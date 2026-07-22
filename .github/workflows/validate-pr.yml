@@ -9,6 +9,9 @@
 
 name: "Inspect the New Charts 🧪🏴‍☠️"
 
+#
+# Validate every pull request that targets the main branch.
+#
 on:
     pull_request:
         branches:
@@ -16,9 +19,15 @@ on:
         paths:
             - "**"
 
+#
+# Pull-request validation needs read-only repository access.
+#
 permissions:
     contents: read
 
+#
+# Validate documentation, Compose, and the production container image together.
+#
 jobs:
     validate-pr:
         name: "Validate the Boarding Charts 🧪"
@@ -26,16 +35,25 @@ jobs:
         permissions:
             contents: read
 
+        #
+        # Shared platform and local image settings for build and scan steps.
+        #
         env:
             IMAGE_PLATFORMS: linux/amd64,linux/arm64,linux/arm/v7
             PLUNDARRPEDIA_LOCAL_IMAGE_REF: ghcr.io/scottgigawatt/plundarrpedia
 
         steps:
+            #
+            # Check out the proposed source without retaining write credentials.
+            #
             - name: "Grab the Treasure Map 🗺️"
               uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7
               with:
                   persist-credentials: false
 
+            #
+            # Install the pinned documentation toolchain with pip caching enabled.
+            #
             - name: "Ready the Python Quill 🪶"
               uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6
               with:
@@ -45,24 +63,38 @@ jobs:
             - name: "Load the Cartographer's Tools 🧰"
               run: pip install --requirement requirements.txt
 
+            #
+            # Create the local environment file and validate the fully resolved
+            # one-file Compose deployment before building containers.
+            #
             - name: "Load the Example Cargo 📦"
               run: cp example.env .env
 
             - name: "Read the Compose Charts 🔎"
               run: docker compose config --quiet
 
+            #
+            # Run repository policy checks and require a warning-free site build.
+            #
             - name: "Scrub the Deck with Pre-Commit 🧽"
               uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd  # v3.0.1
 
             - name: "Render Every Chart 📚"
               run: mkdocs build --strict
 
+            #
+            # Configure emulation and Buildx before testing the production image.
+            #
             - name: "Summon Cross-Arch Cannons 🧨"
               uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8  # v4
 
             - name: "Sharpen the Build Axe 🪓"
               uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c  # v4.2.0
 
+            #
+            # Build the runtime image locally and reject high or critical fixed
+            # vulnerabilities before testing the remaining CPU platforms.
+            #
             - name: "Hammer the Wiki Hull ⚒️"
               run: make build
 
