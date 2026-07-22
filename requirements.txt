@@ -1,0 +1,9 @@
+#
+# Copyright 2026 Scott Gigawatt
+#
+# Licensed under the Apache License, Version 2.0.
+#
+# requirements.txt: Exact Python dependency shared by local and Pages builds.
+#
+
+mkdocs-material==9.7.7

@@ -1,0 +1,86 @@
+---
+title: Configure Plundarr
+description: Set paths, identity, ports, VPN behavior, and networking without losing the thread.
+icon: material/tune-variant
+---
+
+# Configure the stack
+
+Treat `.env` as the control panel and `docker-compose.yml` as the generated
+wiring diagram. Routine local changes belong in `.env`; regenerate the Compose
+file when you want to change selected services.
+
+## Identity and permissions
+
+Linux-based media containers commonly use a numeric user and group ID. On the
+host, identify the account that owns the media directories:
+
+```console
+id media
+```
+
+Use its numeric values for `DEFAULT_PUID` and `DEFAULT_PGID`, then confirm that
+downloads, final libraries, and `config/` are writable where appropriate.
+
+## Path strategy
+
+The most reliable strategy uses one shared host root and consistent container
+paths:
+
+| Host example | Container path | Used by |
+| --- | --- | --- |
+| `/srv/media/downloads` | `/downloads` | Download clients, Radarr, Sonarr |
+| `/srv/media/movies` | `/movies` | Radarr, Plex/Jellyfin |
+| `/srv/media/tv` | `/tv` | Sonarr, Plex/Jellyfin |
+| `./config/radarr` | `/config` | Radarr only |
+
+Do not map the same host download directory as `/data` in one container and
+`/downloads` in another unless you also configure remote-path mappings. A
+single vocabulary makes imports, hardlinks, and troubleshooting easier.
+
+## Network choices
+
+Choose a private subnet that does not overlap:
+
+- your home LAN;
+- an employer or travel VPN;
+- another Docker network;
+- a remote site you route to.
+
+The project currently demonstrates a `172.28.0.0/16` network with a smaller
+container allocation range. It is an example, not a requirement.
+
+## Download client selection
+
+The selected client changes the VPN namespace and service dependencies:
+
+=== "qBittorrent"
+
+    Best when the automation lane retrieves torrents. Its listening port may
+    need to follow the port assigned by PIA/Gluetun.
+
+=== "SABnzbd"
+
+    Best for Usenet. It still benefits from the Gluetun network boundary when
+    that is your chosen privacy model, but it does not consume PIA's forwarded
+    torrent port.
+
+=== "Both"
+
+    Valid when the managers may choose either protocol. Expect more first-run
+    configuration and be explicit about categories and completed-download
+    handling.
+
+## Secrets
+
+Keep these out of Git:
+
+- PIA username and password;
+- application API keys;
+- generated WireGuard files and endpoint metadata;
+- notification credentials and webhook URLs;
+- Duplicati encryption material;
+- real service databases and logs.
+
+Use `example.env` to document variable names and safe examples. Use ignored
+`.env` files or an external secret-management workflow for real values.

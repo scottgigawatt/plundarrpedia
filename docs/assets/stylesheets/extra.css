@@ -1,0 +1,294 @@
+/*
+ * Copyright 2026 Scott Gigawatt
+ *
+ * Licensed under the Apache License, Version 2.0.
+ *
+ * extra.css: Chart-room color system and Material component refinements for
+ *            the Plundarrpedia public site.
+ */
+
+/* Shared chart-room color tokens used by both site palettes. */
+:root {
+  --plundarr-ink: #071a22;
+  --plundarr-deep: #0a2833;
+  --plundarr-sea: #0b7189;
+  --plundarr-foam: #1fc7b6;
+  --plundarr-brass: #d6a84b;
+  --plundarr-parchment: #f4e7c3;
+  --plundarr-coral: #ff7a66;
+}
+
+/* Light palette with parchment surfaces and readable ocean-blue links. */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: var(--plundarr-ink);
+  --md-primary-fg-color--light: #164653;
+  --md-primary-fg-color--dark: #031015;
+  --md-accent-fg-color: #087f78;
+  --md-default-bg-color: #f8f5eb;
+  --md-default-fg-color: #102c35;
+  --md-typeset-a-color: #08798a;
+  --md-code-bg-color: #e9eee9;
+}
+
+/* Dark palette with sea-glass accents and deep navy surfaces. */
+[data-md-color-scheme="slate"] {
+  color-scheme: dark;
+  --md-hue: 192;
+  --md-primary-fg-color: #06171e;
+  --md-primary-fg-color--light: #123844;
+  --md-primary-fg-color--dark: #020b0f;
+  --md-accent-fg-color: var(--plundarr-foam);
+  --md-default-bg-color: #071a22;
+  --md-default-fg-color: #d9e8e6;
+  --md-typeset-a-color: #5bd6c9;
+  --md-code-bg-color: #041116;
+  --md-footer-bg-color: #041116;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 12% 8%, rgb(31 199 182 / 10%), transparent 24rem),
+    radial-gradient(circle at 88% 18%, rgb(214 168 75 / 9%), transparent 22rem);
+}
+
+.md-header,
+.md-tabs {
+  background-image: linear-gradient(115deg, #041116 0%, #0a3340 62%, #0b5664 100%);
+}
+
+.md-header {
+  border-bottom: 1px solid rgb(214 168 75 / 36%);
+}
+
+.md-announce {
+  background: linear-gradient(90deg, var(--plundarr-brass), #f0cf7d);
+  color: #18282c;
+}
+
+.md-main__inner {
+  margin-top: 1.5rem;
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+  letter-spacing: -0.02em;
+  font-weight: 750;
+}
+
+.md-typeset h1 {
+  color: var(--md-default-fg-color);
+}
+
+.md-typeset h2 {
+  border-bottom: 1px solid rgb(11 113 137 / 24%);
+  padding-bottom: 0.3rem;
+}
+
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid > .card {
+  background:
+    linear-gradient(145deg, rgb(31 199 182 / 7%), transparent 62%),
+    var(--md-default-bg-color);
+  border: 1px solid rgb(11 113 137 / 28%);
+  border-radius: 0.75rem;
+  box-shadow: 0 0.55rem 1.5rem rgb(3 16 21 / 8%);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.md-typeset .grid.cards > ul > li:hover,
+.md-typeset .grid > .card:hover {
+  border-color: var(--plundarr-foam);
+  box-shadow: 0 0.8rem 2rem rgb(3 16 21 / 18%);
+  transform: translateY(-3px);
+}
+
+.md-typeset .hero {
+  background:
+    linear-gradient(115deg, rgb(4 17 22 / 94%), rgb(8 59 69 / 88%)),
+    repeating-radial-gradient(circle at 80% 20%, transparent 0 14px, rgb(214 168 75 / 14%) 15px 16px);
+  border: 1px solid rgb(214 168 75 / 42%);
+  border-radius: 1.2rem;
+  box-shadow: 0 1.2rem 3.5rem rgb(3 16 21 / 24%);
+  color: #eef8f6;
+  margin: 0 0 2rem;
+  overflow: hidden;
+  padding: clamp(2rem, 6vw, 5rem);
+  position: relative;
+}
+
+.md-typeset .hero::after {
+  border: 1px solid rgb(214 168 75 / 32%);
+  border-radius: 50%;
+  content: "";
+  height: 18rem;
+  position: absolute;
+  right: -7rem;
+  top: -8rem;
+  width: 18rem;
+}
+
+.md-typeset .hero h1 {
+  color: #fff;
+  font-size: clamp(2.4rem, 7vw, 4.8rem);
+  line-height: 0.95;
+  margin: 0 0 1rem;
+  max-width: 10ch;
+}
+
+.md-typeset .hero p {
+  color: #cfe3e0;
+  font-size: 1.05rem;
+  max-width: 58ch;
+}
+
+.md-typeset .hero .md-button {
+  border-color: var(--plundarr-brass);
+  color: #fff;
+  margin: 0.5rem 0.4rem 0 0;
+}
+
+.md-typeset .hero .md-button--primary {
+  background: var(--plundarr-brass);
+  color: #18282c;
+}
+
+.fleet-line {
+  align-items: center;
+  display: grid;
+  gap: 0.4rem;
+  grid-template-columns: repeat(5, 1fr);
+  margin: 2rem 0;
+}
+
+.fleet-line span {
+  background: linear-gradient(90deg, var(--plundarr-sea), var(--plundarr-foam));
+  border-radius: 999px;
+  height: 0.35rem;
+}
+
+.fleet-line b {
+  color: var(--plundarr-brass);
+  text-align: center;
+}
+
+/* Responsive architecture maps that work without a JavaScript diagram runtime. */
+.flow-map {
+  align-items: stretch;
+  background: linear-gradient(135deg, rgb(11 113 137 / 12%), rgb(31 199 182 / 5%));
+  border: 1px solid rgb(11 113 137 / 30%);
+  border-radius: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+  margin: 1rem 0;
+  padding: 1rem;
+}
+
+.flow-map--support {
+  background: linear-gradient(135deg, rgb(214 168 75 / 10%), transparent);
+  border-color: rgb(214 168 75 / 34%);
+}
+
+.flow-map__step {
+  align-items: center;
+  background: var(--md-default-bg-color);
+  border: 1px solid rgb(11 113 137 / 32%);
+  border-radius: 0.55rem;
+  box-shadow: 0 0.35rem 1rem rgb(3 16 21 / 8%);
+  display: inline-flex;
+  font-weight: 700;
+  justify-content: center;
+  min-height: 3.2rem;
+  padding: 0.65rem 0.85rem;
+  text-align: center;
+}
+
+.flow-map__arrow,
+.flow-map__divider {
+  align-items: center;
+  color: var(--plundarr-brass);
+  display: inline-flex;
+  font-weight: 800;
+  justify-content: center;
+}
+
+/* Numbered file-handoff sequence used on the Privateerr architecture page. */
+.handoff-timeline {
+  counter-reset: handoff-step;
+  display: grid;
+  gap: 0.8rem;
+  list-style: none;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+.handoff-timeline li {
+  background: linear-gradient(135deg, rgb(11 113 137 / 9%), transparent);
+  border-left: 0.3rem solid var(--plundarr-brass);
+  border-radius: 0.35rem 0.65rem 0.65rem 0.35rem;
+  counter-increment: handoff-step;
+  padding: 0.9rem 1rem 0.9rem 3.2rem;
+  position: relative;
+}
+
+.handoff-timeline li::before {
+  align-items: center;
+  background: var(--plundarr-ink);
+  border-radius: 50%;
+  color: var(--plundarr-parchment);
+  content: counter(handoff-step);
+  display: flex;
+  font-weight: 800;
+  height: 1.8rem;
+  justify-content: center;
+  left: 0.8rem;
+  position: absolute;
+  top: 0.75rem;
+  width: 1.8rem;
+}
+
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: 0.55rem;
+}
+
+.md-typeset table:not([class]) {
+  border-radius: 0.45rem;
+  overflow: hidden;
+}
+
+.md-footer {
+  border-top: 1px solid rgb(214 168 75 / 22%);
+}
+
+@media screen and (max-width: 44.984375em) {
+  .md-content__button {
+    display: none;
+  }
+
+  .md-typeset .hero {
+    border-radius: 0.8rem;
+    padding: 2rem 1.4rem;
+  }
+
+  .fleet-line {
+    grid-template-columns: 1fr;
+  }
+
+  .fleet-line span {
+    display: none;
+  }
+
+  .flow-map {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .flow-map__arrow,
+  .flow-map__divider {
+    min-height: 1.5rem;
+    transform: rotate(90deg);
+  }
+}

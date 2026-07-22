@@ -1,0 +1,68 @@
+//
+// Copyright 2026 Scott Gigawatt
+//
+// Licensed under the Apache License, Version 2.0.
+//
+// renovate.json5: Automated update policy for actions, Python dependencies,
+//                 Compose images, and Dockerfile base images.
+//
+
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:recommended",
+        "helpers:pinGitHubActionDigests"
+    ],
+    "timezone": "America/New_York",
+    "schedule": ["before 8am on monday"],
+    "dependencyDashboard": true,
+    "labels": ["dependencies"],
+    "assignees": ["scottgigawatt"],
+    "reviewers": ["scottgigawatt"],
+    "enabledManagers": [
+        "docker-compose",
+        "dockerfile",
+        "github-actions",
+        "pip_requirements"
+    ],
+    "customManagers": [
+        {
+            "customType": "regex",
+            "managerFilePatterns": ["/^example\\.env$/"],
+            "matchStrings": [
+                "MKDOCS_MATERIAL_TAG=\"\\$\\{MKDOCS_MATERIAL_TAG:-(?<currentValue>[^@\\s}]+)@(?<currentDigest>sha256:[a-f0-9]+)\\}\""
+            ],
+            "depNameTemplate": "squidfunk/mkdocs-material",
+            "datasourceTemplate": "docker",
+            "versioningTemplate": "docker"
+        },
+        {
+            "customType": "regex",
+            "managerFilePatterns": ["/^example\\.env$/"],
+            "matchStrings": [
+                "NGINX_UNPRIVILEGED_TAG=\"\\$\\{NGINX_UNPRIVILEGED_TAG:-(?<currentValue>[^@\\s}]+)@(?<currentDigest>sha256:[a-f0-9]+)\\}\""
+            ],
+            "depNameTemplate": "nginxinc/nginx-unprivileged",
+            "datasourceTemplate": "docker",
+            "versioningTemplate": "docker"
+        }
+    ],
+    "packageRules": [
+        {
+            "matchManagers": ["docker-compose", "dockerfile", "custom.regex"],
+            "pinDigests": true
+        },
+        {
+            "groupName": "GitHub Actions",
+            "matchManagers": ["github-actions"]
+        },
+        {
+            "groupName": "Container images",
+            "matchManagers": ["docker-compose", "dockerfile"]
+        },
+        {
+            "groupName": "MkDocs dependencies",
+            "matchManagers": ["pip_requirements"]
+        }
+    ]
+}

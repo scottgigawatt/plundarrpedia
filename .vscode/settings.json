@@ -1,0 +1,46 @@
+//
+// Copyright 2026 Scott Gigawatt
+//
+// Licensed under the Apache License, Version 2.0.
+//
+// settings.json: Workspace spelling additions for Plundarrpedia terminology.
+//
+
+{
+    "cSpell.words": [
+        "BUILDX",
+        "centurylinklabs",
+        "elif",
+        "extrahead",
+        "fontawesome",
+        "Gluetun",
+        "Hardlink",
+        "healthcheck",
+        "inlinehilite",
+        "linenums",
+        "magiclink",
+        "Maraudarr",
+        "markdownlint",
+        "mkdocs",
+        "multiarch",
+        "OPDS",
+        "opencontainers",
+        "PGID",
+        "Plundarr",
+        "Plundarrpedia",
+        "Privateerr",
+        "PUID",
+        "pycache",
+        "pygments",
+        "pymdownx",
+        "qBittorrent",
+        "scottgigawatt",
+        "squidfunk",
+        "superfences",
+        "tasklist",
+        "tmpfs",
+        "TrueNAS",
+        "twemoji",
+        "venv"
+    ]
+}

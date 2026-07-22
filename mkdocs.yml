@@ -1,0 +1,154 @@
+#
+# Copyright 2026 Scott Gigawatt
+#
+# Licensed under the Apache License, Version 2.0.
+#
+# mkdocs.yml: Site navigation, Material theme features, Markdown extensions,
+#             and public Plundarrpedia metadata.
+#
+
+# yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
+
+site_name: Plundarrpedia
+site_description: The captain's field guide to Plundarr, Privateerr, Plex utilities, and self-hosted media.
+site_url: https://scottgigawatt.github.io/plundarrpedia/
+copyright: Copyright &copy; 2026 Scott Gigawatt
+
+repo_name: scottgigawatt/plundarrpedia
+repo_url: https://github.com/scottgigawatt/plundarrpedia
+edit_uri: edit/main/docs/
+
+nav:
+  - Chart Room: index.md
+  - Start Here:
+      - Pick a Route: start-here/index.md
+      - How the Fleet Fits Together: start-here/architecture.md
+      - Choose a Deployment: start-here/choose-a-deployment.md
+  - Plundarr:
+      - Overview: projects/plundarr/index.md
+      - Quick Start: projects/plundarr/quick-start.md
+      - Configure the Stack: projects/plundarr/configuration.md
+      - Service Catalog: projects/plundarr/services.md
+      - Troubleshooting: projects/plundarr/troubleshooting.md
+  - Privateerr:
+      - Overview: projects/privateerr/index.md
+      - Quick Start: projects/privateerr/quick-start.md
+      - Config Handoff: projects/privateerr/config-handoff.md
+      - Troubleshooting: projects/privateerr/troubleshooting.md
+  - Plex Utilities:
+      - Duplex: projects/duplex/index.md
+      - Media Project Catalog: projects/catalog.md
+  - Platform Guides:
+      - Choose a Harbor: guides/index.md
+      - Any Docker Host: guides/docker.md
+      - Synology Container Manager: guides/synology.md
+      - TrueNAS Apps: guides/truenas.md
+  - Core Guides:
+      - Paths and Permissions: guides/storage-and-permissions.md
+      - Networking and VPN: guides/networking-and-vpn.md
+  - Reference:
+      - Command Deck: reference/commands.md
+      - Glossary: reference/glossary.md
+      - Writing and Contributing: CONTRIBUTING.md
+      - About This Wiki: reference/about.md
+
+theme:
+  name: material
+  custom_dir: overrides
+  language: en
+  logo: assets/images/logo.svg
+  favicon: assets/images/logo.svg
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
+  font: false
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Dim the lanterns
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/white-balance-sunny
+        name: Raise the sun
+  features:
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - content.footnote.tooltips
+    - content.tabs.link
+    - content.tooltips
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+
+plugins:
+  - search:
+      lang: en
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      title: On this chart
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+extra:
+  generator: false
+  status:
+    new: Fresh chart
+    updated: Newly surveyed
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/scottgigawatt
+      name: Scott Gigawatt on GitHub
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/u/scottgigawatt
+      name: Scott Gigawatt on Docker Hub
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/BpEGzWwGYf
+      name: HADES Discord

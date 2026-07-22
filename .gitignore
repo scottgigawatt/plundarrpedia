@@ -1,0 +1,16 @@
+#
+# Copyright 2026 Scott Gigawatt
+#
+# Licensed under the Apache License, Version 2.0.
+#
+# .gitignore: Local operating-system, environment, cache, and generated site
+#             files that must not be committed.
+#
+
+.DS_Store
+.cache/
+.env
+.venv/
+site/
+venv/
+__pycache__/

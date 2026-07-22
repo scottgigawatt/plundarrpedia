@@ -1,0 +1,19 @@
+{#
+  Copyright 2026 Scott Gigawatt
+
+  Licensed under the Apache License, Version 2.0.
+
+  main.html: Material theme metadata and announcement-bar overrides.
+#}
+
+{% extends "base.html" %}
+
+{% block extrahead %}
+  <meta name="theme-color" content="#071a22" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Plundarrpedia" />
+{% endblock %}
+
+{% block announce %}
+  <strong>Fresh charts:</strong> Plundarr and Privateerr now share one searchable harbor.
+{% endblock %}

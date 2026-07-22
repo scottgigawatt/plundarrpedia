@@ -1,0 +1,16 @@
+#
+# Copyright 2026 Scott Gigawatt
+#
+# Licensed under the Apache License, Version 2.0.
+#
+# .dockerignore: Local and generated files excluded from Docker build context.
+#
+
+.git
+.github
+.cache
+.env
+.venv
+site
+venv
+docs/**/.DS_Store

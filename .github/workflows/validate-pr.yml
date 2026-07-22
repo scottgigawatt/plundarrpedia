@@ -1,0 +1,80 @@
+#
+# Copyright 2026 Scott Gigawatt
+#
+# Licensed under the Apache License, Version 2.0.
+#
+# validate-pr.yml: Validate documentation, Compose configuration, and the
+#                  production image for pull requests.
+#
+
+name: "Inspect the New Charts 🧪🏴‍☠️"
+
+on:
+    pull_request:
+        branches:
+            - main
+        paths:
+            - "**"
+
+permissions:
+    contents: read
+
+jobs:
+    validate-pr:
+        name: "Validate the Boarding Charts 🧪"
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+
+        env:
+            IMAGE_PLATFORMS: linux/amd64,linux/arm64,linux/arm/v7
+            PLUNDARRPEDIA_LOCAL_IMAGE_REF: ghcr.io/scottgigawatt/plundarrpedia
+
+        steps:
+            - name: "Grab the Treasure Map 🗺️"
+              uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7
+              with:
+                  persist-credentials: false
+
+            - name: "Ready the Python Quill 🪶"
+              uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6
+              with:
+                  python-version: "3.13"
+                  cache: pip
+
+            - name: "Load the Cartographer's Tools 🧰"
+              run: pip install --requirement requirements.txt
+
+            - name: "Load the Example Cargo 📦"
+              run: cp example.env .env
+
+            - name: "Read the Compose Charts 🔎"
+              run: docker compose config --quiet
+
+            - name: "Scrub the Deck with Pre-Commit 🧽"
+              uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd  # v3.0.1
+
+            - name: "Render Every Chart 📚"
+              run: mkdocs build --strict
+
+            - name: "Summon Cross-Arch Cannons 🧨"
+              uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8  # v4
+
+            - name: "Sharpen the Build Axe 🪓"
+              uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c  # v4.2.0
+
+            - name: "Hammer the Wiki Hull ⚒️"
+              run: make build
+
+            - name: "Inspect for Bilge Rot 🔍"
+              uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
+              with:
+                  image-ref: ${{ env.PLUNDARRPEDIA_LOCAL_IMAGE_REF }}:edge
+                  format: table
+                  vuln-type: os,library
+                  severity: CRITICAL,HIGH
+                  ignore-unfixed: true
+                  exit-code: 1
+
+            - name: "Test the Three-Deck Hull Plans 🛠️"
+              run: make build-multiarch

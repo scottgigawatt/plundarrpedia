@@ -1,0 +1,24 @@
+<!--
+  Copyright 2026 Scott Gigawatt
+
+  Licensed under the Apache License, Version 2.0.
+
+  logo.svg: Plundarrpedia compass rose and ship-wheel site mark.
+-->
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title description">
+  <title id="title">Plundarrpedia compass rose</title>
+  <desc id="description">A compass rose inside a ship's wheel.</desc>
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1fc7b6"/>
+      <stop offset="1" stop-color="#0b7189"/>
+    </linearGradient>
+  </defs>
+  <circle cx="64" cy="64" r="54" fill="#071a22" stroke="#d6a84b" stroke-width="6"/>
+  <circle cx="64" cy="64" r="42" fill="none" stroke="#2b5661" stroke-width="2"/>
+  <path fill="url(#sea)" d="M64 18 76 52l34 12-34 12-12 34-12-34-34-12 34-12z"/>
+  <path fill="#f4e7c3" d="m64 28 7 29 29 7-29 7-7 29-7-29-29-7 29-7z"/>
+  <circle cx="64" cy="64" r="8" fill="#d6a84b"/>
+  <path stroke="#d6a84b" stroke-width="6" stroke-linecap="round" d="M64 3v10M64 115v10M3 64h10M115 64h10M21 21l7 7M100 100l7 7M21 107l7-7M100 28l7-7"/>
+</svg>

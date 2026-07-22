@@ -1,0 +1,77 @@
+#
+# Copyright 2026 Scott Gigawatt
+#
+# Licensed under the Apache License, Version 2.0.
+#
+# pages.yml: Validate and publish the Plundarrpedia static site to GitHub Pages.
+#
+
+name: "Publish the Captain's Charts 📚🏴‍☠️"
+
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - "docs/**"
+            - "overrides/**"
+            - "mkdocs.yml"
+            - "requirements.txt"
+            - ".github/workflows/pages.yml"
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+concurrency:
+    group: github-pages
+    cancel-in-progress: false
+
+jobs:
+    build:
+        name: "Draw the Static Map 🗺️"
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+
+        steps:
+            - name: "Grab the Logbook 📖"
+              uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7
+              with:
+                  persist-credentials: false
+
+            - name: "Ready the Python Quill 🪶"
+              uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6
+              with:
+                  python-version: "3.13"
+                  cache: pip
+
+            - name: "Load the Cartographer's Tools 🧰"
+              run: pip install --requirement requirements.txt
+
+            - name: "Configure the Pages Harbor ⚓"
+              uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b  # v5
+
+            - name: "Render Every Chart 🔎"
+              run: mkdocs build --strict
+
+            - name: "Crate the Site Artifact 📦"
+              uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b  # v4
+              with:
+                  path: site
+
+    deploy:
+        name: "Raise the Pages Flag 🚩"
+        needs: build
+        runs-on: ubuntu-latest
+        permissions:
+            pages: write
+            id-token: write
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+
+        steps:
+            - name: "Deploy Plundarrpedia 🚀"
+              id: deployment
+              uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e  # v4
