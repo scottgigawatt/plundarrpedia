@@ -182,6 +182,9 @@ digests.
 
 ## 🛡️ Security and Scope
 
+See the [security policy](./docs/SECURITY.md) for supported releases and private
+vulnerability reporting instructions.
+
 - Never copy `.env`, credentials, API keys, live `wg0.conf`, private logs, or
   local hostnames into the wiki.
 - Treat sibling repositories as the technical source of truth.
@@ -196,6 +199,9 @@ digests.
 ## ⚖️ License and Community
 
 Plundarrpedia is licensed under Apache 2.0; see [LICENSE](LICENSE).
+
+Contributions follow the [contribution guide](./docs/CONTRIBUTING.md) and
+[code of conduct](./docs/CODE_OF_CONDUCT.md).
 
 Need a second pair of eyes? Join the
 [🔥HADES🔥 Discord](https://discord.gg/BpEGzWwGYf) and bring the logs with the
