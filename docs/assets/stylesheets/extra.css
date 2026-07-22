@@ -153,6 +153,23 @@ body {
   color: #18282c;
 }
 
+/* Keep standard article buttons visible against the dark chart-room palette. */
+[data-md-color-scheme="slate"] .md-typeset .md-button:not(.md-button--primary) {
+  border-color: var(--plundarr-foam);
+  color: var(--plundarr-foam);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .md-button:not(.md-button--primary):is(:focus, :hover) {
+  background-color: var(--plundarr-foam);
+  color: var(--plundarr-ink);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .md-button--primary {
+  background-color: var(--plundarr-brass);
+  border-color: var(--plundarr-brass);
+  color: var(--plundarr-ink);
+}
+
 .fleet-line {
   align-items: center;
   display: grid;

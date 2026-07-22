@@ -9,36 +9,42 @@ icon: material/transit-connection-variant
 The easiest way to understand a media stack is to separate it into lanes. A
 container may speak to several lanes, but each lane has one job.
 
-| Lane | Typical services | Responsibility |
-| --- | --- | --- |
-| Requests | Seerr | Turns human requests into manager activity. |
-| Discovery | Prowlarr, FlareSolverr | Supplies indexers and supported challenge handling. |
-| Management | Radarr, Sonarr, Whisparr, Bazarr | Chooses releases and manages final library files. |
-| Download | qBittorrent, SABnzbd | Retrieves payloads into a shared download root. |
-| VPN | Privateerr, Gluetun | Generates VPN configuration, runs the tunnel, and handles PIA port forwarding. |
-| Playback | Plex, Jellyfin | Scans and serves completed media libraries. |
-| Operations | Homepage, Duplicati, Cleanuparr, Speedtest Tracker, Apprise | Observability, backup, cleanup, and notification work. |
-| Curation | Kometa, ImageMaid, PATTRMM, Tautulli, Notifiarr | Improves and monitors an existing Plex deployment. |
+| Lane       | Typical services                                            | Responsibility                                                                 |
+| ---------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Requests   | Seerr                                                       | Turns human requests into manager activity.                                    |
+| Discovery  | Prowlarr, FlareSolverr                                      | Supplies indexers and supported challenge handling.                            |
+| Management | Radarr, Sonarr, Whisparr, Bazarr                            | Chooses releases and manages final library files.                              |
+| Download   | qBittorrent, SABnzbd                                        | Retrieves payloads into a shared download root.                                |
+| VPN        | Privateerr, Gluetun                                         | Generates VPN configuration, runs the tunnel, and handles PIA port forwarding. |
+| Playback   | Plex, Jellyfin                                              | Scans and serves completed media libraries.                                    |
+| Operations | Homepage, Duplicati, Cleanuparr, Speedtest Tracker, Apprise | Observability, backup, cleanup, and notification work.                         |
+| Curation   | Kometa, ImageMaid, PATTRMM, Tautulli, Notifiarr             | Improves and monitors an existing Plex deployment.                             |
 
 ## The VPN boundary
 
-<div class="flow-map" role="img" aria-label="Privateerr writes configuration into shared storage, Gluetun consumes it, and Gluetun connects to the PIA endpoint.">
-  <span class="flow-map__step">Privateerr</span>
-  <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">Shared config</span>
-  <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">Gluetun</span>
-  <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">PIA endpoint</span>
-</div>
+```mermaid
+flowchart TB
+    accTitle: VPN configuration and network path
+    accDescr: Privateerr supplies Gluetun, download clients share its network, and Gluetun connects to PIA.
 
-<div class="flow-map flow-map--support" role="img" aria-label="Media managers reach qBittorrent or SABnzbd over the project network, and the download client shares Gluetun's network namespace.">
-  <span class="flow-map__step">Radarr / Sonarr / Prowlarr</span>
-  <span class="flow-map__arrow" aria-hidden="true">→ project network →</span>
-  <span class="flow-map__step">qBittorrent / SABnzbd</span>
-  <span class="flow-map__arrow" aria-hidden="true">→ shared namespace →</span>
-  <span class="flow-map__step">Gluetun</span>
-</div>
+    privateerr["🏴‍☠️ Privateerr"]
+    config[("📜 Shared VPN<br/>configuration")]
+    managers["🎬 Radarr / Sonarr<br/>🔎 Prowlarr"]
+    pia["🌐 PIA endpoint"]
+
+    privateerr -->|writes| config
+
+    subgraph namespace["🛡️ Gluetun network namespace"]
+        direction TB
+        gluetun["🔐 Gluetun<br/>VPN tunnel and exposed ports"]
+        clients["📥 qBittorrent / SABnzbd<br/>share Gluetun's network stack"]
+        gluetun ---|same network namespace| clients
+    end
+
+    config -->|read by| gluetun
+    managers -->|project network<br/>through exposed ports| gluetun
+    gluetun -->|🔒 encrypted WireGuard tunnel| pia
+```
 
 Only selected download clients need to share Gluetun's network namespace.
 Managers, indexers, dashboards, and playback servers normally stay on the

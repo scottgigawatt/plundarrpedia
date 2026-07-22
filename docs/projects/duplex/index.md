@@ -12,15 +12,15 @@ happens around Plex after the media is there.
 
 ## The cast
 
-| Tool | Job |
-| --- | --- |
-| Kometa | Builds collections, applies metadata, and manages overlays from YAML configuration. |
-| ImageMaid | Cleans Plex image assets and cache state. |
-| Overlay Reset | Removes overlays when a clean slate is needed. |
-| PATTRMM | Builds time-aware collections such as returning-soon or historical views. |
-| Tautulli | Records activity and exposes Plex usage analytics. |
-| Notifiarr | Delivers application and system notifications. |
-| Watchtower | Handles selected container update policy. |
+| Tool          | Job                                                                                 |
+| ------------- | ----------------------------------------------------------------------------------- |
+| Kometa        | Builds collections, applies metadata, and manages overlays from YAML configuration. |
+| ImageMaid     | Cleans Plex image assets and cache state.                                           |
+| Overlay Reset | Removes overlays when a clean slate is needed.                                      |
+| PATTRMM       | Builds time-aware collections such as returning-soon or historical views.           |
+| Tautulli      | Records activity and exposes Plex usage analytics.                                  |
+| Notifiarr     | Delivers application and system notifications.                                      |
+| Watchtower    | Handles selected container update policy.                                           |
 
 The Kometa configuration lives in the separate
 [`kometa-config`](https://github.com/scottgigawatt/kometa-config) repository and

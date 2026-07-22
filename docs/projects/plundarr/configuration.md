@@ -27,12 +27,12 @@ downloads, final libraries, and `config/` are writable where appropriate.
 The most reliable strategy uses one shared host root and consistent container
 paths:
 
-| Host example | Container path | Used by |
-| --- | --- | --- |
-| `/srv/media/downloads` | `/downloads` | Download clients, Radarr, Sonarr |
-| `/srv/media/movies` | `/movies` | Radarr, Plex/Jellyfin |
-| `/srv/media/tv` | `/tv` | Sonarr, Plex/Jellyfin |
-| `./config/radarr` | `/config` | Radarr only |
+| Host example           | Container path | Used by                          |
+| ---------------------- | -------------- | -------------------------------- |
+| `/srv/media/downloads` | `/downloads`   | Download clients, Radarr, Sonarr |
+| `/srv/media/movies`    | `/movies`      | Radarr, Plex/Jellyfin            |
+| `/srv/media/tv`        | `/tv`          | Sonarr, Plex/Jellyfin            |
+| `./config/radarr`      | `/config`      | Radarr only                      |
 
 Do not map the same host download directory as `/data` in one container and
 `/downloads` in another unless you also configure remote-path mappings. A

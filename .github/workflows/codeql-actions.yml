@@ -1,0 +1,62 @@
+#
+# Copyright 2026 Scott Gigawatt
+#
+# Licensed under the Apache License, Version 2.0.
+#
+# codeql-actions.yml: Analyze Plundarrpedia's GitHub Actions source.
+#
+
+name: "Interrogate the Actions Rigging 🔎🏴‍☠️"
+
+#
+# Inspect every change entering main, every resulting main commit, and any
+# manually requested security review.
+#
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+jobs:
+    #
+    # Run CodeQL with the permissions needed to read workflow metadata and
+    # publish GitHub Actions findings to code scanning.
+    #
+    codeql-actions:
+        name: "Sniff the Workflow Bilge 🔍"
+        runs-on: ubuntu-latest
+        permissions:
+            actions: read
+            contents: read
+            security-events: write
+
+        steps:
+            #
+            # Check out without retaining credentials before CodeQL inspects the
+            # repository's workflow definitions.
+            #
+            - name: "Grab the Treasure Map 🗺️"
+              uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7
+              with:
+                  persist-credentials: false
+
+            - name: "Wake the CodeQL Kraken 🐙"
+              uses: github/codeql-action/init@7188fc363630916deb702c7fdcf4e481b751f97a  # v4
+              with:
+                  languages: actions
+
+            #
+            # Analyze the initialized Actions database and keep its findings in
+            # a dedicated code-scanning category.
+            #
+            - name: "Read the Cursed Scrolls 📜"
+              uses: github/codeql-action/analyze@7188fc363630916deb702c7fdcf4e481b751f97a  # v4
+              with:
+                  category: "/language:actions"

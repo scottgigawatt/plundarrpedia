@@ -55,7 +55,7 @@ client port still produces poor inbound connectivity.
 
 ## Testing the full path
 
-Privateerr's repository includes the test-only Buccaneerr validator:
+Privateerr's repository includes the test-only Buccaneer validator:
 
 ```console
 make test-e2e

@@ -40,14 +40,14 @@ make services
 
 At minimum, review:
 
-| Setting | Why it matters |
-| --- | --- |
-| `PIA_USER` / `PIA_PASS` | Required when the Privateerr/Gluetun lane uses PIA. |
-| `DEFAULT_PUID` / `DEFAULT_PGID` | Must match a host identity that can access mounted files. |
-| `HOST_DOWNLOADS_PATH` | Shared download root used by clients and managers. |
-| `HOST_MOVIES_PATH` / `HOST_TV_PATH` | Final libraries seen by managers and playback servers. |
-| `TZ` | Keeps logs and schedules aligned with your location. |
-| `*_WEBUI_PORT` | Must not collide with another host service. |
+| Setting                             | Why it matters                                            |
+| ----------------------------------- | --------------------------------------------------------- |
+| `PIA_USER` / `PIA_PASS`             | Required when the Privateerr/Gluetun lane uses PIA.       |
+| `DEFAULT_PUID` / `DEFAULT_PGID`     | Must match a host identity that can access mounted files. |
+| `HOST_DOWNLOADS_PATH`               | Shared download root used by clients and managers.        |
+| `HOST_MOVIES_PATH` / `HOST_TV_PATH` | Final libraries seen by managers and playback servers.    |
+| `TZ`                                | Keeps logs and schedules aligned with your location.      |
+| `*_WEBUI_PORT`                      | Must not collide with another host service.               |
 
 The checked-in defaults use Synology-shaped paths as examples. Linux and
 Docker Desktop users should replace them with real absolute host paths.

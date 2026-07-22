@@ -20,10 +20,6 @@ into a stale copy of a README.
 - Current Docker, Material for MkDocs, Synology, and TrueNAS documentation for
   behavior owned by those platforms.
 
-This site intentionally excludes unrelated personal and general homelab notes.
-Platform pages exist only where they help deploy or operate the media automation
-fleet.
-
 ## Visual direction
 
 The earlier wiki used a cosmic photographic background. Plundarrpedia uses a

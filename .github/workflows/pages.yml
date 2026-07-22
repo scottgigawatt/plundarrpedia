@@ -8,6 +8,9 @@
 
 name: "Publish the Captain's Charts 📚🏴‍☠️"
 
+#
+# Publish Pages when site sources reach main or a maintainer starts the workflow.
+#
 on:
     push:
         branches:
@@ -20,13 +23,23 @@ on:
             - ".github/workflows/pages.yml"
     workflow_dispatch:
 
+#
+# Keep the workflow read-only until the deployment job explicitly requests the
+# minimum permissions required by GitHub Pages.
+#
 permissions:
     contents: read
 
+#
+# Allow one Pages deployment at a time without canceling an active publication.
+#
 concurrency:
     group: github-pages
     cancel-in-progress: false
 
+#
+# Build the static artifact separately from the trusted deployment environment.
+#
 jobs:
     build:
         name: "Draw the Static Map 🗺️"
@@ -35,11 +48,17 @@ jobs:
             contents: read
 
         steps:
+            #
+            # Check out the public site sources without retaining write credentials.
+            #
             - name: "Grab the Logbook 📖"
               uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7
               with:
                   persist-credentials: false
 
+            #
+            # Install the pinned documentation toolchain with pip caching enabled.
+            #
             - name: "Ready the Python Quill 🪶"
               uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6
               with:
@@ -49,9 +68,17 @@ jobs:
             - name: "Load the Cartographer's Tools 🧰"
               run: pip install --requirement requirements.txt
 
+            #
+            # Configure Pages metadata before rendering so canonical URLs use the
+            # repository's active GitHub Pages settings.
+            #
             - name: "Configure the Pages Harbor ⚓"
               uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b  # v5
 
+            #
+            # Fail on broken navigation, invalid configuration, or build warnings,
+            # then package the generated site for the deployment job.
+            #
             - name: "Render Every Chart 🔎"
               run: mkdocs build --strict
 
@@ -60,6 +87,9 @@ jobs:
               with:
                   path: site
 
+    #
+    # Deploy only the immutable artifact produced by the build job.
+    #
     deploy:
         name: "Raise the Pages Flag 🚩"
         needs: build
@@ -72,6 +102,9 @@ jobs:
             url: ${{ steps.deployment.outputs.page_url }}
 
         steps:
+            #
+            # Publish the artifact and expose its final URL through the environment.
+            #
             - name: "Deploy Plundarrpedia 🚀"
               id: deployment
               uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e  # v4

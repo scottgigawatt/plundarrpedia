@@ -40,15 +40,15 @@ selected for your account and request.
 
 ## Important variables
 
-| Variable | Owner | Meaning |
-| --- | --- | --- |
-| `PIA_USER`, `PIA_PASS` | PIA scripts | Account credentials. |
-| `PIA_PF` | PIA scripts | Request a port-forwarding-capable region. |
-| `PIA_CONNECT=false` | Privateerr policy | Generate files without connecting in the generator. |
-| `PIA_CONF_PATH` | PIA scripts | Container path where `wg0.conf` is written. |
-| `PRIVATEERR_METADATA_PATH` | Privateerr | Container path for `privateerr.env`. |
-| `PRIVATEERR_KEEPALIVE` | Privateerr | Keep the healthy generator container alive for Compose ordering. |
-| `VPN_SERVICE_PROVIDER=custom` | Gluetun | Tell Gluetun to consume the generated WireGuard configuration. |
+| Variable                      | Owner             | Meaning                                                          |
+| ----------------------------- | ----------------- | ---------------------------------------------------------------- |
+| `PIA_USER`, `PIA_PASS`        | PIA scripts       | Account credentials.                                             |
+| `PIA_PF`                      | PIA scripts       | Request a port-forwarding-capable region.                        |
+| `PIA_CONNECT=false`           | Privateerr policy | Generate files without connecting in the generator.              |
+| `PIA_CONF_PATH`               | PIA scripts       | Container path where `wg0.conf` is written.                      |
+| `PRIVATEERR_METADATA_PATH`    | Privateerr        | Container path for `privateerr.env`.                             |
+| `PRIVATEERR_KEEPALIVE`        | Privateerr        | Keep the healthy generator container alive for Compose ordering. |
+| `VPN_SERVICE_PROVIDER=custom` | Gluetun           | Tell Gluetun to consume the generated WireGuard configuration.   |
 
 ## Directory mounts
 
