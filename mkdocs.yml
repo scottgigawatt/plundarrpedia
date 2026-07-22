@@ -18,6 +18,9 @@ repo_name: scottgigawatt/plundarrpedia
 repo_url: https://github.com/scottgigawatt/plundarrpedia
 edit_uri: edit/main/docs/
 
+not_in_nav: |
+  GHCR_README.md
+
 nav:
   - Chart Room: index.md
   - Start Here:
@@ -48,7 +51,10 @@ nav:
       - Networking and VPN: guides/networking-and-vpn.md
   - Reference:
       - Command Deck: reference/commands.md
-      - Writing and Contributing: CONTRIBUTING.md
+      - Advanced Usage: ADVANCED_USAGE.md
+      - Contributing: CONTRIBUTING.md
+      - Code of Conduct: CODE_OF_CONDUCT.md
+      - Security Policy: SECURITY.md
       - About This Wiki: reference/about.md
 
 theme:

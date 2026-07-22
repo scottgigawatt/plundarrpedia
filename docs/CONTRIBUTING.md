@@ -1,14 +1,63 @@
 ---
-title: Writing and Contributing
-description: Format, lint, preview, and validate task-oriented Plundarrpedia pages.
+title: Contributing
+description: Propose, format, preview, validate, and submit Plundarrpedia improvements.
 icon: material/text-box-edit
 ---
 
-# Writing and contributing
+# Contributing to Plundarrpedia 🏴‍☠️
 
 Plundarrpedia is maintained as Markdown, but valid Markdown alone is not enough.
 Pages also need stable navigation, accurate examples, safe public data, and a
 clean Material for MkDocs render.
+
+## Before you start
+
+- Read the [repository README](https://github.com/scottgigawatt/plundarrpedia#readme)
+  for the repository and image overview.
+- Read the [security policy](SECURITY.md) before sharing logs, screenshots, or
+  infrastructure details.
+- Keep to the [code of conduct](CODE_OF_CONDUCT.md).
+- Check existing issues and pull requests before opening a duplicate chart.
+- Confirm the sibling project that owns the behavior you want to document.
+
+## What belongs here
+
+Good contributions include:
+
+- task-oriented guides for Plundarr, Privateerr, Duplex, and related projects;
+- Linux Docker, Synology, TrueNAS, and other platform-specific deployment help;
+- corrected commands, links, screenshots, diagrams, and troubleshooting steps;
+- accessibility, navigation, search, or theme improvements;
+- container, workflow, linting, and supply-chain hardening for the wiki itself.
+
+Questionable cargo includes:
+
+- copying a sibling project's entire README into the wiki;
+- undocumented platform assumptions presented as universal requirements;
+- generated HTML from `site/` instead of its Markdown or theme source;
+- speculative instructions that have not been checked against the owning
+  project;
+- credentials, private logs, live VPN configuration, or identifiable paths.
+
+## Local setup
+
+```console
+git clone https://github.com/scottgigawatt/plundarrpedia.git
+cd plundarrpedia
+cp example.env .env
+```
+
+Useful authoring and validation commands:
+
+```console
+make serve
+make markdown
+make site
+make config
+pre-commit run --all-files
+```
+
+Open <http://localhost:8000> while `make serve` is running.
 
 ## Page structure
 
@@ -110,3 +159,49 @@ changes can affect the published platform set.
 !!! important
     A clean Markdown lint does not prove that navigation links resolve or that
     Material extensions render. A strict MkDocs build is required as well.
+
+## Repository style
+
+- Public documentation may be lightly nautical, but the task comes first.
+- Code, Dockerfile, Compose, Makefile, and workflow comments use plain English.
+- Preserve the repository's copyright and file-purpose header style.
+- Use separator-block comments to explain workflow and configuration sections.
+- Keep GitHub Actions pinned to full commit SHAs.
+- Keep container base images pinned by version and digest.
+- Preserve `linux/amd64`, `linux/arm64`, and `linux/arm/v7` support unless a
+  reviewed base-image constraint makes that impossible.
+- Prefer `.env` variables over hardcoded deployment values where users may need
+  a safe override.
+
+## Release tags
+
+- Create annotated semantic-version tags from commits already on `main`.
+- Never move or reuse a published version tag.
+- Successful `main` builds publish `edge` and a commit-SHA tag.
+- Stable version tags publish the exact version and replace `latest`.
+- Prerelease tags publish the prerelease and commit-SHA tags without replacing
+  `latest`.
+- Wait for Pages, image, scan, provenance, and attestation checks before
+  announcing a release.
+
+## Pull requests
+
+Before opening a pull request:
+
+- run the smallest relevant `make` targets;
+- run `pre-commit run --all-files`;
+- inspect the rendered light and dark themes for visual changes;
+- confirm navigation and relative links resolve in a strict build;
+- remove `.env`, `site/`, logs, and other generated or private files;
+- explain what changed, why it changed, and how it was validated.
+
+Smaller, focused pull requests are easier to review than a kraken-sized rewrite
+with six unrelated tentacles.
+
+## Security reports
+
+Do not report vulnerabilities in public issues or pull requests. Use the
+[security policy](SECURITY.md), or ask for a private route in the
+[🔥HADES🔥 Discord](https://discord.gg/BpEGzWwGYf).
+
+Fair winds, clean diffs, and may your YAML indent on the first try. ☠️
