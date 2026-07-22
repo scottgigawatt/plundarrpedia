@@ -86,13 +86,13 @@ shell fallback, so it can also be overridden for one command:
 
 ## 🧭 Pick a Reading Route
 
-| 🗺️ Route | 🎯 What it covers |
-| --- | --- |
-| [Start Here](https://scottgigawatt.github.io/plundarrpedia/start-here/) | Choose the smallest project path that solves the job. |
-| [Plundarr](https://scottgigawatt.github.io/plundarrpedia/projects/plundarr/) | Generate and operate a complete media automation stack. |
-| [Privateerr](https://scottgigawatt.github.io/plundarrpedia/projects/privateerr/) | Generate PIA WireGuard configuration for Gluetun. |
-| [Duplex](https://scottgigawatt.github.io/plundarrpedia/projects/duplex/) | Operate Plex curation, cleanup, monitoring, and notification tools. |
-| [Platform Guides](https://scottgigawatt.github.io/plundarrpedia/guides/) | Deploy on Linux Docker, Synology, or TrueNAS. |
+| 🗺️ Route                                                                         | 🎯 What it covers                                                   |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| [Start Here](https://scottgigawatt.github.io/plundarrpedia/start-here/)          | Choose the smallest project path that solves the job.               |
+| [Plundarr](https://scottgigawatt.github.io/plundarrpedia/projects/plundarr/)     | Generate and operate a complete media automation stack.             |
+| [Privateerr](https://scottgigawatt.github.io/plundarrpedia/projects/privateerr/) | Generate PIA WireGuard configuration for Gluetun.                   |
+| [Duplex](https://scottgigawatt.github.io/plundarrpedia/projects/duplex/)         | Operate Plex curation, cleanup, monitoring, and notification tools. |
+| [Platform Guides](https://scottgigawatt.github.io/plundarrpedia/guides/)         | Deploy on Linux Docker, Synology, or TrueNAS.                       |
 
 ## ✍️ Write and Preview the Wiki
 
@@ -140,11 +140,11 @@ Plundarrpedia uses a multi-stage Dockerfile:
 
 Published images support `linux/amd64`, `linux/arm64`, and `linux/arm/v7`.
 
-| 📦 Channel | 🐳 Image |
-| --- | --- |
-| Stable | `ghcr.io/scottgigawatt/plundarrpedia:latest` |
-| Preview | `ghcr.io/scottgigawatt/plundarrpedia:edge` |
-| Exact release | `ghcr.io/scottgigawatt/plundarrpedia:1.0.0` |
+| 📦 Channel      | 🐳 Image                                          |
+| --------------- | ------------------------------------------------- |
+| Stable          | `ghcr.io/scottgigawatt/plundarrpedia:latest`      |
+| Preview         | `ghcr.io/scottgigawatt/plundarrpedia:edge`        |
+| Exact release   | `ghcr.io/scottgigawatt/plundarrpedia:1.0.0`       |
 | Source revision | `ghcr.io/scottgigawatt/plundarrpedia:sha-cfa2fb5` |
 
 > [!CAUTION]
@@ -153,20 +153,20 @@ Published images support `linux/amd64`, `linux/arm64`, and `linux/arm/v7`.
 
 ## ⚙️ Useful Commands
 
-| ⚙️ Command | ✅ Use it when |
-| --- | --- |
-| `make serve` | You want live-reload authoring on port 8000. |
-| `make markdown` | You want to lint every Markdown document. |
-| `make site` | You want a strict static build in `site/`. |
-| `make build` | You want the production Nginx image. |
-| `make build-multiarch` | You changed image inputs or published platforms. |
-| `make config` | You want the fully rendered Compose model. |
-| `make env` | You want Compose interpolation values. |
-| `make print-config` | You want uncommented raw Compose YAML. |
-| `make print-env` | You want uncommented example environment values. |
-| `make up` / `make down` | You want to start or stop the local site. |
-| `make logs` | You want to follow the production container logs. |
-| `make lint` | You want every repository validation hook. |
+| ⚙️ Command              | ✅ Use it when                                     |
+| ----------------------- | -------------------------------------------------- |
+| `make serve`            | You want live-reload authoring on port 8000.       |
+| `make markdown`         | You want to lint every Markdown document.          |
+| `make site`             | You want a strict static build in `site/`.         |
+| `make build`            | You want the production Nginx image.               |
+| `make build-multiarch`  | You changed image inputs or published platforms.   |
+| `make config`           | You want the fully rendered Compose model.         |
+| `make env`              | You want Compose interpolation values.             |
+| `make print-config`     | You want uncommented raw Compose YAML.             |
+| `make print-env`        | You want uncommented example environment values.   |
+| `make up` / `make down` | You want to start or stop the local site.          |
+| `make logs`             | You want to follow the production container logs.  |
+| `make lint`             | You want every repository validation hook.         |
 
 ## 🚀 Publishing
 

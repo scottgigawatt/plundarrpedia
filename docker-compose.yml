@@ -26,10 +26,10 @@ x-default-healthcheck-settings: &default-healthcheck-settings  # YAML anchor for
 # Shared container log rotation settings.
 #
 x-default-logging: &default-logging  # YAML anchor for logging settings
-  driver: json-file                 # Use Docker's local JSON log driver
-  options:                          # Bound log growth on long-running hosts
-    max-file: "3"                   # Keep three rotated log files
-    max-size: 10m                   # Rotate each file after ten megabytes
+  driver: json-file                  # Use Docker's local JSON log driver
+  options:                           # Bound log growth on long-running hosts
+    max-file: "3"                    # Keep three rotated log files
+    max-size: 10m                    # Rotate each file after ten megabytes
 
 #
 # Define the services used in this stack.
@@ -40,22 +40,22 @@ services:
   #
   plundarrpedia:
     # Docker image build and container information
-    image: ${PLUNDARRPEDIA_IMAGE_REF}:${PLUNDARRPEDIA_TAG}  # Published or locally built image
-    build:                                                  # Define build context and arguments
-      context: .                                            # Repository root containing the wiki sources
-      dockerfile: docker/Dockerfile                         # Production multi-stage Dockerfile
-      args:                                                 # Arguments passed to the image build
-        MKDOCS_MATERIAL_IMAGE: ${MKDOCS_MATERIAL_IMAGE}            # MkDocs Material image repository
-        MKDOCS_MATERIAL_TAG: ${MKDOCS_MATERIAL_TAG}                # Pinned MkDocs Material version and digest
-        NGINX_UNPRIVILEGED_IMAGE: ${NGINX_UNPRIVILEGED_IMAGE}      # Unprivileged Nginx image repository
-        NGINX_UNPRIVILEGED_TAG: ${NGINX_UNPRIVILEGED_TAG}          # Pinned Nginx version and digest
-        IMAGE_CREATED: ${IMAGE_CREATED}                            # OCI image creation timestamp
-        IMAGE_REVISION: ${IMAGE_REVISION}                          # OCI image source revision
-        IMAGE_VERSION: ${IMAGE_VERSION}                            # OCI image version
-    container_name: plundarrpedia-${PLUNDARRPEDIA_TAG}       # Container name including the image tag
-    restart: unless-stopped                                  # Restart after host reboots unless stopped
-    hostname: plundarrpedia                                  # Set the hostname inside the container
-    read_only: true                                          # Prevent writes to the container filesystem
+    image: ${PLUNDARRPEDIA_IMAGE_REF}:${PLUNDARRPEDIA_TAG}     # Published or locally built image
+    build:                                                     # Define build context and arguments
+      context: .                                               # Repository root containing the wiki sources
+      dockerfile: docker/Dockerfile                            # Production multi-stage Dockerfile
+      args:                                                    # Arguments passed to the image build
+        MKDOCS_MATERIAL_IMAGE: ${MKDOCS_MATERIAL_IMAGE}        # MkDocs Material image repository
+        MKDOCS_MATERIAL_TAG: ${MKDOCS_MATERIAL_TAG}            # Pinned MkDocs Material version and digest
+        NGINX_UNPRIVILEGED_IMAGE: ${NGINX_UNPRIVILEGED_IMAGE}  # Unprivileged Nginx image repository
+        NGINX_UNPRIVILEGED_TAG: ${NGINX_UNPRIVILEGED_TAG}      # Pinned Nginx version and digest
+        IMAGE_CREATED: ${IMAGE_CREATED}                        # OCI image creation timestamp
+        IMAGE_REVISION: ${IMAGE_REVISION}                      # OCI image source revision
+        IMAGE_VERSION: ${IMAGE_VERSION}                        # OCI image version
+    container_name: plundarrpedia-${PLUNDARRPEDIA_TAG}         # Container name including the image tag
+    restart: unless-stopped                                    # Restart after host reboots unless stopped
+    hostname: plundarrpedia                                    # Set the hostname inside the container
+    read_only: true                                            # Prevent writes to the container filesystem
 
     # Drop privileges that are unnecessary for a static web server
     security_opt:
@@ -72,8 +72,8 @@ services:
       - "${PLUNDARRPEDIA_HOST_PORT}:8080"  # Configurable host port to the image's fixed HTTP port
 
     # Bound the resources used by the static site container
-    mem_limit: ${PLUNDARRPEDIA_MEM_LIMIT}      # Maximum container memory
-    cpu_shares: ${PLUNDARRPEDIA_CPU_SHARES}    # Relative CPU scheduling weight
+    mem_limit: ${PLUNDARRPEDIA_MEM_LIMIT}    # Maximum container memory
+    cpu_shares: ${PLUNDARRPEDIA_CPU_SHARES}  # Relative CPU scheduling weight
 
     # Apply update and log handling policies
     labels: *disable-watchtower-updates  # Update the documentation image intentionally

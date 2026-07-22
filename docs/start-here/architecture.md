@@ -9,16 +9,16 @@ icon: material/transit-connection-variant
 The easiest way to understand a media stack is to separate it into lanes. A
 container may speak to several lanes, but each lane has one job.
 
-| Lane | Typical services | Responsibility |
-| --- | --- | --- |
-| Requests | Seerr | Turns human requests into manager activity. |
-| Discovery | Prowlarr, FlareSolverr | Supplies indexers and supported challenge handling. |
-| Management | Radarr, Sonarr, Whisparr, Bazarr | Chooses releases and manages final library files. |
-| Download | qBittorrent, SABnzbd | Retrieves payloads into a shared download root. |
-| VPN | Privateerr, Gluetun | Generates VPN configuration, runs the tunnel, and handles PIA port forwarding. |
-| Playback | Plex, Jellyfin | Scans and serves completed media libraries. |
-| Operations | Homepage, Duplicati, Cleanuparr, Speedtest Tracker, Apprise | Observability, backup, cleanup, and notification work. |
-| Curation | Kometa, ImageMaid, PATTRMM, Tautulli, Notifiarr | Improves and monitors an existing Plex deployment. |
+| Lane       | Typical services                                            | Responsibility                                                                 |
+| ---------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Requests   | Seerr                                                       | Turns human requests into manager activity.                                    |
+| Discovery  | Prowlarr, FlareSolverr                                      | Supplies indexers and supported challenge handling.                            |
+| Management | Radarr, Sonarr, Whisparr, Bazarr                            | Chooses releases and manages final library files.                              |
+| Download   | qBittorrent, SABnzbd                                        | Retrieves payloads into a shared download root.                                |
+| VPN        | Privateerr, Gluetun                                         | Generates VPN configuration, runs the tunnel, and handles PIA port forwarding. |
+| Playback   | Plex, Jellyfin                                              | Scans and serves completed media libraries.                                    |
+| Operations | Homepage, Duplicati, Cleanuparr, Speedtest Tracker, Apprise | Observability, backup, cleanup, and notification work.                         |
+| Curation   | Kometa, ImageMaid, PATTRMM, Tautulli, Notifiarr             | Improves and monitors an existing Plex deployment.                             |
 
 ## The VPN boundary
 
