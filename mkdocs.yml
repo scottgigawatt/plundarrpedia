@@ -48,7 +48,6 @@ nav:
       - Networking and VPN: guides/networking-and-vpn.md
   - Reference:
       - Command Deck: reference/commands.md
-      - Glossary: reference/glossary.md
       - Writing and Contributing: CONTRIBUTING.md
       - About This Wiki: reference/about.md
 
