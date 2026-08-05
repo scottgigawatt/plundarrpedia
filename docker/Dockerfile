@@ -20,15 +20,9 @@ ARG NGINX_UNPRIVILEGED_IMAGE=nginxinc/nginx-unprivileged
 ARG NGINX_UNPRIVILEGED_TAG=1.31.3-alpine3.24@sha256:18d67281256ded39ff65e010ae4f831be18f19356f83c60bc546492c7eb6dd23
 
 #
-# Use the specified MkDocs Material image to build the static site.
+# Use the specified MkDocs Material image as the shared documentation toolchain.
 #
-FROM ${MKDOCS_MATERIAL_IMAGE}:${MKDOCS_MATERIAL_TAG} AS build
-
-#
-# Re-declare the build-stage values so the stage can use them in labels.
-#
-ARG MKDOCS_MATERIAL_IMAGE
-ARG MKDOCS_MATERIAL_TAG
+FROM ${MKDOCS_MATERIAL_IMAGE}:${MKDOCS_MATERIAL_TAG} AS toolchain
 
 #
 # Set the MkDocs project working directory.
@@ -40,6 +34,12 @@ WORKDIR /docs
 #
 COPY requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir --requirement requirements.txt
+
+#
+# Extend the shared toolchain with the source files needed for a production
+# static-site build.
+#
+FROM toolchain AS build
 
 #
 # Copy only the configuration, public content, and theme overrides needed to
@@ -110,7 +110,7 @@ EXPOSE 8080
 # Verify the dedicated health endpoint without requiring additional packages.
 #
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD wget --quiet --spider http://127.0.0.1:8080/healthz || exit 1
+    CMD ["wget", "--quiet", "--spider", "http://127.0.0.1:8080/healthz"]
 
 #
 # Run Nginx as the unprivileged user supplied by the runtime base image.

@@ -7,48 +7,78 @@
 #             and public Plundarrpedia metadata.
 #
 
+# Use the Material schema to validate settings and provide editor completion.
 # yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
 
+#
+# Public site identity and search-engine metadata.
+#
 site_name: Plundarrpedia
 site_description: The captain's field guide to Plundarr, Privateerr, Plex utilities, and self-hosted media.
 site_url: https://scottgigawatt.github.io/plundarrpedia/
 copyright: Copyright &copy; 2026 Scott Gigawatt
 
+#
+# Source repository integration used by header and page action links.
+#
 repo_name: scottgigawatt/plundarrpedia
 repo_url: https://github.com/scottgigawatt/plundarrpedia
 edit_uri: edit/main/docs/
 
+#
+# Keep registry-specific documentation available to builds but out of the
+# public navigation tree.
+#
 not_in_nav: |
   GHCR_README.md
 
+#
+# Define the complete public navigation hierarchy explicitly so page order and
+# labels stay stable as new Markdown files are added.
+#
 nav:
+  # Use the landing page as the first top-level navigation tab.
   - Chart Room: index.md
+
+  # Orient new readers before sending them into project-specific instructions.
   - Start Here:
       - Pick a Route: start-here/index.md
       - How the Fleet Fits Together: start-here/architecture.md
       - Choose a Deployment: start-here/choose-a-deployment.md
+
+  # Keep Plundarr tasks ordered from introduction through troubleshooting.
   - Plundarr:
       - Overview: projects/plundarr/index.md
       - Quick Start: projects/plundarr/quick-start.md
       - Configure the Stack: projects/plundarr/configuration.md
       - Service Catalog: projects/plundarr/services.md
       - Troubleshooting: projects/plundarr/troubleshooting.md
+
+  # Explain Privateerr's configuration role separately from Gluetun's tunnel.
   - Privateerr:
       - Overview: projects/privateerr/index.md
       - Quick Start: projects/privateerr/quick-start.md
       - Config Handoff: projects/privateerr/config-handoff.md
       - Troubleshooting: projects/privateerr/troubleshooting.md
+
+  # Group Duplex and other Plex-adjacent utility projects together.
   - Plex Utilities:
       - Duplex: projects/duplex/index.md
       - Media Project Catalog: projects/catalog.md
+
+  # Provide platform-specific routes after the project concepts are established.
   - Platform Guides:
       - Choose a Harbor: guides/index.md
       - Any Docker Host: guides/docker.md
       - Synology Container Manager: guides/synology.md
       - TrueNAS Apps: guides/truenas.md
+
+  # Share operational guidance that applies across deployment platforms.
   - Core Guides:
       - Paths and Permissions: guides/storage-and-permissions.md
       - Networking and VPN: guides/networking-and-vpn.md
+
+  # Collect command, policy, contribution, and project background pages.
   - Reference:
       - Command Deck: reference/commands.md
       - Advanced Usage: ADVANCED_USAGE.md
@@ -57,17 +87,27 @@ nav:
       - Security Policy: SECURITY.md
       - About This Wiki: reference/about.md
 
+#
+# Configure Material's appearance, repository actions, palettes, and navigation
+# behavior. The custom override and stylesheet preserve Plundarrpedia's visual
+# identity while leaving commands and warnings easy to read.
+#
 theme:
   name: material
   custom_dir: overrides
   language: en
   logo: assets/images/logo.svg
   favicon: assets/images/logo.svg
+  font: false
+
+  # Select icons for repository and page-level source actions.
   icon:
     repo: fontawesome/brands/github
     edit: material/pencil
     view: material/eye
-  font: false
+
+  # Follow the operating-system preference by default and expose a manual
+  # palette toggle with project-specific labels.
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -79,6 +119,8 @@ theme:
       toggle:
         icon: material/white-balance-sunny
         name: Raise the sun
+
+  # Enable only the Material behaviors intentionally used by this site.
   features:
     - announce.dismiss
     - content.action.edit
@@ -104,10 +146,18 @@ theme:
     - search.suggest
     - toc.follow
 
+#
+# Build the local search index into the static site so no hosted search service
+# or external credentials are required.
+#
 plugins:
   - search:
       lang: en
 
+#
+# Extend Python Markdown with the authoring constructs used throughout the wiki.
+# Each extension is listed explicitly so rendering behavior is auditable.
+#
 markdown_extensions:
   - abbr
   - admonition
@@ -116,41 +166,67 @@ markdown_extensions:
   - footnotes
   - md_in_html
   - tables
+
+  # Add linked heading anchors and a project-specific table-of-contents label.
   - toc:
       permalink: true
       title: On this chart
+
   - pymdownx.details
+
+  # Convert emoji shortcodes to bundled Twemoji SVG assets.
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+  # Highlight fenced code and preserve stable line anchors for annotations.
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
+
   - pymdownx.inlinehilite
   - pymdownx.keys
   - pymdownx.magiclink
   - pymdownx.mark
   - pymdownx.snippets
+
+  # Render ordinary nested fences and route Mermaid blocks to its diagram class.
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+
+  # Render platform and option variants as accessible linked content tabs.
   - pymdownx.tabbed:
       alternate_style: true
+
+  # Render task lists with theme-aware checkbox styling.
   - pymdownx.tasklist:
       custom_checkbox: true
+
   - pymdownx.tilde
 
+#
+# Load the chart-room palette and component refinements after theme styles.
+#
 extra_css:
   - assets/stylesheets/extra.css
 
+#
+# Configure Material-specific metadata that is not part of the core MkDocs
+# schema, including generator visibility, page statuses, and footer links.
+#
 extra:
   generator: false
+
+  # Define reusable labels for pages marked new or recently updated.
   status:
     new: Fresh chart
     updated: Newly surveyed
+
+  # Publish project-community links in the site footer.
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/scottgigawatt
