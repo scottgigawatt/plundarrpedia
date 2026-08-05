@@ -3,108 +3,120 @@
 #
 # Licensed under the Apache License, Version 2.0.
 #
-# docker-compose.yml: Docker Compose configuration for building and running
-#                     Plundarrpedia on Docker hosts and NAS platforms.
+# docker-compose.yml: Docker Compose configuration for building, authoring,
+#                     exporting, and serving Plundarrpedia on Docker hosts and
+#                     NAS platforms.
+#
+# The production service serves the generated site. The opt-in authoring and
+# site services share the pinned MkDocs toolchain for preview and strict export.
+#
+# Services included:
+#   - plundarrpedia: Serve the production static site with unprivileged Nginx.
+#   - authoring:     Preview source changes with MkDocs live reload.
+#   - site:          Export a strict static-site build to the host.
 #
 
 #
-# Shared arguments for every build target in the production Dockerfile.
+# Setup shared Dockerfile build arguments.
 #
-x-plundarrpedia-build-args: &plundarrpedia-build-args           # Reuse identical pinned build inputs
-  MKDOCS_MATERIAL_IMAGE: ${MKDOCS_MATERIAL_IMAGE}               # MkDocs Material image repository
-  MKDOCS_MATERIAL_TAG: ${MKDOCS_MATERIAL_TAG}                   # Pinned MkDocs Material version and digest
-  NGINX_UNPRIVILEGED_IMAGE: ${NGINX_UNPRIVILEGED_IMAGE}         # Unprivileged Nginx image repository
-  NGINX_UNPRIVILEGED_TAG: ${NGINX_UNPRIVILEGED_TAG}             # Pinned Nginx version and digest
-  IMAGE_CREATED: ${IMAGE_CREATED}                               # OCI image creation timestamp
-  IMAGE_REVISION: ${IMAGE_REVISION}                             # OCI image source revision
-  IMAGE_VERSION: ${IMAGE_VERSION}                               # OCI image version
+x-plundarrpedia-build-args: &plundarrpedia-build-args    # Reuse identical pinned build inputs
+  MKDOCS_MATERIAL_IMAGE: ${MKDOCS_MATERIAL_IMAGE}        # MkDocs Material image repository
+  MKDOCS_MATERIAL_TAG: ${MKDOCS_MATERIAL_TAG}            # Pinned MkDocs Material version and digest
+  NGINX_UNPRIVILEGED_IMAGE: ${NGINX_UNPRIVILEGED_IMAGE}  # Unprivileged Nginx image repository
+  NGINX_UNPRIVILEGED_TAG: ${NGINX_UNPRIVILEGED_TAG}      # Pinned Nginx version and digest
+  IMAGE_CREATED: ${IMAGE_CREATED}                        # OCI image creation timestamp
+  IMAGE_REVISION: ${IMAGE_REVISION}                      # OCI image source revision
+  IMAGE_VERSION: ${IMAGE_VERSION}                        # OCI image version
 
 #
-# Shared Dockerfile location and arguments for Compose build services.
+# Setup the shared Dockerfile build definition.
 #
-x-plundarrpedia-build: &plundarrpedia-build                     # Base build definition
-  context: ${DOCKER_BUILD_CONTEXT:-.}                           # Repository root containing the wiki sources
-  dockerfile: ${DOCKERFILE:-docker/Dockerfile}                  # Production multi-stage Dockerfile
-  args: *plundarrpedia-build-args                               # Supply the shared pinned build inputs
+x-plundarrpedia-build: &plundarrpedia-build      # Base build definition
+  context: ${DOCKER_BUILD_CONTEXT:-.}            # Repository root containing the wiki sources
+  dockerfile: ${DOCKERFILE:-docker/Dockerfile}   # Production multi-stage Dockerfile
+  args: *plundarrpedia-build-args                # Supply the shared pinned build inputs
 
 #
-# Shared image and build stage for one-shot documentation tool services.
+# Setup the shared documentation tool service.
 #
 x-plundarrpedia-tools: &plundarrpedia-tools                     # Base authoring and export service
   image: ${PLUNDARRPEDIA_IMAGE_REF}:${PLUNDARRPEDIA_TAG}-tools  # Local documentation tool image
   build:
-    <<: *plundarrpedia-build                                    # Reuse the production Dockerfile and build inputs
-    target: toolchain                                           # Stop before copying or rendering project source
+    <<: *plundarrpedia-build  # Reuse the production Dockerfile and build inputs
+    target: toolchain         # Stop before copying or rendering project source
   entrypoint:
-    - mkdocs                                                    # Invoke the documentation command directly
-  working_dir: /docs                                            # Run against the mounted repository root
+    - mkdocs          # Invoke the documentation command directly
+  working_dir: /docs  # Run against the mounted repository root
 
 #
 # Labels for containers that should not be updated unattended by Watchtower.
 #
-x-disable-watchtower-updates: &disable-watchtower-updates       # Disable unattended Watchtower updates
-  - "com.centurylinklabs.watchtower.enable=false"               # Require intentional updates for this container
+# Plundarrpedia serves public documentation from a pinned image. Update it
+# intentionally after checking release notes and the rendered site.
+#
+x-disable-watchtower-updates: &disable-watchtower-updates  # Disable unattended Watchtower updates
+  - "com.centurylinklabs.watchtower.enable=false"          # Require intentional updates for this container
 
 #
-# Shared healthcheck timing settings.
+# Setup default healthcheck timing settings.
 #
-x-default-healthcheck-settings: &default-healthcheck-settings   # YAML anchor for healthcheck settings
-  interval: ${DEFAULT_HEALTHCHECK_INTERVAL}                     # Run the check at this interval
-  timeout: ${DEFAULT_HEALTHCHECK_TIMEOUT}                       # Fail if it exceeds this duration
-  start_period: ${DEFAULT_HEALTHCHECK_START_PERIOD}             # Grace period before checks start
-  retries: ${DEFAULT_HEALTHCHECK_RETRIES}                       # Mark as unhealthy after failures
+x-default-healthcheck-settings: &default-healthcheck-settings  # YAML anchor for healthcheck settings
+  interval: ${DEFAULT_HEALTHCHECK_INTERVAL}                    # Run the check at this interval
+  timeout: ${DEFAULT_HEALTHCHECK_TIMEOUT}                      # Fail if it exceeds this duration
+  start_period: ${DEFAULT_HEALTHCHECK_START_PERIOD}            # Grace period before checks start
+  retries: ${DEFAULT_HEALTHCHECK_RETRIES}                      # Mark as unhealthy after failures
 
 #
-# Shared container log rotation settings.
+# Setup default container log rotation settings.
 #
-x-default-logging: &default-logging                             # YAML anchor for logging settings
-  driver: json-file                                             # Use Docker's local JSON log driver
-  options:                                                      # Bound log growth on long-running hosts
-    max-file: "3"                                               # Keep three rotated log files
-    max-size: 10m                                               # Rotate each file after ten megabytes
+x-default-logging: &default-logging  # YAML anchor for logging settings
+  driver: json-file                  # Use Docker's local JSON log driver
+  options:                           # Bound log growth on long-running hosts
+    max-file: "3"                    # Keep three rotated log files
+    max-size: 10m                    # Rotate each file after ten megabytes
 
 #
-# Define the services used in this stack.
+# Define the services section.
 #
 services:
   #
-  # Configure the service that serves the generated Plundarrpedia site.
+  # Configure the 'plundarrpedia' service to serve the generated static site.
   #
   plundarrpedia:
     # Docker image build and container information
-    image: ${PLUNDARRPEDIA_IMAGE_REF}:${PLUNDARRPEDIA_TAG}      # Published or locally built image
-    build: *plundarrpedia-build                                 # Build with the shared production definition
-    container_name: plundarrpedia-${PLUNDARRPEDIA_TAG}          # Container name including the image tag
-    restart: unless-stopped                                     # Restart after host reboots unless stopped
-    hostname: plundarrpedia                                     # Set the hostname inside the container
-    read_only: true                                             # Prevent writes to the container filesystem
+    image: ${PLUNDARRPEDIA_IMAGE_REF}:${PLUNDARRPEDIA_TAG}  # Published or locally built image
+    build: *plundarrpedia-build                             # Build with the shared production definition
+    container_name: plundarrpedia-${PLUNDARRPEDIA_TAG}      # Container name including the image tag
+    restart: unless-stopped                                 # Restart after host reboots unless stopped
+    hostname: plundarrpedia                                 # Set the hostname inside the container
+    read_only: true                                         # Prevent writes to the container filesystem
 
     # Drop privileges that are unnecessary for a static web server
     security_opt:
-      - no-new-privileges:true                                  # Prevent processes from gaining new privileges
+      - no-new-privileges:true  # Prevent processes from gaining new privileges
     cap_drop:
-      - ALL                                                     # Remove every Linux capability from the runtime
+      - ALL  # Remove every Linux capability from the runtime
 
     # Provide the only writable runtime path as an in-memory filesystem
     tmpfs:
-      - /tmp:size=16m,mode=1777                                 # Nginx temporary runtime files
+      - /tmp:size=16m,mode=1777  # Nginx temporary runtime files
 
     # Publish the internal unprivileged web server port
     ports:
-      - "${PLUNDARRPEDIA_HOST_PORT}:8080"                       # Configurable host port to the image's fixed HTTP port
+      - "${PLUNDARRPEDIA_HOST_PORT}:8080"  # Configurable host port to the image's fixed HTTP port
 
     # Bound the resources used by the static site container
-    mem_limit: ${PLUNDARRPEDIA_MEM_LIMIT}                       # Maximum container memory
-    cpu_shares: ${PLUNDARRPEDIA_CPU_SHARES}                     # Relative CPU scheduling weight
+    mem_limit: ${PLUNDARRPEDIA_MEM_LIMIT}    # Maximum container memory
+    cpu_shares: ${PLUNDARRPEDIA_CPU_SHARES}  # Relative CPU scheduling weight
 
     # Apply update and log handling policies
-    labels: *disable-watchtower-updates                         # Update the documentation image intentionally
-    logging: *default-logging                                   # Rotate the container's access and error logs
+    labels: *disable-watchtower-updates  # Update the documentation image intentionally
+    logging: *default-logging            # Rotate the container's access and error logs
 
     # Verify that the static web server responds from inside the container
     healthcheck:
-      <<: *default-healthcheck-settings                         # Pull in default healthcheck settings
-      test:                                                     # Request the dedicated health endpoint
+      <<: *default-healthcheck-settings  # Pull in default healthcheck settings
+      test:                              # Request the dedicated health endpoint
         - CMD
         - wget
         - --quiet
@@ -112,45 +124,59 @@ services:
         - http://127.0.0.1:8080/healthz
 
   #
-  # Provide the live-reload documentation authoring environment. This service
-  # runs only when it is explicitly selected by the Makefile.
+  # Configure the 'authoring' service for live-reload documentation preview.
+  # This service runs only when it is explicitly selected by the Makefile.
   #
   authoring:
-    <<: *plundarrpedia-tools                                    # Use the shared pinned documentation tool image
+    # Reuse the shared tool image and opt into the tools profile
+    <<: *plundarrpedia-tools  # Use the shared pinned documentation tool image
     profiles:
-      - tools                                                   # Exclude authoring tools from the production stack
-    init: true                                                  # Reap child processes during live reload
-    stdin_open: true                                            # Preserve an interactive authoring session
-    tty: true                                                   # Allocate a terminal for readable build output
+      - tools  # Exclude authoring tools from the production stack
+
+    # Configure the interactive live-reload session
+    init: true        # Reap child processes during live reload
+    stdin_open: true  # Preserve an interactive authoring session
+    tty: true         # Allocate a terminal for readable build output
+
+    # Start the MkDocs development server
     command:
-      - serve                                                   # Start the MkDocs development server
-      - --dev-addr=0.0.0.0:8000                                 # Listen beyond the container loopback interface
+      - serve                    # Start the MkDocs development server
+      - --dev-addr=0.0.0.0:8000  # Listen beyond the container loopback interface
+
+    # Publish the configurable authoring port
     ports:
-      - "${MKDOCS_AUTHOR_PORT:-8000}:8000"                      # Publish the configurable authoring port
+      - "${MKDOCS_AUTHOR_PORT:-8000}:8000"  # Map the host port to MkDocs
+
+    # Mount the repository source for live reload
     volumes:
-      - type: bind                                              # Mount source files for live reload
-        source: .                                               # Use the current Compose project directory
-        target: /docs                                           # Match the authoring image work directory
+      - type: bind     # Mount source files for live reload
+        source: .      # Use the current Compose project directory
+        target: /docs  # Match the authoring image work directory
 
   #
-  # Export a strict static site with the same build stage and dependencies used
-  # by the production image. This service runs only when explicitly selected.
+  # Configure the 'site' service to export a strict static-site build.
+  # This service runs only when it is explicitly selected by the Makefile.
   #
   site:
-    <<: *plundarrpedia-tools                                    # Use the shared pinned documentation tool image
+    # Reuse the shared tool image and opt into the tools profile
+    <<: *plundarrpedia-tools  # Use the shared pinned documentation tool image
     profiles:
-      - tools                                                   # Exclude build tools from the production stack
+      - tools  # Exclude build tools from the production stack
+
+    # Render the site and fail on warnings
     command:
-      - build                                                   # Render all configured documentation pages
-      - --strict                                                # Fail on warnings and invalid configuration
-      - --site-dir=/site                                        # Write generated files to the output mount
+      - build               # Render all configured documentation pages
+      - --strict            # Fail on warnings and invalid configuration
+      - --site-dir=/site    # Write generated files to the output mount
+
+    # Mount read-only source files and writable build output
     volumes:
-      - type: bind                                              # Mount source files without granting writes
-        source: .                                               # Use the current Compose project directory
-        target: /docs                                           # Match the tool image working directory
-        read_only: true                                         # Prevent the build from modifying source files
-      - type: bind                                              # Export generated files to the Docker host
-        source: ${SITE_OUTPUT_PATH:-site}                       # Use the configurable output directory
-        target: /site                                           # Match the strict build output argument
+      - type: bind       # Mount source files without granting writes
+        source: .        # Use the current Compose project directory
+        target: /docs    # Match the tool image working directory
+        read_only: true  # Prevent the build from modifying source files
+      - type: bind                            # Export generated files to the Docker host
+        source: ${SITE_OUTPUT_PATH:-site}     # Use the configurable output directory
+        target: /site                         # Match the strict build output argument
         bind:
-          create_host_path: true                                # Create the output directory when it is absent
+          create_host_path: true  # Create the output directory when it is absent
