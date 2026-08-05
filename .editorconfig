@@ -1,0 +1,43 @@
+#
+# Copyright 2026 Scott Gigawatt
+#
+# Licensed under the Apache License, Version 2.0.
+#
+# .editorconfig: Shared text encoding, line ending, whitespace, and indentation
+#                rules for Plundarrpedia source files.
+#
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{md,yml,yaml,json,json5,css,html,svg}]
+indent_style = space
+indent_size = 2
+
+[.github/**/*.{yml,yaml}]
+indent_style = space
+indent_size = 4
+
+[.github/renovate.json5]
+indent_style = space
+indent_size = 4
+
+[.vscode/*.json]
+indent_style = space
+indent_size = 4
+
+[*.conf]
+indent_style = space
+indent_size = 4
+
+[Dockerfile]
+indent_style = space
+indent_size = 4
+
+[Makefile]
+indent_style = tab

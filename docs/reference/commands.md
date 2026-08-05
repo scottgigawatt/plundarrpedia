@@ -45,14 +45,15 @@ docker compose logs --tail=100 SERVICE
 
 ## Plundarrpedia
 
-| Command                 | Purpose                                    |
-| ----------------------- | ------------------------------------------ |
-| `make serve`            | Live-reload authoring server on port 8000. |
-| `make site`             | Export the static site into `site/`.       |
-| `make build`            | Build the unprivileged Nginx image.        |
-| `make build-multiarch`  | Validate all published platforms.          |
-| `make config`           | Validate the one-file Compose deployment.  |
-| `make up` / `make down` | Start or stop the production wiki image.   |
+| Command                    | Purpose                                            |
+| -------------------------- | -------------------------------------------------- |
+| `make serve`               | Run the Compose live-reload authoring service.     |
+| `make site`                | Export the static site into `site/` via Compose.   |
+| `make clean`               | Delete the generated static site.                  |
+| `make build`               | Build the unprivileged Nginx image via Compose.    |
+| `make build-multiarch`     | Validate all published platforms.                  |
+| `make config`              | Validate the one-file Compose deployment.          |
+| `make run` / `make down`   | Start or stop the complete production wiki stack.  |
 
 ## Universal diagnostics
 

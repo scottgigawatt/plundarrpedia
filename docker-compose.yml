@@ -8,6 +8,38 @@
 #
 
 #
+# Shared arguments for every build target in the production Dockerfile.
+#
+x-plundarrpedia-build-args: &plundarrpedia-build-args  # Reuse identical pinned build inputs
+  MKDOCS_MATERIAL_IMAGE: ${MKDOCS_MATERIAL_IMAGE}      # MkDocs Material image repository
+  MKDOCS_MATERIAL_TAG: ${MKDOCS_MATERIAL_TAG}          # Pinned MkDocs Material version and digest
+  NGINX_UNPRIVILEGED_IMAGE: ${NGINX_UNPRIVILEGED_IMAGE}  # Unprivileged Nginx image repository
+  NGINX_UNPRIVILEGED_TAG: ${NGINX_UNPRIVILEGED_TAG}      # Pinned Nginx version and digest
+  IMAGE_CREATED: ${IMAGE_CREATED}                        # OCI image creation timestamp
+  IMAGE_REVISION: ${IMAGE_REVISION}                      # OCI image source revision
+  IMAGE_VERSION: ${IMAGE_VERSION}                        # OCI image version
+
+#
+# Shared Dockerfile location and arguments for Compose build services.
+#
+x-plundarrpedia-build: &plundarrpedia-build  # Base build definition
+  context: ${DOCKER_BUILD_CONTEXT:-.}        # Repository root containing the wiki sources
+  dockerfile: ${DOCKERFILE:-docker/Dockerfile}  # Production multi-stage Dockerfile
+  args: *plundarrpedia-build-args            # Supply the shared pinned build inputs
+
+#
+# Shared image and build stage for one-shot documentation tool services.
+#
+x-plundarrpedia-tools: &plundarrpedia-tools  # Base authoring and export service
+  image: ${PLUNDARRPEDIA_IMAGE_REF}:${PLUNDARRPEDIA_TAG}-tools  # Local documentation tool image
+  build:
+    <<: *plundarrpedia-build  # Reuse the production Dockerfile and build inputs
+    target: toolchain         # Stop before copying or rendering project source
+  entrypoint:
+    - mkdocs                  # Invoke the documentation command directly
+  working_dir: /docs          # Run against the mounted repository root
+
+#
 # Labels for containers that should not be updated unattended by Watchtower.
 #
 x-disable-watchtower-updates: &disable-watchtower-updates  # Disable unattended Watchtower updates
@@ -41,17 +73,7 @@ services:
   plundarrpedia:
     # Docker image build and container information
     image: ${PLUNDARRPEDIA_IMAGE_REF}:${PLUNDARRPEDIA_TAG}     # Published or locally built image
-    build:                                                     # Define build context and arguments
-      context: .                                               # Repository root containing the wiki sources
-      dockerfile: docker/Dockerfile                            # Production multi-stage Dockerfile
-      args:                                                    # Arguments passed to the image build
-        MKDOCS_MATERIAL_IMAGE: ${MKDOCS_MATERIAL_IMAGE}        # MkDocs Material image repository
-        MKDOCS_MATERIAL_TAG: ${MKDOCS_MATERIAL_TAG}            # Pinned MkDocs Material version and digest
-        NGINX_UNPRIVILEGED_IMAGE: ${NGINX_UNPRIVILEGED_IMAGE}  # Unprivileged Nginx image repository
-        NGINX_UNPRIVILEGED_TAG: ${NGINX_UNPRIVILEGED_TAG}      # Pinned Nginx version and digest
-        IMAGE_CREATED: ${IMAGE_CREATED}                        # OCI image creation timestamp
-        IMAGE_REVISION: ${IMAGE_REVISION}                      # OCI image source revision
-        IMAGE_VERSION: ${IMAGE_VERSION}                        # OCI image version
+    build: *plundarrpedia-build                               # Build with the shared production definition
     container_name: plundarrpedia-${PLUNDARRPEDIA_TAG}         # Container name including the image tag
     restart: unless-stopped                                    # Restart after host reboots unless stopped
     hostname: plundarrpedia                                    # Set the hostname inside the container
@@ -88,3 +110,47 @@ services:
         - --quiet
         - --spider
         - http://127.0.0.1:8080/healthz
+
+  #
+  # Provide the live-reload documentation authoring environment. This service
+  # runs only when it is explicitly selected by the Makefile.
+  #
+  authoring:
+    <<: *plundarrpedia-tools  # Use the shared pinned documentation tool image
+    profiles:
+      - tools  # Exclude authoring tools from the production stack
+    init: true                                               # Reap child processes during live reload
+    stdin_open: true                                         # Preserve an interactive authoring session
+    tty: true                                                # Allocate a terminal for readable build output
+    command:
+      - serve                          # Start the MkDocs development server
+      - --dev-addr=0.0.0.0:8000       # Listen beyond the container loopback interface
+    ports:
+      - "${MKDOCS_AUTHOR_PORT:-8000}:8000"  # Publish the configurable authoring port
+    volumes:
+      - type: bind                     # Mount source files for live reload
+        source: .                      # Use the current Compose project directory
+        target: /docs                  # Match the authoring image work directory
+
+  #
+  # Export a strict static site with the same build stage and dependencies used
+  # by the production image. This service runs only when explicitly selected.
+  #
+  site:
+    <<: *plundarrpedia-tools  # Use the shared pinned documentation tool image
+    profiles:
+      - tools  # Exclude build tools from the production stack
+    command:
+      - build                   # Render all configured documentation pages
+      - --strict                # Fail on warnings and invalid configuration
+      - --site-dir=/site        # Write generated files to the output mount
+    volumes:
+      - type: bind              # Mount source files without granting writes
+        source: .               # Use the current Compose project directory
+        target: /docs           # Match the tool image working directory
+        read_only: true         # Prevent the build from modifying source files
+      - type: bind              # Export generated files to the Docker host
+        source: ${SITE_OUTPUT_PATH:-site}  # Use the configurable output directory
+        target: /site           # Match the strict build output argument
+        bind:
+          create_host_path: true  # Create the output directory when it is absent

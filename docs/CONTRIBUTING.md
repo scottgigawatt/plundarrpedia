@@ -53,6 +53,7 @@ Useful authoring and validation commands:
 make serve
 make markdown
 make site
+make clean
 make config
 pre-commit run --all-files
 ```
@@ -148,6 +149,7 @@ Before submitting a documentation change:
 ```console
 make markdown
 make site
+make clean
 make config
 make lint
 ```
@@ -162,6 +164,8 @@ changes can affect the published platform set.
 
 ## Repository style
 
+- Use an editor that honors the repository's root `.editorconfig` so source
+  files keep consistent encoding, line endings, whitespace, and indentation.
 - Public documentation may be lightly nautical, but the task comes first.
 - Code, Dockerfile, Compose, Makefile, and workflow comments use plain English.
 - Preserve the repository's copyright and file-purpose header style.

@@ -68,7 +68,7 @@ ordinary Docker hosts, Synology Container Manager, and compatible NAS systems:
 ❯ git clone https://github.com/scottgigawatt/plundarrpedia.git
 ❯ cd plundarrpedia
 ❯ cp example.env .env
-❯ make up
+❯ make run
 ```
 
 Open <http://localhost:8000>.
@@ -77,7 +77,7 @@ The defaults in `.env` are ready for a normal local run. Every setting keeps a
 shell fallback, so it can also be overridden for one command:
 
 ```console
-❯ PLUNDARRPEDIA_HOST_PORT=8888 PLUNDARRPEDIA_TAG=edge make up
+❯ PLUNDARRPEDIA_HOST_PORT=8888 PLUNDARRPEDIA_TAG=edge make run
 ```
 
 > [!TIP]
@@ -112,6 +112,7 @@ Before opening a pull request:
 ```console
 ❯ make markdown
 ❯ make site
+❯ make clean
 ❯ make config
 ❯ make lint
 ```
@@ -153,20 +154,21 @@ Published images support `linux/amd64`, `linux/arm64`, and `linux/arm/v7`.
 
 ## ⚙️ Useful Commands
 
-| ⚙️ Command              | ✅ Use it when                                     |
-| ----------------------- | -------------------------------------------------- |
-| `make serve`            | You want live-reload authoring on port 8000.       |
-| `make markdown`         | You want to lint every Markdown document.          |
-| `make site`             | You want a strict static build in `site/`.         |
-| `make build`            | You want the production Nginx image.               |
-| `make build-multiarch`  | You changed image inputs or published platforms.   |
-| `make config`           | You want the fully rendered Compose model.         |
-| `make env`              | You want Compose interpolation values.             |
-| `make print-config`     | You want uncommented raw Compose YAML.             |
-| `make print-env`        | You want uncommented example environment values.   |
-| `make up` / `make down` | You want to start or stop the local site.          |
-| `make logs`             | You want to follow the production container logs.  |
-| `make lint`             | You want every repository validation hook.         |
+| ⚙️ Command                | ✅ Use it when                                     |
+| ------------------------- | -------------------------------------------------- |
+| `make serve`              | You want live-reload authoring through Compose.    |
+| `make markdown`           | You want to lint every Markdown document.          |
+| `make site`               | You want a strict static build in `site/`.         |
+| `make clean`              | You want to delete the generated static site.      |
+| `make build`              | You want the production Nginx image.               |
+| `make build-multiarch`    | You changed image inputs or published platforms.   |
+| `make config`             | You want the fully rendered Compose model.         |
+| `make env`                | You want Compose interpolation values.             |
+| `make print-config`       | You want uncommented raw Compose YAML.             |
+| `make print-env`          | You want uncommented example environment values.   |
+| `make run` / `make down`  | Start or stop the complete local Compose stack.    |
+| `make logs`               | You want to follow the production container logs.  |
+| `make lint`               | You want every repository validation hook.         |
 
 ## 🚀 Publishing
 

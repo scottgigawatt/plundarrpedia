@@ -30,6 +30,11 @@ make site
 
 The strict build rejects broken navigation, invalid configuration, missing
 pages, and MkDocs warnings. It writes the generated static site to `site/`.
+Remove that generated output when it is no longer needed:
+
+```console
+make clean
+```
 
 !!! note
     The generated `site/` directory is build output. Edit the Markdown,
@@ -135,16 +140,18 @@ When reviewing a dependency pull request, confirm that:
 
 ## Useful maintenance commands
 
-| Command                | Purpose                                              |
-| ---------------------- | ---------------------------------------------------- |
-| `make config`          | Render the complete Docker Compose model.            |
-| `make env`             | Print evaluated Compose interpolation values.        |
-| `make print-config`    | Print uncommented source Compose YAML.               |
-| `make print-env`       | Print uncommented example environment values.        |
-| `make markdown`        | Lint every Markdown document.                        |
-| `make lint`            | Run all configured repository hooks.                 |
-| `make logs`            | Follow the production documentation container logs.  |
-| `make down`            | Stop and remove the local site container.            |
+| Command             | Purpose                                             |
+| ------------------- | --------------------------------------------------- |
+| `make config`       | Render the complete Docker Compose model.           |
+| `make env`          | Print evaluated Compose interpolation values.       |
+| `make print-config` | Print uncommented source Compose YAML.              |
+| `make print-env`    | Print uncommented example environment values.       |
+| `make markdown`     | Lint every Markdown document.                       |
+| `make lint`         | Run all configured repository hooks.                |
+| `make clean`        | Delete the generated static-site directory.         |
+| `make run`          | Build and start the complete local Compose stack.   |
+| `make logs`         | Follow the production documentation container logs. |
+| `make down`         | Stop and remove the complete local Compose stack.   |
 
 See the [Command Deck](reference/commands.md) for the complete command map and
 the [contribution guide](CONTRIBUTING.md) before changing public pages.
