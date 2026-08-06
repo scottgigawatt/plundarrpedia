@@ -12,6 +12,7 @@ icon: material/console
 | ----------------------- | ------------------------------------------------------- |
 | `make ship`             | Generate the default Plundarr project.                  |
 | `make configure`        | Open Maraudarr's interactive generator.                 |
+| `make update-maraudarr` | Pull the current published Maraudarr image.             |
 | `make presets`          | Show available presets and their service sets.          |
 | `make services`         | List selectable services.                               |
 | `make config`           | Render and validate the generated Compose project.      |

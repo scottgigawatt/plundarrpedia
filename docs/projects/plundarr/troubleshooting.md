@@ -23,6 +23,15 @@ have failed to find a local image, pull the published one, or build a fallback.
 Do not confuse a registry/Docker-daemon failure with a bad generated Compose
 model.
 
+If generation succeeds but the resulting chart lacks behavior from a newer
+release, refresh the generator before rebuilding:
+
+```console
+make update-maraudarr
+make configure
+make config
+```
+
 ## Compose problems
 
 ```console
@@ -43,8 +52,14 @@ Common causes:
 
 Symptoms include `permission denied`, an app that cannot import downloads, or a
 database that repeatedly resets. Compare numeric ownership on the host with the
-configured `PUID`/`PGID`, then test the exact mounted directory rather than its
-parent.
+configured `DEFAULT_PUID`, `DEFAULT_PGID`, and `DEFAULT_GROUP`, then test the
+exact mounted directory rather than its parent.
+
+Apprise or Seerr startup failures on Synology can also indicate an old generated
+chart. Plundarr v1.0.2 runs both services through the shared rootless identity.
+Run `make update-maraudarr`, regenerate the Compose file, and inspect
+`make config` before changing host ownership or weakening a read-only
+filesystem.
 
 ## VPN lane never becomes healthy
 
