@@ -60,9 +60,10 @@ Record the numeric user and group that should own media files:
 id media-user
 ```
 
-Set the matching `PUID` and `PGID` values in `.env`, then grant that DSM account
-read/write access to downloads, the applicable library folders, and service
-configuration directories.
+Set the matching `DEFAULT_PUID` and `DEFAULT_PGID` values in `.env`. Set
+`DEFAULT_GROUP` to the supplemental DSM group used for shared paths, then grant
+that identity read/write access to downloads, the applicable library folders,
+and service configuration directories.
 
 !!! warning
     Giving every container full control of every shared folder makes a
@@ -83,7 +84,36 @@ If the device is absent after a reboot, review Plundarr's
 **Control Panel → Task Scheduler**. Run host-level scripts with the smallest
 privilege that works and keep a record of the change.
 
-## 5. Create the Container Manager project
+## 5. Restore trusted Docker CLI access after boot
+
+Container Manager can recreate `/var/run/docker.sock` with root-only group
+ownership after a DSM reboot or package update. This affects trusted users who
+run Docker commands over SSH; it does not require making the socket writable by
+every local account.
+
+If the socket loses the intended group access:
+
+1. Create a `docker` group under **Control Panel → User & Group → Group**.
+2. Add only the trusted DSM users who need Docker CLI access.
+3. Review Plundarr's
+   [`docker-socket.sh`](https://github.com/scottgigawatt/plundarr/blob/main/scripts/synology/docker-socket.sh)
+   helper.
+4. Create a boot-up task in **Control Panel → Task Scheduler**, select `root`
+   as the task user, and run:
+
+```console
+sh /volume1/docker/plundarr/scripts/synology/docker-socket.sh
+```
+
+The helper waits up to 120 seconds for the socket, verifies the Synology
+`docker` group, then restores ownership to `root:docker` with mode `0660`.
+
+!!! danger
+    Docker-group membership grants root-equivalent control of the NAS through
+    the Docker daemon. Add only trusted administrators; do not replace the
+    helper's `0660` mode with world-writable permissions.
+
+## 6. Create the Container Manager project
 
 1. Open **Container Manager → Project**.
 2. Select **Create** and choose the generated project directory.
@@ -95,7 +125,7 @@ Do not paste only the Compose file into an unrelated directory. Relative
 `./config/...` mounts resolve from the project directory and must travel with
 the deployment.
 
-## 6. Check networking and the DSM firewall
+## 7. Check networking and the DSM firewall
 
 - Make sure the Plundarr subnet does not overlap the LAN, another Compose
   project, or a remote VPN route.
@@ -107,7 +137,7 @@ the deployment.
 - Enable WebSocket and HTTP/1.1 proxy support for applications that require
   persistent connections.
 
-## 7. Validate in layers
+## 8. Validate in layers
 
 Start the project, then validate the VPN lane before configuring the rest of the
 fleet:

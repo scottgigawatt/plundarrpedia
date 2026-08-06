@@ -23,6 +23,19 @@ Maraudarr prefers an available local image, then a published image, then a
 local build from the checkout. It writes the finished Compose project into the
 repository root.
 
+!!! important "Refresh Maraudarr before an upgrade"
+    `make ship` reuses an available local Maraudarr image. Before regenerating
+    an existing deployment to pick up a newer release, refresh the generator:
+
+    ```console
+    make update-maraudarr
+    make configure
+    ```
+
+    Plundarr v1.0.2 requires regeneration to add the rootless identity shared
+    by Apprise and Seerr. Existing `.env` values and application state are
+    preserved; no data or mount migration is required.
+
 For the interactive configurator instead:
 
 ```console
@@ -44,6 +57,7 @@ At minimum, review:
 | ----------------------------------- | --------------------------------------------------------- |
 | `PIA_USER` / `PIA_PASS`             | Required when the Privateerr/Gluetun lane uses PIA.       |
 | `DEFAULT_PUID` / `DEFAULT_PGID`     | Must match a host identity that can access mounted files. |
+| `DEFAULT_GROUP`                     | Supplemental group used for shared host-path access.      |
 | `HOST_DOWNLOADS_PATH`               | Shared download root used by clients and managers.        |
 | `HOST_MOVIES_PATH` / `HOST_TV_PATH` | Final libraries seen by managers and playback servers.    |
 | `TZ`                                | Keeps logs and schedules aligned with your location.      |

@@ -33,6 +33,20 @@ Confirm all three boundaries:
 Privateerr's health signal means generation finished; it does not mean the VPN
 tunnel is connected.
 
+Run the image-owned readiness probe directly when the Compose health state is
+unclear:
+
+```console
+docker compose exec privateerr privateerr-healthcheck
+```
+
+An exit status of zero means the configured `PRIVATEERR_HEALTHCHECK_MARKER`
+exists. The command is available in Privateerr v1.0.1 and newer and continues
+to honor custom marker paths. Plundarr's default `latest` channel already
+selects a compatible stable image. If the command is missing, replace an
+explicitly pinned older `PRIVATEERR_TAG`, pull the current image, and recreate
+the stack.
+
 ## Port forwarding is unavailable
 
 `PIA_PF=true` requests a compatible region. If metadata says forwarding is not
