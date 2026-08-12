@@ -85,6 +85,16 @@ IP will fail by design.
 On Synology, also confirm the DSM firewall allows the host port and, when
 needed, traffic sourced from the Compose subnet.
 
+## NZBGet is healthy but managers cannot connect
+
+- Use `gluetun:6789` from Radarr or Sonarr; do not use the browser-facing host
+  port between containers.
+- Keep SSL disabled unless you intentionally configured it inside NZBGet.
+- Copy `NZBGET_USER` and `NZBGET_PASS` from the generated `.env`.
+- Confirm Radarr uses category `radarr` and Sonarr uses category `sonarr`.
+- Keep NZBGet's internal control port at `6789`; changing it also requires
+  coordinated Compose, healthcheck, Homepage, and manager updates.
+
 ## Downloads finish but never import
 
 - Use the same container path for the shared download root.

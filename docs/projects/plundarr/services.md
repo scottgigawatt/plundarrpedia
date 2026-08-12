@@ -24,6 +24,7 @@ capabilities are valuable to you.
 | ------------ | ----------------------------------------- | ----------------------------------------------------------------- |
 | qBittorrent  | Torrent download client.                  | You use torrent sources.                                          |
 | SABnzbd      | Usenet download client.                   | You use Usenet sources.                                           |
+| NZBGet       | Lean Usenet download client.              | You prefer NZBGet or need a separate Usenet queue.                |
 | Radarr       | Movie acquisition and organization.       | You manage a movie library.                                       |
 | Sonarr       | Television acquisition and organization.  | You manage episodic TV.                                           |
 | Sonarr Anime | Separate Sonarr instance for anime rules. | Anime needs distinct naming, profiles, or indexers.               |
@@ -48,6 +49,10 @@ capabilities are valuable to you.
     VPN and download components should be updated intentionally. A release can
     change healthchecks, namespaces, or port-forwarding behavior. The project
     disables Watchtower for tightly coordinated containers by default.
+
+SABnzbd and NZBGet are separate opt-in Usenet lanes. Maraudarr can select
+either one or both, routes each through Gluetun, and keeps the default
+Plundarr preset unchanged.
 
 ## Related projects
 
