@@ -7,110 +7,202 @@
  *            the Plundarrpedia public site.
  */
 
-/* Shared chart-room color tokens used by both site palettes. */
+/* Shared harbor-twilight tokens and privacy-friendly system font stacks. */
 :root {
-  --plundarr-ink: #071a22;
-  --plundarr-deep: #0a2833;
-  --plundarr-sea: #0b7189;
-  --plundarr-foam: #1fc7b6;
-  --plundarr-brass: #d6a84b;
-  --plundarr-parchment: #f4e7c3;
-  --plundarr-coral: #ff7a66;
+  --pedia-ink: #171329;
+  --pedia-deep: #292044;
+  --pedia-indigo: #66518f;
+  --pedia-coral: #ee7b74;
+  --pedia-copper: #d49a66;
+  --pedia-tide: #4c93a6;
+  --pedia-mist: #f5eef7;
+  --md-text-font: "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif;
+  --md-code-font: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
-/* Light palette with parchment surfaces and readable ocean-blue links. */
+/* Warm lilac surfaces distinguish the wiki from Plundarr's ocean palette. */
 [data-md-color-scheme="default"] {
-  --md-primary-fg-color: var(--plundarr-ink);
-  --md-primary-fg-color--light: #164653;
-  --md-primary-fg-color--dark: #031015;
-  --md-accent-fg-color: #087f78;
-  --md-default-bg-color: #f8f5eb;
-  --md-default-fg-color: #102c35;
-  --md-typeset-a-color: #08798a;
-  --md-code-bg-color: #e9eee9;
+  --md-primary-fg-color: #30264f;
+  --md-primary-fg-color--light: #5b497d;
+  --md-primary-fg-color--dark: #19132d;
+  --md-accent-fg-color: #a33f5d;
+  --md-accent-fg-color--transparent: rgb(163 63 93 / 12%);
+  --md-default-bg-color: #fbf8f5;
+  --md-default-fg-color: #2c263b;
+  --md-typeset-a-color: #684694;
+  --md-code-bg-color: #f0ebf2;
+  --md-code-fg-color: #332a43;
+  --pedia-border: rgb(102 81 143 / 24%);
+  --pedia-shadow: rgb(23 19 41 / 10%);
+  --pedia-surface: rgb(255 255 255 / 74%);
 }
 
-/* Dark palette with sea-glass accents and deep navy surfaces. */
+/* Inky violet surfaces pair with coral and copper instead of sea glass. */
 [data-md-color-scheme="slate"] {
   color-scheme: dark;
-  --md-hue: 192;
-  --md-primary-fg-color: #06171e;
-  --md-primary-fg-color--light: #123844;
-  --md-primary-fg-color--dark: #020b0f;
-  --md-accent-fg-color: var(--plundarr-foam);
-  --md-default-bg-color: #071a22;
-  --md-default-fg-color: #d9e8e6;
-  --md-typeset-a-color: #5bd6c9;
-  --md-code-bg-color: #041116;
-  --md-footer-bg-color: #041116;
+  --md-hue: 258;
+  --md-primary-fg-color: #171329;
+  --md-primary-fg-color--light: #45375f;
+  --md-primary-fg-color--dark: #0c0916;
+  --md-accent-fg-color: #ff9b91;
+  --md-accent-fg-color--transparent: rgb(255 155 145 / 13%);
+  --md-default-bg-color: #151120;
+  --md-default-fg-color: #eee7f2;
+  --md-typeset-a-color: #d7aff8;
+  --md-code-bg-color: #0d0a17;
+  --md-code-fg-color: #eee8f2;
+  --md-footer-bg-color: #0d0a17;
+  --pedia-border: rgb(203 158 227 / 22%);
+  --pedia-shadow: rgb(0 0 0 / 30%);
+  --pedia-surface: rgb(38 29 55 / 78%);
 }
 
+/* Anchor the ambient color to the viewport so articles scroll over it. */
 body {
+  background-attachment: fixed;
   background-image:
-    radial-gradient(circle at 12% 8%, rgb(31 199 182 / 10%), transparent 24rem),
-    radial-gradient(circle at 88% 18%, rgb(214 168 75 / 9%), transparent 22rem);
+    radial-gradient(circle at 10% 7%, rgb(102 81 143 / 15%), transparent 26rem),
+    radial-gradient(circle at 92% 14%, rgb(238 123 116 / 11%), transparent 23rem);
+  background-repeat: no-repeat;
 }
 
+::selection {
+  background: rgb(238 123 116 / 30%);
+}
+
+/* Give the global chrome its own twilight harbor identity. */
 .md-header,
 .md-tabs {
-  background-image: linear-gradient(115deg, #041116 0%, #0a3340 62%, #0b5664 100%);
+  background-image: linear-gradient(115deg, var(--pedia-ink) 0%, var(--pedia-deep) 60%, #65415f 100%);
 }
 
 .md-header {
-  border-bottom: 1px solid rgb(214 168 75 / 36%);
+  border-bottom: 1px solid rgb(212 154 102 / 38%);
+  box-shadow: 0 0.35rem 1.4rem rgb(12 9 22 / 22%);
+}
+
+.md-header__button.md-logo {
+  color: var(--pedia-copper);
+  filter: drop-shadow(0 0.15rem 0.25rem rgb(0 0 0 / 30%));
+}
+
+.md-header__topic {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.md-tabs {
+  border-bottom: 1px solid rgb(238 123 116 / 16%);
+}
+
+.md-tabs__link {
+  opacity: 0.78;
+}
+
+.md-tabs__link:is(:focus, :hover),
+.md-tabs__link--active {
+  color: #fff;
+  opacity: 1;
+}
+
+.md-tabs__link--active {
+  box-shadow: inset 0 -0.15rem var(--pedia-coral);
 }
 
 .md-announce {
-  background: linear-gradient(90deg, var(--plundarr-brass), #f0cf7d);
-  color: #18282c;
+  background: linear-gradient(90deg, var(--pedia-copper), #efbf91);
+  color: #251d32;
 }
 
+/* Match the sibling site's typography while keeping a distinct color story. */
 .md-main__inner {
-  margin-top: 1.5rem;
+  margin-top: 1.4rem;
+}
+
+.md-content__inner {
+  padding-bottom: 2.5rem;
+}
+
+.md-typeset {
+  font-size: 0.82rem;
+  line-height: 1.72;
 }
 
 .md-typeset h1,
 .md-typeset h2,
 .md-typeset h3 {
-  letter-spacing: -0.02em;
+  color: var(--md-default-fg-color);
   font-weight: 750;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
 
 .md-typeset h1 {
-  color: var(--md-default-fg-color);
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.08;
+  margin-bottom: 1.15rem;
+}
+
+.md-typeset h1::after {
+  background: linear-gradient(
+    90deg,
+    var(--pedia-copper),
+    var(--pedia-coral),
+    var(--pedia-indigo),
+    var(--pedia-tide),
+    transparent
+  );
+  border-radius: 999px;
+  content: "";
+  display: block;
+  height: 0.16rem;
+  margin-top: 0.7rem;
+  max-width: 11rem;
 }
 
 .md-typeset h2 {
-  border-bottom: 1px solid rgb(11 113 137 / 24%);
-  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--pedia-border);
+  padding-bottom: 0.35rem;
 }
 
+.md-typeset a:not(.md-button):not(.headerlink) {
+  text-decoration-color: transparent;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.16em;
+  transition: color 140ms ease, text-decoration-color 140ms ease;
+}
+
+.md-typeset a:not(.md-button):not(.headerlink):is(:focus, :hover) {
+  text-decoration-color: currentcolor;
+}
+
+/* Keep the wiki's cards and landing-page hero visually prominent. */
 .md-typeset .grid.cards > ul > li,
 .md-typeset .grid > .card {
   background:
-    linear-gradient(145deg, rgb(31 199 182 / 7%), transparent 62%),
-    var(--md-default-bg-color);
-  border: 1px solid rgb(11 113 137 / 28%);
+    linear-gradient(145deg, rgb(238 123 116 / 8%), transparent 62%),
+    var(--pedia-surface);
+  border: 1px solid var(--pedia-border);
   border-radius: 0.75rem;
-  box-shadow: 0 0.55rem 1.5rem rgb(3 16 21 / 8%);
+  box-shadow: 0 0.55rem 1.5rem var(--pedia-shadow);
   transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
 .md-typeset .grid.cards > ul > li:hover,
 .md-typeset .grid > .card:hover {
-  border-color: var(--plundarr-foam);
-  box-shadow: 0 0.8rem 2rem rgb(3 16 21 / 18%);
+  border-color: var(--pedia-coral);
+  box-shadow: 0 0.8rem 2rem var(--pedia-shadow);
   transform: translateY(-3px);
 }
 
 .md-typeset .hero {
   background:
-    linear-gradient(115deg, rgb(4 17 22 / 94%), rgb(8 59 69 / 88%)),
-    repeating-radial-gradient(circle at 80% 20%, transparent 0 14px, rgb(214 168 75 / 14%) 15px 16px);
-  border: 1px solid rgb(214 168 75 / 42%);
+    linear-gradient(115deg, rgb(21 17 38 / 96%), rgb(83 49 78 / 91%)),
+    repeating-radial-gradient(circle at 80% 20%, transparent 0 14px, rgb(212 154 102 / 16%) 15px 16px);
+  border: 1px solid rgb(212 154 102 / 46%);
   border-radius: 1.2rem;
-  box-shadow: 0 1.2rem 3.5rem rgb(3 16 21 / 24%);
-  color: #eef8f6;
+  box-shadow: 0 1.2rem 3.5rem rgb(12 9 22 / 28%);
+  color: #f8f0f7;
   margin: 0 0 2rem;
   overflow: hidden;
   padding: clamp(2rem, 6vw, 5rem);
@@ -118,7 +210,7 @@ body {
 }
 
 .md-typeset .hero::after {
-  border: 1px solid rgb(214 168 75 / 32%);
+  border: 1px solid rgb(238 123 116 / 34%);
   border-radius: 50%;
   content: "";
   height: 18rem;
@@ -136,38 +228,42 @@ body {
   max-width: 10ch;
 }
 
+.md-typeset .hero h1::after {
+  background: linear-gradient(90deg, var(--pedia-copper), var(--pedia-coral), transparent);
+}
+
 .md-typeset .hero p {
-  color: #cfe3e0;
+  color: #eadde9;
   font-size: 1.05rem;
   max-width: 58ch;
 }
 
 .md-typeset .hero .md-button {
-  border-color: var(--plundarr-brass);
+  border-color: var(--pedia-copper);
   color: #fff;
   margin: 0.5rem 0.4rem 0 0;
 }
 
 .md-typeset .hero .md-button--primary {
-  background: var(--plundarr-brass);
-  color: #18282c;
+  background: var(--pedia-copper);
+  color: #251d32;
 }
 
-/* Keep standard article buttons visible against the dark chart-room palette. */
+/* Keep standard article buttons visible against the twilight dark palette. */
 [data-md-color-scheme="slate"] .md-typeset .md-button:not(.md-button--primary) {
-  border-color: var(--plundarr-foam);
-  color: var(--plundarr-foam);
+  border-color: var(--pedia-coral);
+  color: #ffb0a8;
 }
 
 [data-md-color-scheme="slate"] .md-typeset .md-button:not(.md-button--primary):is(:focus, :hover) {
-  background-color: var(--plundarr-foam);
-  color: var(--plundarr-ink);
+  background-color: var(--pedia-coral);
+  color: var(--pedia-ink);
 }
 
 [data-md-color-scheme="slate"] .md-typeset .md-button--primary {
-  background-color: var(--plundarr-brass);
-  border-color: var(--plundarr-brass);
-  color: var(--plundarr-ink);
+  background-color: var(--pedia-copper);
+  border-color: var(--pedia-copper);
+  color: var(--pedia-ink);
 }
 
 .fleet-line {
@@ -179,21 +275,21 @@ body {
 }
 
 .fleet-line span {
-  background: linear-gradient(90deg, var(--plundarr-sea), var(--plundarr-foam));
+  background: linear-gradient(90deg, var(--pedia-indigo), var(--pedia-tide), var(--pedia-coral));
   border-radius: 999px;
   height: 0.35rem;
 }
 
 .fleet-line b {
-  color: var(--plundarr-brass);
+  color: var(--pedia-copper);
   text-align: center;
 }
 
 /* Responsive architecture maps that work without a JavaScript diagram runtime. */
 .flow-map {
   align-items: stretch;
-  background: linear-gradient(135deg, rgb(11 113 137 / 12%), rgb(31 199 182 / 5%));
-  border: 1px solid rgb(11 113 137 / 30%);
+  background: linear-gradient(135deg, rgb(102 81 143 / 13%), rgb(238 123 116 / 6%));
+  border: 1px solid var(--pedia-border);
   border-radius: 0.8rem;
   display: flex;
   flex-wrap: wrap;
@@ -204,16 +300,16 @@ body {
 }
 
 .flow-map--support {
-  background: linear-gradient(135deg, rgb(214 168 75 / 10%), transparent);
-  border-color: rgb(214 168 75 / 34%);
+  background: linear-gradient(135deg, rgb(212 154 102 / 12%), transparent);
+  border-color: rgb(212 154 102 / 38%);
 }
 
 .flow-map__step {
   align-items: center;
-  background: var(--md-default-bg-color);
-  border: 1px solid rgb(11 113 137 / 32%);
+  background: var(--pedia-surface);
+  border: 1px solid var(--pedia-border);
   border-radius: 0.55rem;
-  box-shadow: 0 0.35rem 1rem rgb(3 16 21 / 8%);
+  box-shadow: 0 0.35rem 1rem var(--pedia-shadow);
   display: inline-flex;
   font-weight: 700;
   justify-content: center;
@@ -225,7 +321,7 @@ body {
 .flow-map__arrow,
 .flow-map__divider {
   align-items: center;
-  color: var(--plundarr-brass);
+  color: var(--pedia-copper);
   display: inline-flex;
   font-weight: 800;
   justify-content: center;
@@ -242,8 +338,8 @@ body {
 }
 
 .handoff-timeline li {
-  background: linear-gradient(135deg, rgb(11 113 137 / 9%), transparent);
-  border-left: 0.3rem solid var(--plundarr-brass);
+  background: linear-gradient(135deg, rgb(102 81 143 / 11%), transparent);
+  border-left: 0.3rem solid var(--pedia-coral);
   border-radius: 0.35rem 0.65rem 0.65rem 0.35rem;
   counter-increment: handoff-step;
   padding: 0.9rem 1rem 0.9rem 3.2rem;
@@ -252,9 +348,9 @@ body {
 
 .handoff-timeline li::before {
   align-items: center;
-  background: var(--plundarr-ink);
+  background: var(--pedia-ink);
   border-radius: 50%;
-  color: var(--plundarr-parchment);
+  color: var(--pedia-mist);
   content: counter(handoff-step);
   display: flex;
   font-weight: 800;
@@ -266,21 +362,87 @@ body {
   width: 1.8rem;
 }
 
+/* Elevate dense guide components without letting decoration obscure content. */
+.md-typeset .admonition,
+.md-typeset details,
+.md-typeset table:not([class]),
+.md-typeset .highlight > pre,
+.md-typeset pre > code {
+  border-radius: 0.65rem;
+}
+
 .md-typeset .admonition,
 .md-typeset details {
-  border-radius: 0.55rem;
+  background: var(--pedia-surface);
+  box-shadow: 0 0.45rem 1.35rem var(--pedia-shadow);
 }
 
 .md-typeset table:not([class]) {
-  border-radius: 0.45rem;
+  background: var(--pedia-surface);
+  border: 1px solid var(--pedia-border);
+  box-shadow: 0 0.55rem 1.7rem var(--pedia-shadow);
   overflow: hidden;
 }
 
+.md-typeset table:not([class]) th {
+  background: linear-gradient(110deg, rgb(102 81 143 / 15%), rgb(238 123 116 / 8%));
+  color: var(--md-default-fg-color);
+}
+
+.md-typeset table:not([class]) tr:hover td {
+  background: rgb(238 123 116 / 7%);
+}
+
+.md-typeset .highlight {
+  filter: drop-shadow(0 0.45rem 1rem var(--pedia-shadow));
+}
+
+.md-typeset .highlight > pre,
+.md-typeset pre > code {
+  border: 1px solid var(--pedia-border);
+}
+
+.md-typeset code:not(pre code) {
+  border: 1px solid var(--pedia-border);
+  border-radius: 0.3rem;
+  padding: 0.08em 0.32em;
+}
+
+.md-typeset hr {
+  background: linear-gradient(90deg, transparent, var(--pedia-border), transparent);
+  border: 0;
+  height: 1px;
+}
+
+/* Keep navigation state visible without competing with the article. */
+.md-nav__link--active {
+  font-weight: 700;
+}
+
+.md-nav__link:is(:focus, :hover) {
+  color: var(--md-accent-fg-color);
+}
+
+.md-search__form {
+  border: 1px solid rgb(255 255 255 / 11%);
+  border-radius: 0.5rem;
+}
+
 .md-footer {
-  border-top: 1px solid rgb(214 168 75 / 22%);
+  background-image: linear-gradient(115deg, #0d0a17, #241a38);
+  border-top: 1px solid rgb(212 154 102 / 24%);
+}
+
+:focus-visible {
+  outline: 0.15rem solid var(--md-accent-fg-color);
+  outline-offset: 0.15rem;
 }
 
 @media screen and (max-width: 44.984375em) {
+  .md-typeset {
+    font-size: 0.78rem;
+  }
+
   .md-content__button {
     display: none;
   }
@@ -307,5 +469,14 @@ body {
   .flow-map__divider {
     min-height: 1.5rem;
     transform: rotate(90deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
