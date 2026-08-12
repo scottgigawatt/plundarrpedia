@@ -14,7 +14,7 @@
 # Public site identity and search-engine metadata.
 #
 site_name: Plundarrpedia
-site_description: The captain's field guide to Plundarr, Privateerr, Plex utilities, and self-hosted media.
+site_description: The captain's field guide to Plundarr, Privateerr, Duplex, and self-hosted media.
 site_url: https://scottgigawatt.github.io/plundarrpedia/
 copyright: Copyright &copy; 2026 Scott Gigawatt
 
@@ -61,25 +61,27 @@ nav:
       - Config Handoff: projects/privateerr/config-handoff.md
       - Troubleshooting: projects/privateerr/troubleshooting.md
 
-  # Group Duplex and other Plex-adjacent utility projects together.
-  - Plex Utilities:
-      - Duplex: projects/duplex/index.md
+  # Use the Duplex project name while keeping related Plex projects nearby.
+  - Duplex:
+      - Overview: projects/duplex/index.md
       - Media Project Catalog: projects/catalog.md
 
   # Provide platform-specific routes after the project concepts are established.
   - Platform Guides:
       - Choose a Harbor: guides/index.md
       - Any Docker Host: guides/docker.md
-      - Synology Container Manager: guides/synology.md
-      - TrueNAS Apps: guides/truenas.md
+      - Synology: guides/synology.md
+      - TrueNAS: guides/truenas.md
 
   # Share operational guidance that applies across deployment platforms.
   - Core Guides:
+      - Overview: guides/core/index.md
       - Paths and Permissions: guides/storage-and-permissions.md
       - Networking and VPN: guides/networking-and-vpn.md
 
   # Collect command, policy, contribution, and project background pages.
   - Reference:
+      - Overview: reference/index.md
       - Command Deck: reference/commands.md
       - Advanced Usage: ADVANCED_USAGE.md
       - Contributing: CONTRIBUTING.md

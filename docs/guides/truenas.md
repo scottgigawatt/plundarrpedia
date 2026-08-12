@@ -1,14 +1,15 @@
 ---
-title: TrueNAS SCALE and Dockge
+title: TrueNAS
 description: Run Plundarr on TrueNAS SCALE with Dockge or a TrueNAS custom application.
 icon: material/server-network
 status: new
 ---
 
-# TrueNAS SCALE and Dockge
+# TrueNAS
 
-Current TrueNAS SCALE releases use a Docker-based Apps system. You can deploy
-Plundarr as either:
+This guide covers deploying Plundarr on **TrueNAS SCALE** through its
+Docker-based Apps system, using either Dockge or a custom application. You can
+deploy Plundarr as either:
 
 - a **Dockge stack**, which keeps the generated Compose project editable and
   manageable as ordinary files; or
