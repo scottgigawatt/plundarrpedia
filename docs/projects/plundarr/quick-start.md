@@ -99,6 +99,12 @@ make test-vpn
 # Use SABnzbd instead of qBittorrent
 make ship PRESET=plundarr OPTIONAL_SERVICES=sabnzbd
 
+# Use NZBGet instead of qBittorrent
+make ship PRESET=plundarr OPTIONAL_SERVICES=nzbget
+
+# Run SABnzbd and NZBGet as separate Usenet queues
+make ship PRESET=plundarr OPTIONAL_SERVICES=sabnzbd,nzbget
+
 # Add Plex to the generated stack
 make ship OPTIONAL_SERVICES=qbittorrent,cleanuparr,plex
 

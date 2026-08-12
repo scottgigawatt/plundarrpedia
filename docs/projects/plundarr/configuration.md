@@ -79,11 +79,38 @@ The selected client changes the VPN namespace and service dependencies:
     that is your chosen privacy model, but it does not consume PIA's forwarded
     torrent port.
 
-=== "Both"
+=== "NZBGet"
 
-    Valid when the managers may choose either protocol. Expect more first-run
-    configuration and be explicit about categories and completed-download
-    handling.
+    A lean Usenet alternative to SABnzbd. It shares Gluetun's network
+    namespace, keeps its internal control port at `6789`, and receives a strong
+    first-run Web UI password in `.env`.
+
+=== "Several clients"
+
+    Valid when managers may choose either protocol or separate Usenet queues.
+    Expect more first-run configuration and be explicit about ports,
+    categories, and completed-download handling.
+
+## NZBGet first-run settings
+
+Add provider credentials under **Settings → News-Servers** in NZBGet. Those
+credentials belong to the application; `NZBGET_USER` and `NZBGET_PASS` in
+`.env` protect its Web UI and RPC control endpoint.
+
+Keep the generated path vocabulary:
+
+| NZBGet setting  | Value                                     |
+| --------------- | ----------------------------------------- |
+| `MainDir`       | `/downloads/usenet`                       |
+| `InterDir`      | `${MainDir}/incomplete`                   |
+| `DestDir`       | `${MainDir}/complete`                     |
+| Radarr category | `radarr` → `${MainDir}/complete/movies`   |
+| Sonarr category | `sonarr` → `${MainDir}/complete/tv`       |
+
+When adding NZBGet to Radarr or Sonarr, use host `gluetun`, port `6789`, no
+SSL, and the generated `NZBGET_USER` / `NZBGET_PASS` values. A browser reaches
+the host-side `NZBGET_WEBUI_PORT`; connected containers use the fixed internal
+port.
 
 ## Secrets
 

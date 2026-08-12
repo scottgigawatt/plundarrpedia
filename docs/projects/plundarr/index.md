@@ -21,7 +21,7 @@ to validate the result.
 ## What Plundarr solves
 
 - Keeps a large Compose stack readable without asking users to merge fragments.
-- Makes qBittorrent, SABnzbd, or both explicit choices.
+- Makes qBittorrent, SABnzbd, NZBGet, or a deliberate combination explicit.
 - Keeps selected download clients behind Gluetun while other apps use the
   project network.
 - Preserves environment values when a stack is regenerated.
@@ -55,4 +55,10 @@ plundarr/
 
 </div>
 
+[Plundarr's developer documentation](https://scottgigawatt.github.io/plundarr/)
+covers Maraudarr architecture, service-extension contracts, testing, and the
+source-generated Python reference. Plundarrpedia stays focused on deployment,
+configuration, and troubleshooting voyages.
+
 [View Plundarr on GitHub](https://github.com/scottgigawatt/plundarr){ .md-button }
+[Open the developer documentation](https://scottgigawatt.github.io/plundarr/){ .md-button .md-button--primary }

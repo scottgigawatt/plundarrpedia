@@ -21,6 +21,12 @@ icon: material/console
 | `make test-maraudarr`   | Validate generator behavior and representative outputs. |
 | `make test-vpn`         | Validate an already-running VPN/download lane.          |
 | `make test-e2e`         | Launch and validate the focused live VPN path.          |
+| `make docs`             | Build Plundarr's strict developer documentation.        |
+| `make docs-serve`       | Preview Plundarr's developer documentation locally.     |
+
+The published [Plundarr developer documentation](https://scottgigawatt.github.io/plundarr/)
+contains Maraudarr's architecture, contribution guides, and generated Python
+reference.
 
 ## Privateerr
 

@@ -130,8 +130,8 @@ the deployment.
 - Make sure the Plundarr subnet does not overlap the LAN, another Compose
   project, or a remote VPN route.
 - Permit only the Web UI host ports you intend to use from trusted LAN sources.
-- Publish qBittorrent or SABnzbd ports on Gluetun when those services use
-  `network_mode: service:gluetun`.
+- Publish qBittorrent, SABnzbd, or NZBGet ports on Gluetun when those services
+  use `network_mode: service:gluetun`.
 - Prefer a private access layer or authenticated HTTPS reverse proxy over
   exposing application UIs directly to the internet.
 - Enable WebSocket and HTTP/1.1 proxy support for applications that require
