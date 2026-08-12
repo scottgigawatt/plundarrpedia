@@ -1,14 +1,16 @@
 ---
-title: Synology Container Manager
+title: Synology
 description: Deploy Plundarr on DSM with deliberate paths, permissions, networking, and VPN validation.
 icon: material/nas
 ---
 
-# Synology Container Manager
+# Synology
 
-Synology is one supported harbor for Plundarr, not a requirement baked into the
+This guide covers deploying Plundarr on a Synology NAS through DSM's **Container
+Manager**. Synology is one supported harbor, not a requirement baked into the
 applications. DSM-specific work is concentrated in shared-folder paths,
-permissions, firewall rules, and the TUN device used by Gluetun.
+permissions, firewall rules, Container Manager projects, and the TUN device
+used by Gluetun.
 
 ## 1. Generate the deployment artifact
 

@@ -1,6 +1,7 @@
 ---
 title: Chart Room
-description: One harbor for Plundarr, Privateerr, Plex utilities, and self-hosted media guides.
+description: One harbor for Plundarr, Privateerr, Duplex, and self-hosted media guides.
+icon: material/map
 hide:
   - navigation
   - toc
@@ -68,27 +69,29 @@ behind a self-hosted media stack—without assuming your harbor is a Synology.
 ## The fleet at a glance
 
 <div class="flow-map" role="img" aria-label="Requests flow from your crew through Seerr, media managers, a download client, the media library, and Plex or Jellyfin.">
-  <span class="flow-map__step">Your crew</span>
+  <span class="flow-map__step">👥 Your crew</span>
   <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">Seerr</span>
+  <span class="flow-map__step">🔎 Seerr</span>
   <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">Radarr / Sonarr</span>
+  <span class="flow-map__step">🎬 Radarr / Sonarr</span>
   <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">Download client</span>
+  <span class="flow-map__step">⬇️ Download client</span>
   <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">Media library</span>
+  <span class="flow-map__step">🗂️ Media library</span>
   <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">Plex / Jellyfin</span>
+  <span class="flow-map__step">📺 Plex / Jellyfin</span>
 </div>
 
-<div class="flow-map flow-map--support" role="img" aria-label="Privateerr supplies WireGuard configuration to Gluetun, while Duplex utilities curate and monitor Plex.">
-  <span class="flow-map__step">Privateerr</span>
+<div class="flow-map flow-map--support" role="img" aria-label="Privateerr generates WireGuard configuration for the Gluetun VPN tunnel, while Duplex maintains and monitors Plex.">
+  <span class="flow-map__step">🔐 Privateerr</span>
   <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">Gluetun VPN lane</span>
+  <span class="flow-map__step">📄 WireGuard config</span>
+  <span class="flow-map__arrow" aria-hidden="true">→</span>
+  <span class="flow-map__step">🛡️ Gluetun VPN tunnel</span>
   <span class="flow-map__divider" aria-hidden="true">◆</span>
-  <span class="flow-map__step">Duplex utilities</span>
+  <span class="flow-map__step">📺 Duplex</span>
   <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">Plex care</span>
+  <span class="flow-map__step">🧰 Plex maintenance</span>
 </div>
 
 !!! important "Privateerr draws the map; Gluetun sails the tunnel"

@@ -47,7 +47,7 @@ Every platform needs the same foundations:
 
     [:octicons-arrow-right-24: Open the Docker guide](docker.md)
 
--   :material-nas:{ .lg .middle } **Synology Container Manager**
+-   :material-nas:{ .lg .middle } **Synology**
 
     ---
 
@@ -56,7 +56,7 @@ Every platform needs the same foundations:
 
     [:octicons-arrow-right-24: Open the Synology guide](synology.md)
 
--   :material-server-network:{ .lg .middle } **TrueNAS Apps**
+-   :material-server-network:{ .lg .middle } **TrueNAS**
 
     ---
 

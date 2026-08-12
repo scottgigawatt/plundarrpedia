@@ -10,6 +10,11 @@ Duplex is the backstage crew for an existing Plex Media Server. Plundarr focuses
 on discovery, downloading, and library management; Duplex focuses on what
 happens around Plex after the media is there.
 
+The name **Duplex** is short for **Docker Utilities for Plex**. It brings the
+project's Plex-focused maintenance tools together in one Docker Compose stack;
+"utilities" is already built into the name, so this wiki simply calls the
+project Duplex.
+
 ## The cast
 
 | Tool          | Job                                                                                 |
