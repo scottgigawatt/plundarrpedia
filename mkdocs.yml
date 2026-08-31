@@ -63,8 +63,8 @@ nav:
       - Config Handoff: projects/privateerr/config-handoff.md
       - Troubleshooting: projects/privateerr/troubleshooting.md
 
-  # Keep focused deployment shapes under Plundarr instead of presenting each
-  # historical repository as a separate documentation product.
+  # Keep the deprecated standalone Boudoirr, Duplex, Jellyfin, and
+  # Calibre-Web-Automated deployment shapes under Plundarr presets.
   - Presets:
       - Choose a Preset: projects/presets/index.md
       - Boudoirr: projects/presets/boudoirr.md

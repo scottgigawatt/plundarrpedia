@@ -53,7 +53,7 @@ Each preset has a separate Compose project, network allocation, host-port range,
 
 Change a subnet when it overlaps your local-area network, another Docker network, or a route reached through a virtual private network. Plex uses host networking and is the main exception to the bridge-network pattern.
 
-## Move from an older standalone chart
+## Move from a deprecated standalone chart
 
 Use the matching Plundarr preset as a migration target, not an in-place Compose replacement:
 
@@ -63,7 +63,7 @@ Use the matching Plundarr preset as a migration target, not an in-place Compose 
 4. Move persistent state only while the related containers are stopped.
 5. Validate the generated Compose model, then cut over one project at a time.
 
-The older repositories can remain useful as historical references, but the generated Plundarr routes keep current deployment behavior, dependency updates, and documentation in one maintained catalog.
+The deprecated standalone Duplex, Boudoirr, Jellyfin, and Calibre-Web-Automated repositories can remain useful as historical references, but their generated Plundarr presets keep current deployment behavior, dependency updates, and documentation in one maintained catalog.
 
 [Generate the default Plundarr stack](../plundarr/quick-start.md){ .md-button .md-button--primary }
 [Read the configuration guide](../plundarr/configuration.md){ .md-button }

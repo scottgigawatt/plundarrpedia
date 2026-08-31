@@ -12,8 +12,8 @@ Privateerr packages the official, unmodified
 scripts into a small Alpine container. It adds repeatable commands, friendly
 defaults, a health signal, and a metadata handoff for Docker Compose stacks.
 
-!!! important "Use Plundarr for new complete deployments"
-    Maraudarr includes Privateerr as the `privateerr` service in every VPN-enabled Plundarr preset. Start there when you need the complete Privateerr-to-Gluetun lane; use the standalone source only when you specifically need to generate files for another WireGuard deployment.
+!!! important "Privateerr remains actively maintained"
+    Privateerr is maintained both as a standalone project and as the `privateerr` service in every VPN-enabled Plundarr preset. Use Plundarr when you want the complete generated Privateerr-to-Gluetun lane, or use the standalone project when you want Privateerr to generate files for another WireGuard deployment.
 
 !!! danger "Privateerr is not a VPN client"
     Privateerr does not establish or maintain a tunnel. It writes a PIA

@@ -7,9 +7,9 @@ status: updated
 
 # Privateerr quick start
 
-Use a VPN-enabled Plundarr preset for a new complete deployment. Maraudarr selects Privateerr and Gluetun together, writes the required environment and mounts, and preserves their configuration under the generated preset directory.
+Privateerr remains an actively maintained standalone project and a first-class Plundarr integration. Use a VPN-enabled Plundarr preset for a complete generated deployment, or use standalone Privateerr when you need its WireGuard configuration and metadata without the rest of the stack.
 
-## Generate the recommended Plundarr route
+## Generate the complete Plundarr route
 
 ```sh
 git clone https://github.com/scottgigawatt/plundarr.git
@@ -32,7 +32,7 @@ Privateerr writes `wg0.conf` and `privateerr.env` beneath the generated configur
 
 ## Generate files for another WireGuard deployment
 
-Use the standalone source only when you specifically need Privateerr output outside a generated Plundarr project:
+Use the standalone source when you need Privateerr output outside a generated Plundarr project:
 
 ```sh
 git clone --recurse-submodules https://github.com/scottgigawatt/privateerr.git
@@ -66,7 +66,7 @@ make ps
 make logs
 ```
 
-Use this route for a focused handoff test, not as a second full media-stack architecture.
+Use this maintained route for focused Privateerr generation and handoff testing rather than as a second full media-stack architecture.
 
 ## Clean up live test state
 
