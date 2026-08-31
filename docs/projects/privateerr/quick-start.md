@@ -1,78 +1,82 @@
 ---
 title: Privateerr Quick Start
-description: Generate a PIA WireGuard configuration in one short run.
+description: Generate the Privateerr and Gluetun handoff through Plundarr or as a focused standalone run.
 icon: material/flash
+status: updated
 ---
 
 # Privateerr quick start
 
-## Clone and prepare
+Privateerr remains an actively maintained standalone project and a first-class Plundarr integration. Use a VPN-enabled Plundarr preset for a complete generated deployment, or use standalone Privateerr when you need its WireGuard configuration and metadata without the rest of the stack.
 
-The upstream PIA scripts are a Git submodule, so include submodules when
-cloning:
+## Generate the complete Plundarr route
 
-```console
+```sh
+git clone https://github.com/scottgigawatt/plundarr.git
+cd plundarr
+make ship
+```
+
+Set `PIA_USER` and `PIA_PASS` in `dist/plundarr/.env`. Set `PIA_PF=true` when you need a port-forwarding-capable endpoint, then validate and start the stack:
+
+```sh
+make config
+make up
+make test-vpn
+```
+
+Privateerr writes `wg0.conf` and `privateerr.env` beneath the generated configuration tree. Gluetun consumes the handoff and establishes the live tunnel.
+
+!!! warning
+    `wg0.conf` contains live WireGuard connection material. Do not paste it into an issue, commit it, or include it in an unencrypted backup.
+
+## Generate files for another WireGuard deployment
+
+Use the standalone source when you need Privateerr output outside a generated Plundarr project:
+
+```sh
 git clone --recurse-submodules https://github.com/scottgigawatt/privateerr.git
 cd privateerr
 cp example.env .env
 ```
 
-## Generate the files
+Set the real PIA values in the ignored `.env`, then generate fresh files:
 
-Pass credentials for the run instead of storing them in shell history whenever
-your environment offers a safer secret mechanism. The direct form is:
-
-```console
-PIA_USER="p1234567" \
-PIA_PASS="replace-me" \
-PIA_PF="false" \
+```sh
 make run-privateerr
 ```
 
-Inspect the generated files:
+The outputs are:
 
-```console
-sed -n '1,120p' config/gluetun/wireguard/wg0.conf
-sed -n '1,120p' config/gluetun/wireguard/privateerr.env
-```
+| File | Consumer | Purpose |
+| --- | --- | --- |
+| `config/gluetun/wireguard/wg0.conf` | Gluetun, WireGuard, or another compatible client | WireGuard interface, peer, keys, and endpoint. |
+| `config/gluetun/wireguard/privateerr.env` | Gluetun wrapper or other automation | PIA server identity, region, endpoint, and port-forwarding support. |
 
-!!! warning
-    `wg0.conf` contains live WireGuard connection material. Do not paste it into
-    an issue, commit it, or include it in ordinary backups without encryption.
+Inspect only the non-secret metadata you need. Do not print or share the private key from `wg0.conf`.
 
-## Request a port-forwarding region
+## Run the standalone example stack
 
-```console
-PIA_USER="p1234567" \
-PIA_PASS="replace-me" \
-PIA_PF="true" \
-make run-privateerr
-```
+The Privateerr repository also includes a Privateerr and Gluetun Compose example:
 
-Privateerr asks PIA for a port-forwarding-capable endpoint, identifies the
-matching PIA WireGuard server name, and records that name in `privateerr.env`.
-Gluetun still owns the live tunnel and the forwarded-port lifecycle.
-
-## Run the paired Compose stack
-
-The repository includes a full Privateerr + Gluetun example:
-
-```console
+```sh
+make config
 make up
-docker compose ps
+make ps
 make logs
 ```
 
-Use this when you want automatic generation, health-ordered Gluetun startup,
-and port-forwarding integration rather than only the resulting file.
+Use this maintained route for focused Privateerr generation and handoff testing rather than as a second full media-stack architecture.
 
-## Clean up safely
+## Clean up live test state
 
-```console
+```sh
 make down
-make reset-config
+make restore-test-config
+git status --short
 ```
 
-`reset-config` restores the checked-in example files after a live run. Inspect
-`git status --short` before committing anything from a checkout that handled
-real credentials.
+`restore-test-config` restores the checked-in safe examples after a live run. Use `make clean-test` after end-to-end validation so containers are stopped and example state is restored together.
+
+[Understand the file handoff](config-handoff.md){ .md-button .md-button--primary }
+[Troubleshoot Privateerr](troubleshooting.md){ .md-button }

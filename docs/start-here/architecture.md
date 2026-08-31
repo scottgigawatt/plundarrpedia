@@ -17,7 +17,9 @@ container may speak to several lanes, but each lane has one job.
 | Download   | qBittorrent, SABnzbd, NZBGet                                | Retrieves payloads into a shared download root.                                |
 | VPN        | Privateerr, Gluetun                                         | Generates VPN configuration, runs the tunnel, and handles PIA port forwarding. |
 | Playback   | Plex, Jellyfin                                              | Scans and serves completed media libraries.                                    |
+| Books      | Calibre-Web Automated                                       | Ingests, manages, and serves an ebook library.                                 |
 | Operations | Homepage, Duplicati, Cleanuparr, Speedtest Tracker, Apprise | Observability, backup, cleanup, and notification work.                         |
+| Updates    | Watchtower                                                  | Replaces eligible container images under an explicit host policy.              |
 | Curation   | Kometa, ImageMaid, PATTRMM, Tautulli, Notifiarr             | Improves and monitors an existing Plex deployment.                             |
 
 ## The VPN boundary
@@ -80,6 +82,7 @@ Host
 ## Responsibility map
 
 - **Maraudarr** generates Plundarr; it is not a long-running media service.
+- **Presets** select a maintained deployment shape; they are not separate generator implementations.
 - **Privateerr** generates PIA files; it does not carry traffic.
 - **Gluetun** carries VPN traffic and coordinates port forwarding.
 - **Download clients** retrieve files; they should not organize the library.

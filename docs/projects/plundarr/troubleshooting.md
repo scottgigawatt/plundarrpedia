@@ -12,8 +12,8 @@ download client simply lacks a category.
 
 ## Generator problems
 
-```console
-make test-maraudarr
+```sh
+make test-unit
 make services
 make presets
 ```
@@ -26,23 +26,25 @@ model.
 If generation succeeds but the resulting chart lacks behavior from a newer
 release, refresh the generator before rebuilding:
 
-```console
-make update-maraudarr
-make configure
-make config
+```sh
+make pull-image
+make ship PRESET=YOUR-PRESET
+make config PRESET=YOUR-PRESET
 ```
+
+Replace `YOUR-PRESET` with the affected deployment ID. Maraudarr regenerates only `dist/YOUR-PRESET/`.
 
 ## Compose problems
 
-```console
-make config
-docker compose ps
-docker compose logs --tail=100 SERVICE
+```sh
+make config PRESET=YOUR-PRESET
+make ps PRESET=YOUR-PRESET
+make logs PRESET=YOUR-PRESET
 ```
 
 Common causes:
 
-- `.env` is missing or not beside `docker-compose.yml`;
+- `.env` is missing from `dist/<preset>/` or is not beside `docker-compose.yml`;
 - a host port is already in use;
 - a path is relative to a different project directory than expected;
 - the custom subnet overlaps another route;
@@ -50,16 +52,9 @@ Common causes:
 
 ## Permission problems
 
-Symptoms include `permission denied`, an app that cannot import downloads, or a
-database that repeatedly resets. Compare numeric ownership on the host with the
-configured `DEFAULT_PUID`, `DEFAULT_PGID`, and `DEFAULT_GROUP`, then test the
-exact mounted directory rather than its parent.
+Symptoms include `permission denied`, an app that cannot import downloads, or a database that repeatedly resets. Compare numeric ownership on the host with the generated user, group, and service-specific supplemental-group values, then test the exact mounted directory rather than its parent.
 
-Apprise or Seerr startup failures on Synology can also indicate an old generated
-chart. Plundarr v1.0.2 runs both services through the shared rootless identity.
-Run `make update-maraudarr`, regenerate the Compose file, and inspect
-`make config` before changing host ownership or weakening a read-only
-filesystem.
+Apprise or Seerr startup failures on Synology can also indicate an old generated chart. Run `make pull-image`, regenerate the affected preset, and inspect `make config PRESET=YOUR-PRESET` before changing host ownership or weakening a read-only filesystem.
 
 ## VPN lane never becomes healthy
 
@@ -72,7 +67,7 @@ Check in order:
 5. The selected PIA region supports port forwarding when `PIA_PF=true`.
 6. The host provides the capabilities/devices required by Gluetun.
 
-```console
+```sh
 make test-vpn
 ```
 
@@ -105,7 +100,4 @@ needed, traffic sourced from the Compose subnet.
 
 ## Safe reset
 
-Back up `config/` before changing application state. `make down` stops the
-stack; it should not be treated as permission to remove volumes or configuration
-directories. Use destructive cleanup targets only when you intentionally want
-a fresh deployment.
+Back up `dist/<preset>/config/` before changing application state. `make down PRESET=YOUR-PRESET` preserves volumes, images, environment files, configuration, and backups. `make nuke PRESET=YOUR-PRESET` removes attributable Docker resources but preserves deployment files and application state. Only `make delete-config PRESET=YOUR-PRESET` deletes the generated configuration tree.

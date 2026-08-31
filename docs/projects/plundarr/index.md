@@ -25,24 +25,23 @@ to validate the result.
 - Keeps selected download clients behind Gluetun while other apps use the
   project network.
 - Preserves environment values when a stack is regenerated.
-- Offers ready-made Plundarr and Boudoirr presets plus a build-your-own path.
+- Offers maintained Plundarr, Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, Watchtower, and custom presets.
 - Produces a Synology-friendly deployment artifact without becoming
   Synology-only.
 
 ## Core output
 
 ```text
-plundarr/
-├── docker-compose.yml   # Generated complete deployment
-├── example.env          # Safe reference values
-├── .env                 # Local settings and secrets; never commit
-└── config/              # Persistent application state
+dist/
+└── plundarr/
+    ├── docker-compose.yml   # Generated complete deployment
+    ├── example.env          # Safe reference values
+    ├── .env                 # Local settings and secrets; never commit
+    └── config/              # Persistent application state
 ```
 
 !!! important
-    Review `.env` before launching. PIA credentials, user/group IDs, host media
-    paths, timezone, and port choices belong to your harbor and cannot be safely
-    guessed by the generator.
+    Review `dist/plundarr/.env` before launching. PIA credentials, user/group IDs, host media paths, timezone, and port choices belong to your harbor and cannot be safely guessed by the generator.
 
 ## Where to go next
 

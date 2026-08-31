@@ -24,7 +24,7 @@ clean Material for MkDocs render.
 
 Good contributions include:
 
-- task-oriented guides for Plundarr, Privateerr, Duplex, and related projects;
+- task-oriented guides for Plundarr, Privateerr, and generated Plundarr presets;
 - Linux Docker, Synology, TrueNAS, and other platform-specific deployment help;
 - corrected commands, links, screenshots, diagrams, and troubleshooting steps;
 - accessibility, navigation, search, or theme improvements;
@@ -41,7 +41,7 @@ Questionable cargo includes:
 
 ## Local setup
 
-```console
+```sh
 git clone https://github.com/scottgigawatt/plundarrpedia.git
 cd plundarrpedia
 cp example.env .env
@@ -49,7 +49,7 @@ cp example.env .env
 
 Useful authoring and validation commands:
 
-```console
+```sh
 make serve
 make markdown
 make site
@@ -79,8 +79,7 @@ page around a reader's task rather than the source repository's file layout.
 
 - Use relative links for pages and assets inside Plundarrpedia.
 - Use descriptive link text instead of “click here.”
-- Give fenced command examples the `console` language and configuration
-  examples the correct format such as `yaml`, `text`, or `ini`.
+- Give copyable commands the `sh` language without prompt characters or prose comments. Use `console` only for command output or a terminal transcript, and use the correct format such as `yaml`, `text`, or `ini` for configuration.
 - Wrap prose naturally. The linter deliberately does not enforce a fixed line
   length because tables, URLs, and Material attributes can be wider.
 - Put one blank line around headings, lists, tables, code fences, and
@@ -90,6 +89,16 @@ page around a reader's task rather than the source repository's file layout.
 - Prefer ordered steps for a procedure and checklists for preflight validation.
 - Do not reproduce an entire project README. Link to the source when internal
   implementation detail becomes the subject.
+
+## Writing standard
+
+Write for the reader and the outcome rather than mirroring the source tree. Lead with the required action or conclusion, use active voice and second person in procedures, put conditions before instructions, and keep one main idea in each sentence or paragraph.
+
+Use sentence-case headings with searchable nouns and active verbs. Keep short navigation labels concise, use numbered lists for procedures, use tables only for genuine comparisons, and link to the most specific useful source.
+
+Reserve callouts for information that justifies interrupting the reading flow. Most pages need no more than one or two, and the warning itself must state the required action or risk without relying on nautical humor.
+
+These choices follow the practical parts of [GitHub's documentation style guide](https://docs.github.com/en/contributing/style-guide-and-content-model/style-guide), [GitHub's content design principles](https://docs.github.com/en/contributing/writing-for-github-docs/content-design-principles), and the [Google developer documentation style highlights](https://developers.google.com/style/highlights). Plundarrpedia keeps its existing light nautical voice, Material components, and task-oriented structure rather than copying another site's editorial system wholesale.
 
 ## Material callouts
 
@@ -134,7 +143,7 @@ inline HTML required for Material card grids and README badges. It also permits
 Material's three-space card-list markers and mixed fenced/indented code inside
 tabs and admonitions; MkDocs owns the rendering rules for those constructs.
 
-```console
+```sh
 make markdown
 make serve
 ```
@@ -146,7 +155,7 @@ Material render at <http://localhost:8000>.
 
 Before submitting a documentation change:
 
-```console
+```sh
 make markdown
 make site
 make clean

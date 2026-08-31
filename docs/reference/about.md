@@ -16,7 +16,7 @@ into a stale copy of a README.
   catalog, setup notes, helper scripts, and tests.
 - Current Privateerr documentation, Compose handoff, image/release model, and
   validation workflow.
-- Current Duplex README and Compose service set.
+- Current Plundarr preset catalog, service charts, generated output, and migration boundaries.
 - Current Docker, Material for MkDocs, Synology, and TrueNAS documentation for
   behavior owned by those platforms.
 
@@ -45,9 +45,7 @@ generated site from an unprivileged Nginx image. Architecture maps use native
 HTML and CSS, so they render under the same self-contained Content Security
 Policy on GitHub Pages and in the production container.
 
-The container workflow follows the sibling project conventions: multi-platform
-Buildx output, OCI metadata, Trivy scanning, SBOM/provenance, GHCR publishing,
-and Renovate-managed dependency updates.
+The container workflow follows the sibling project conventions: multi-platform Buildx output, Open Container Initiative (OCI) metadata, Trivy scanning, software bills of materials (SBOMs), provenance, GitHub Container Registry (GHCR) publishing, and Renovate-managed dependency updates.
 
 ## Contributing
 

@@ -3,8 +3,9 @@
 ## Purpose
 
 Plundarrpedia is the public, task-oriented documentation hub for Plundarr,
-Privateerr, Duplex, and related self-hosted media projects. It is a Material for
-MkDocs site published to GitHub Pages and as a production Docker image.
+Privateerr, and the generated self-hosted media presets they power. It is a
+Material for MkDocs site published to GitHub Pages and as a production Docker
+image.
 
 ## Voice and content
 
@@ -15,6 +16,8 @@ MkDocs site published to GitHub Pages and as a production Docker image.
   generated VPN material, local paths, or private logs from them.
 - Clearly state that Privateerr generates configuration and Gluetun runs the
   VPN tunnel.
+- Treat Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, and Watchtower
+  as Plundarr presets rather than separate maintained documentation products.
 - Prefer task-oriented guides over copies of project READMEs.
 
 ## Repository layout

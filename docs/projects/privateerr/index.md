@@ -12,6 +12,9 @@ Privateerr packages the official, unmodified
 scripts into a small Alpine container. It adds repeatable commands, friendly
 defaults, a health signal, and a metadata handoff for Docker Compose stacks.
 
+!!! important "Privateerr remains actively maintained"
+    Privateerr is maintained both as a standalone project and as the `privateerr` service in every VPN-enabled Plundarr preset. Use Plundarr when you want the complete generated Privateerr-to-Gluetun lane, or use the standalone project when you want Privateerr to generate files for another WireGuard deployment.
+
 !!! danger "Privateerr is not a VPN client"
     Privateerr does not establish or maintain a tunnel. It writes a PIA
     WireGuard configuration file for Gluetun, WireGuard, or another compatible
@@ -51,4 +54,4 @@ Use `edge` only when intentionally testing the newest successful `main` build.
 - `wg0.conf` is secret material even though it is generated rather than typed.
 
 [View Privateerr on GitHub](https://github.com/scottgigawatt/privateerr){ .md-button }
-[Generate a config](quick-start.md){ .md-button .md-button--primary }
+[Use Privateerr with Plundarr](quick-start.md){ .md-button .md-button--primary }

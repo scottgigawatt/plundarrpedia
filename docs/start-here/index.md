@@ -6,8 +6,7 @@ icon: material/map-marker-path
 
 # Pick a route
 
-You do not need every project. Start with the outcome you want and add another
-ship only when it solves a real problem.
+You do not need every service. Start with the outcome you want, choose the smallest maintained route, and add another component only when it solves a real problem.
 
 <div class="grid cards" markdown>
 
@@ -18,19 +17,17 @@ ship only when it solves a real problem.
 
     [:material-arrow-right: Plundarr quick start](../projects/plundarr/quick-start.md)
 
--   **I only need PIA WireGuard configuration**
+-   **I need the Privateerr and Gluetun VPN lane**
 
-    Use **Privateerr**. It runs the official PIA manual-connection scripts and
-    writes files that Gluetun or another WireGuard client can consume.
+    Use a VPN-enabled **Plundarr** preset for a complete deployment. Read the **Privateerr** guide when you need to understand or troubleshoot the generated PIA WireGuard handoff.
 
-    [:material-arrow-right: Privateerr quick start](../projects/privateerr/quick-start.md)
+    [:material-arrow-right: Understand Privateerr](../projects/privateerr/index.md)
 
--   **Plex already works; I want the backstage tools**
+-   **I want a focused deployment**
 
-    Use **Duplex** for Kometa, ImageMaid, PATTRMM, Tautulli, Notifiarr, and
-    controlled container updates.
+    Choose a Plundarr preset for Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, Watchtower, or a custom service selection.
 
-    [:material-arrow-right: Duplex overview](../projects/duplex/index.md)
+    [:material-arrow-right: Compare presets](../projects/presets/index.md)
 
 -   **I need a platform-specific route**
 
