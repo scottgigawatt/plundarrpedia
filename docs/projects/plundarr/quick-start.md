@@ -1,118 +1,131 @@
 ---
 title: Plundarr Quick Start
-description: Generate, review, and launch the default Plundarr stack.
+description: Generate, review, and launch the default Plundarr deployment under dist/plundarr.
 icon: material/rocket-launch
+status: updated
 ---
 
 # Plundarr quick start
 
+This route generates the default Plundarr deployment with its current removable defaults, including qBittorrent, Calibre-Web Automated, Cleanuparr, and Watchtower. You can change those choices before launch.
+
 ## 1. Clone the repository
 
-```console
+```sh
 git clone https://github.com/scottgigawatt/plundarr.git
 cd plundarr
 ```
 
-## 2. Generate the default voyage
+## 2. Generate the default deployment
 
-```console
+```sh
 make ship
 ```
 
-Maraudarr prefers an available local image, then a published image, then a
-local build from the checkout. It writes the finished Compose project into the
-repository root.
+Maraudarr resolves the preset and service dependencies, validates the generated Compose model, and writes the complete project beneath `dist/plundarr/`:
 
-!!! important "Refresh Maraudarr before an upgrade"
-    `make ship` reuses an available local Maraudarr image. Before regenerating
-    an existing deployment to pick up a newer release, refresh the generator:
+```text
+dist/plundarr/
+├── docker-compose.yml
+├── example.env
+├── .env
+└── config/
+```
 
-    ```console
-    make update-maraudarr
-    make configure
-    ```
+Use the interactive configurator when you want to review preset and service choices before generation:
 
-    Plundarr v1.0.2 requires regeneration to add the rootless identity shared
-    by Apprise and Seerr. Existing `.env` values and application state are
-    preserved; no data or mount migration is required.
-
-For the interactive configurator instead:
-
-```console
+```sh
 make configure
 ```
 
-Useful discovery commands:
+Inspect the current catalog at any time:
 
-```console
+```sh
 make presets
 make services
 ```
 
-## 3. Edit `.env`
+## 3. Review the generated environment
 
-At minimum, review:
+Edit `dist/plundarr/.env`. At minimum, review:
 
-| Setting                             | Why it matters                                            |
-| ----------------------------------- | --------------------------------------------------------- |
-| `PIA_USER` / `PIA_PASS`             | Required when the Privateerr/Gluetun lane uses PIA.       |
-| `DEFAULT_PUID` / `DEFAULT_PGID`     | Must match a host identity that can access mounted files. |
-| `DEFAULT_GROUP`                     | Supplemental group used for shared host-path access.      |
-| `HOST_DOWNLOADS_PATH`               | Shared download root used by clients and managers.        |
-| `HOST_MOVIES_PATH` / `HOST_TV_PATH` | Final libraries seen by managers and playback servers.    |
-| `TZ`                                | Keeps logs and schedules aligned with your location.      |
-| `*_WEBUI_PORT`                      | Must not collide with another host service.               |
+| Setting | Why it matters |
+| --- | --- |
+| `PIA_USER` / `PIA_PASS` | Required because the default preset includes the Privateerr and Gluetun VPN lane. |
+| `DEFAULT_PUID` / `DEFAULT_PGID` | Must identify a host account that can access the mounted paths. |
+| Service-specific groups | Must match supplemental access required by the selected services. |
+| Host path variables | Must point to real download, media, ebook, backup, and configuration locations. |
+| `TZ` | Keeps logs and schedules aligned with your location. |
+| `COMPOSE_NETWORK_*` | Must not overlap another Docker, local-area network, or virtual private network route. |
+| `*_WEBUI_PORT` | Must not collide with another host service. |
 
-The checked-in defaults use Synology-shaped paths as examples. Linux and
-Docker Desktop users should replace them with real absolute host paths.
+The checked-in defaults use Synology-shaped paths as examples. Linux and Docker Desktop users should replace them with real absolute host paths.
 
-## 4. Inspect before launch
+## 4. Validate before launch
 
-```console
+```sh
 make config
 ```
 
-This asks Docker Compose to resolve the project using `.env`. Warnings about
-missing variables, invalid networks, or bad interpolation are cheaper to fix
-before containers exist.
+This renders the generated project with `dist/plundarr/.env`. Fix missing variables, invalid interpolation, network overlap, or port collisions before containers exist.
 
-## 5. Launch
+## 5. Launch and test the VPN lane
 
-```console
+```sh
 make up
-```
-
-Then validate the VPN lane before configuring download clients or managers:
-
-```console
 make test-vpn
 ```
 
-!!! warning
-    VPN tests may use real PIA credentials and inspect live generated WireGuard
-    material. Never commit `.env`, `wg0.conf`, `privateerr.env`, forwarded ports,
-    or test logs.
+> [!WARNING]
+> VPN tests may use real PIA credentials and inspect generated WireGuard material. Never commit `.env`, `wg0.conf`, `privateerr.env`, forwarded ports, or test logs.
 
-## Common variations
+## Generate common variations
 
-```console
-# Use SABnzbd instead of qBittorrent
-make ship PRESET=plundarr OPTIONAL_SERVICES=sabnzbd
+Use a focused preset:
 
-# Use NZBGet instead of qBittorrent
-make ship PRESET=plundarr OPTIONAL_SERVICES=nzbget
-
-# Run SABnzbd and NZBGet as separate Usenet queues
-make ship PRESET=plundarr OPTIONAL_SERVICES=sabnzbd,nzbget
-
-# Add Plex to the generated stack
-make ship OPTIONAL_SERVICES=qbittorrent,cleanuparr,plex
-
-# Generate the Boudoirr preset
-make ship PRESET=boudoirr \
-  OPTIONAL_SERVICES=qbittorrent,sabnzbd,cleanuparr,watchtower
+```sh
+make ship PRESET=boudoirr
+make ship PRESET=jellyfin
+make ship PRESET=plex
+make ship PRESET=calibre-web-automated
+make ship PRESET=duplex
+make ship PRESET=watchtower
 ```
 
-Regeneration preserves known environment values by variable name. Still,
-back up `config/` before a major migration and inspect the generated diff before
-launching it.
+Add a Usenet client to the default preset:
+
+```sh
+make ship ADD_SERVICES=sabnzbd
+make ship ADD_SERVICES=nzbget
+```
+
+Generate a Usenet-only default deployment:
+
+```sh
+make ship REMOVE_SERVICES=qbittorrent,cleanuparr ADD_SERVICES=nzbget
+```
+
+Remove the default ebook service when another deployment already owns it:
+
+```sh
+make ship REMOVE_SERVICES=calibre-web-automated
+```
+
+`ADD_SERVICES` and `REMOVE_SERVICES` replace the removed `OPTIONAL_SERVICES` interface.
+
+## Regenerate an existing deployment
+
+Pull the configured Maraudarr image, regenerate only the selected preset, and validate the result:
+
+```sh
+make pull-image
+make ship PRESET=YOUR-PRESET
+make config PRESET=YOUR-PRESET
+```
+
+Replace `YOUR-PRESET` with the deployment ID. Regeneration preserves known environment values and does not overwrite application state. Values for temporarily unselected services remain in a marked footer so they can return later.
+
+Back up `dist/YOUR-PRESET/config/` before a major migration and inspect the generated `.env` and Compose changes before restarting.
+
+[Compare presets](../presets/index.md){ .md-button }
+[Configure the generated stack](configuration.md){ .md-button .md-button--primary }

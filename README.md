@@ -44,11 +44,7 @@
 
 # ⚓ Plundarrpedia 🏴‍☠️📚
 
-Ahoy! Plundarrpedia is the public field guide for the Scott Gigawatt media
-fleet: [Plundarr](https://github.com/scottgigawatt/plundarr),
-[Privateerr](https://github.com/scottgigawatt/privateerr),
-[Duplex](https://github.com/scottgigawatt/duplex), and the practical Docker,
-storage, networking, and NAS knowledge that connects them.
+Ahoy! Plundarrpedia is the public field guide for [Plundarr](https://github.com/scottgigawatt/plundarr), [Privateerr](https://github.com/scottgigawatt/privateerr), the maintained Plundarr preset fleet, and the practical Docker, storage, networking, and NAS knowledge that connects them.
 
 The project repositories remain the source of truth for code and exact
 configuration. Plundarrpedia is where those pieces become task-oriented guides,
@@ -64,11 +60,11 @@ architecture maps, examples, and troubleshooting routes for humans.
 Run the production site locally with the same one-file Compose project used on
 ordinary Docker hosts, Synology Container Manager, and compatible NAS systems:
 
-```console
-❯ git clone https://github.com/scottgigawatt/plundarrpedia.git
-❯ cd plundarrpedia
-❯ cp example.env .env
-❯ make run
+```sh
+git clone https://github.com/scottgigawatt/plundarrpedia.git
+cd plundarrpedia
+cp example.env .env
+make run
 ```
 
 Open <http://localhost:8000>.
@@ -76,8 +72,8 @@ Open <http://localhost:8000>.
 The defaults in `.env` are ready for a normal local run. Every setting keeps a
 shell fallback, so it can also be overridden for one command:
 
-```console
-❯ PLUNDARRPEDIA_HOST_PORT=8888 PLUNDARRPEDIA_TAG=edge make run
+```sh
+PLUNDARRPEDIA_HOST_PORT=8888 PLUNDARRPEDIA_TAG=edge make run
 ```
 
 > [!TIP]
@@ -91,7 +87,7 @@ shell fallback, so it can also be overridden for one command:
 | [Start Here](https://scottgigawatt.github.io/plundarrpedia/start-here/)          | Choose the smallest project path that solves the job.               |
 | [Plundarr](https://scottgigawatt.github.io/plundarrpedia/projects/plundarr/)     | Generate and operate a complete media automation stack.             |
 | [Privateerr](https://scottgigawatt.github.io/plundarrpedia/projects/privateerr/) | Generate PIA WireGuard configuration for Gluetun.                   |
-| [Duplex](https://scottgigawatt.github.io/plundarrpedia/projects/duplex/)         | Operate Plex curation, cleanup, monitoring, and notification tools. |
+| [Presets](https://scottgigawatt.github.io/plundarrpedia/projects/presets/)       | Choose Boudoirr, Jellyfin, Plex, CWA, Duplex, Watchtower, or custom |
 | [Platform Guides](https://scottgigawatt.github.io/plundarrpedia/guides/)         | Deploy on Linux Docker, Synology, or TrueNAS.                       |
 
 ## ✍️ Write and Preview the Wiki
@@ -100,8 +96,8 @@ Markdown pages live under `docs/`. Each page uses a small YAML front matter
 block, one H1 heading, sentence-case headings, fenced code blocks, and relative
 links for pages inside this site.
 
-```console
-❯ make serve
+```sh
+make serve
 ```
 
 Open <http://localhost:8000>. Material for MkDocs reloads the site as files
@@ -109,12 +105,12 @@ change.
 
 Before opening a pull request:
 
-```console
-❯ make markdown
-❯ make site
-❯ make clean
-❯ make config
-❯ make lint
+```sh
+make markdown
+make site
+make clean
+make config
+make lint
 ```
 
 The rules live in [`.markdownlint-cli2.yaml`](./.markdownlint-cli2.yaml), and
@@ -134,9 +130,9 @@ Plundarrpedia uses a multi-stage Dockerfile:
 2. Responsive architecture maps render without a third-party JavaScript CDN.
 3. A pinned unprivileged Nginx image serves only the generated static files.
 
-```console
-❯ make build
-❯ make build-multiarch
+```sh
+make build
+make build-multiarch
 ```
 
 Published images support `linux/amd64`, `linux/arm64`, and `linux/arm/v7`.

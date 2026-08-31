@@ -14,7 +14,7 @@
 # Public site identity and search-engine metadata.
 #
 site_name: Plundarrpedia
-site_description: The captain's field guide to Plundarr, Privateerr, Duplex, and self-hosted media.
+site_description: The captain's field guide to Plundarr, Privateerr, and the generated media presets they power.
 site_url: https://scottgigawatt.github.io/plundarrpedia/
 copyright: Copyright &copy; 2026 Scott Gigawatt
 
@@ -31,6 +31,8 @@ edit_uri: edit/main/docs/
 #
 not_in_nav: |
   GHCR_README.md
+  projects/catalog.md
+  projects/duplex/index.md
 
 #
 # Define the complete public navigation hierarchy explicitly so page order and
@@ -61,10 +63,14 @@ nav:
       - Config Handoff: projects/privateerr/config-handoff.md
       - Troubleshooting: projects/privateerr/troubleshooting.md
 
-  # Use the Duplex project name while keeping related Plex projects nearby.
-  - Duplex:
-      - Overview: projects/duplex/index.md
-      - Media Project Catalog: projects/catalog.md
+  # Keep focused deployment shapes under Plundarr instead of presenting each
+  # historical repository as a separate documentation product.
+  - Presets:
+      - Choose a Preset: projects/presets/index.md
+      - Boudoirr: projects/presets/boudoirr.md
+      - Duplex: projects/presets/duplex.md
+      - Media Servers and Books: projects/presets/media-servers-and-books.md
+      - Watchtower: projects/presets/watchtower.md
 
   # Provide platform-specific routes after the project concepts are established.
   - Platform Guides:

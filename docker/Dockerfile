@@ -84,7 +84,7 @@ ARG IMAGE_VERSION=latest
 # link the package to its source, documentation, license, and build revision.
 #
 LABEL org.opencontainers.image.title="Plundarrpedia" \
-      org.opencontainers.image.description="A one-stop wiki for Plundarr, Privateerr, Duplex, and self-hosted media automation." \
+      org.opencontainers.image.description="A one-stop wiki for Plundarr, Privateerr, and generated self-hosted media deployments." \
       org.opencontainers.image.url="https://scottgigawatt.github.io/plundarrpedia/" \
       org.opencontainers.image.documentation="https://scottgigawatt.github.io/plundarrpedia/" \
       org.opencontainers.image.source="https://github.com/scottgigawatt/plundarrpedia" \

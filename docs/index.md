@@ -1,6 +1,6 @@
 ---
 title: Chart Room
-description: One harbor for Plundarr, Privateerr, Duplex, and self-hosted media guides.
+description: One harbor for Plundarr, Privateerr, and the generated media deployments they power.
 icon: material/map
 hide:
   - navigation
@@ -12,8 +12,7 @@ status: new
 
 # Your media fleet, finally on one map
 
-Plundarrpedia connects the projects, containers, paths, and practical decisions
-behind a self-hosted media stack—without assuming your harbor is a Synology.
+Plundarrpedia connects Plundarr, Privateerr, generated presets, containers, paths, and practical decisions behind a self-hosted media stack—without assuming your harbor is a Synology.
 
 [Plot a course](start-here/index.md){ .md-button .md-button--primary }
 [Open the Plundarr charts](projects/plundarr/index.md){ .md-button }
@@ -46,14 +45,13 @@ behind a self-hosted media stack—without assuming your harbor is a Synology.
 
     [:octicons-arrow-right-24: Start with Privateerr](projects/privateerr/quick-start.md)
 
--   :material-television-classic:{ .lg .middle } **Care for Plex after launch**
+-   :material-view-grid-plus:{ .lg .middle } **Choose a focused preset**
 
     ---
 
-    Explore Duplex, Kometa, ImageMaid, PATTRMM, Tautulli, and the rest of the
-    backstage crew.
+    Generate Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, Watchtower, or a custom project from the same maintained catalog.
 
-    [:octicons-arrow-right-24: Meet Duplex](projects/duplex/index.md)
+    [:octicons-arrow-right-24: Compare presets](projects/presets/index.md)
 
 -   :material-server-network:{ .lg .middle } **Choose your Docker harbor**
 
@@ -82,16 +80,16 @@ behind a self-hosted media stack—without assuming your harbor is a Synology.
   <span class="flow-map__step">📺 Plex / Jellyfin</span>
 </div>
 
-<div class="flow-map flow-map--support" role="img" aria-label="Privateerr generates WireGuard configuration for the Gluetun VPN tunnel, while Duplex maintains and monitors Plex.">
+<div class="flow-map flow-map--support" role="img" aria-label="Privateerr generates WireGuard configuration for the Gluetun VPN tunnel, while Plundarr presets provide focused deployment shapes such as Duplex.">
   <span class="flow-map__step">🔐 Privateerr</span>
   <span class="flow-map__arrow" aria-hidden="true">→</span>
   <span class="flow-map__step">📄 WireGuard config</span>
   <span class="flow-map__arrow" aria-hidden="true">→</span>
   <span class="flow-map__step">🛡️ Gluetun VPN tunnel</span>
   <span class="flow-map__divider" aria-hidden="true">◆</span>
-  <span class="flow-map__step">📺 Duplex</span>
+  <span class="flow-map__step">🧩 Plundarr presets</span>
   <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">🧰 Plex maintenance</span>
+  <span class="flow-map__step">📺 Playback / books / Plex tools</span>
 </div>
 
 !!! important "Privateerr draws the map; Gluetun sails the tunnel"

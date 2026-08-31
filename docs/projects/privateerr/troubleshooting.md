@@ -16,9 +16,9 @@ Check the Privateerr log for the first direct error. Common causes include:
 - the shared config directory is not writable;
 - the upstream submodule was not cloned for a local image build.
 
-```console
-docker compose logs privateerr
-docker compose config
+```sh
+make logs
+make config
 ```
 
 ## The files exist but Gluetun does not start
@@ -36,16 +36,11 @@ tunnel is connected.
 Run the image-owned readiness probe directly when the Compose health state is
 unclear:
 
-```console
+```sh
 docker compose exec privateerr privateerr-healthcheck
 ```
 
-An exit status of zero means the configured `PRIVATEERR_HEALTHCHECK_MARKER`
-exists. The command is available in Privateerr v1.0.1 and newer and continues
-to honor custom marker paths. Plundarr's default `latest` channel already
-selects a compatible stable image. If the command is missing, replace an
-explicitly pinned older `PRIVATEERR_TAG`, pull the current image, and recreate
-the stack.
+An exit status of zero means the configured `PRIVATEERR_HEALTHCHECK_MARKER` exists. Current Plundarr-generated deployments select a compatible Privateerr image. If the command is missing, refresh Maraudarr, regenerate the preset, and recreate the affected services before changing the healthcheck.
 
 ## Port forwarding is unavailable
 
@@ -71,9 +66,9 @@ client port still produces poor inbound connectivity.
 
 Privateerr's repository includes the test-only Buccaneer validator:
 
-```console
+```sh
 make test-e2e
-make test-down
+make clean-test
 ```
 
 The e2e path uses real credentials when supplied, launches Privateerr and
@@ -81,5 +76,4 @@ Gluetun, validates the tunnel and forwarding expectations, and restores example
 files during cleanup.
 
 !!! caution
-    Always run the cleanup target after live validation and inspect the worktree
-    for generated VPN material before committing.
+    Always run `make clean-test` after live validation and inspect the worktree for generated VPN material before committing.

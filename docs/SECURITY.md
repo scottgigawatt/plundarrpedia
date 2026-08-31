@@ -23,10 +23,7 @@ line rather than every historical documentation snapshot.
 | Older version tags              | ❌        |
 | Forks and modified images       | ❌        |
 
-Issues in Plundarr, Privateerr, Duplex, MkDocs Material, Nginx, or another
-linked upstream project should also be reported to the repository that owns the
-affected code. Plundarrpedia can correct unsafe guidance but cannot patch an
-upstream application.
+Issues in Plundarr, Privateerr, a selected third-party service, MkDocs Material, Nginx, or another linked upstream project should also be reported to the repository that owns the affected code. Plundarrpedia can correct unsafe guidance but cannot patch an upstream application.
 
 ## Reporting a vulnerability
 
