@@ -20,6 +20,7 @@
     "assignees": ["scottgigawatt"],
     "reviewers": ["scottgigawatt"],
     "enabledManagers": [
+        "custom.regex",
         "docker-compose",
         "dockerfile",
         "github-actions",
@@ -58,7 +59,7 @@
         },
         {
             "groupName": "Container images",
-            "matchManagers": ["docker-compose", "dockerfile"]
+            "matchManagers": ["custom.regex", "docker-compose", "dockerfile"]
         },
         {
             "groupName": "MkDocs dependencies",
