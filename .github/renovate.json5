@@ -11,7 +11,8 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
         "config:recommended",
-        "helpers:pinGitHubActionDigests"
+        "helpers:pinGitHubActionDigests",
+        ":enablePreCommit"
     ],
     "timezone": "America/New_York",
     "schedule": ["before 8am on monday"],
@@ -24,7 +25,8 @@
         "docker-compose",
         "dockerfile",
         "github-actions",
-        "pip_requirements"
+        "pip_requirements",
+        "pre-commit"
     ],
     "customManagers": [
         {
@@ -49,6 +51,10 @@
         }
     ],
     "packageRules": [
+        {
+            "groupName": "pre-commit hooks",
+            "matchManagers": ["pre-commit"]
+        },
         {
             "matchManagers": ["docker-compose", "dockerfile", "custom.regex"],
             "pinDigests": true
