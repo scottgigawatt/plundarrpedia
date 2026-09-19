@@ -43,7 +43,7 @@ repos:
   # Validate every Markdown document with the shared markdownlint configuration.
   #
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.22.1
+    rev: v0.23.2
     hooks:
       - id: markdownlint-cli2
         pass_filenames: false
@@ -73,6 +73,6 @@ repos:
   # Lint the production Dockerfile against container image best practices.
   #
   - repo: https://github.com/hadolint/hadolint
-    rev: v2.14.0
+    rev: v2.15.1
     hooks:
       - id: hadolint-docker
