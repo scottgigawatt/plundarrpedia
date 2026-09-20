@@ -47,7 +47,7 @@ Container images often accept `PUID` and `PGID`. Those values must correspond to
 host ownership; a username inside one container does not grant host access by
 magic.
 
-```console
+```sh
 id media
 stat -c '%u:%g %a %n' /srv/media/downloads /srv/media/movies
 ```

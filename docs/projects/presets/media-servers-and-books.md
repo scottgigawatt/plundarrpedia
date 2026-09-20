@@ -47,8 +47,8 @@ Set `CWA_CONFIG_PATH`, `CWA_INGEST_PATH`, and `CWA_LIBRARY_PATH` to three separa
 
 Back up the complete configuration directory and the Calibre library containing `metadata.db`. Set `CWA_NETWORK_SHARE_MODE=true` only when the library uses Network File System (NFS) or Server Message Block (SMB) storage.
 
-!!! important
-    Calibre-Web Automated image releases can migrate persistent databases, so Plundarr excludes the service from Watchtower. Review and apply its image updates intentionally.
+> [!IMPORTANT]
+> Calibre-Web Automated image releases can migrate persistent databases, so Plundarr excludes the service from Watchtower. Review and apply its image updates intentionally.
 
 The service image currently supports `linux/amd64` and `linux/arm64`, not `linux/arm/v7`, even though Maraudarr itself publishes for all three platforms.
 

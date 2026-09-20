@@ -17,10 +17,8 @@ configuration, and expose the VPN device.
 | Synology DSM | Media and containers on one Synology NAS | Shared-folder paths, Container Manager projects, and Task Scheduler |
 | TrueNAS | ZFS-first media storage with Docker-based Apps | Dataset layout, ACL entries, YAML deployment, and `/dev/net/tun` |
 
-!!! tip
-    Generate the Plundarr project before translating it to a platform UI. The
-    final `docker-compose.yml` and matching `.env` are the deployment artifact;
-    the source modules are not.
+> [!TIP]
+> Generate the Plundarr project before translating it to a platform UI. The final `docker-compose.yml` and matching `.env` are the deployment artifact; the source modules are not.
 
 ## What stays the same
 

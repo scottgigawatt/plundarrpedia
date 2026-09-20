@@ -43,7 +43,7 @@ the generated Compose project.
 Plundarrpedia is a static site. It needs no database and stores no runtime
 state. The production image exposes port `8080`:
 
-```console
+```sh
 docker run --rm -p 8000:8080 \
   --read-only \
   --tmpfs /tmp \

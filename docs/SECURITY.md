@@ -56,10 +56,8 @@ Helpful private reports include:
 - minimal, sanitized logs or screenshots;
 - whether the issue belongs to Plundarrpedia or a linked upstream project.
 
-!!! danger
-    Never include real passwords, API tokens, webhook URLs, WireGuard private
-    keys, live `wg0.conf` files, public IP addresses, or unsanitized logs in a
-    public report.
+> [!CAUTION]
+> Never include real passwords, API tokens, webhook URLs, WireGuard private keys, live `wg0.conf` files, public IP addresses, or unsanitized logs in a public report.
 
 ## Response expectations
 
@@ -100,8 +98,7 @@ The protected build path:
 Renovate proposes dependency changes for review instead of allowing published
 build inputs to drift silently.
 
-!!! tip
-    Pull `latest` for the newest stable edition. Use `edge` only when you
-    intentionally want the newest successful `main` build.
+> [!TIP]
+> Pull `latest` for the newest stable edition. Use `edge` only when you intentionally want the newest successful `main` build.
 
 Fair winds, sharp eyes, and may every example keep its secrets redacted. ☠️

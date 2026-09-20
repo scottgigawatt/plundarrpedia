@@ -15,7 +15,7 @@ file when you want to change selected services.
 Linux-based media containers commonly use a numeric user and group ID. On the
 host, identify the account that owns the media directories:
 
-```console
+```sh
 id media
 ```
 

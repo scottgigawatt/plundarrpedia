@@ -14,7 +14,7 @@ This page keeps the deeper authoring, image, release, and maintenance details.
 Use the live-reload server while writing Markdown or adjusting the Material
 theme:
 
-```console
+```sh
 make serve
 ```
 
@@ -23,7 +23,7 @@ MkDocs Material authoring image and does not require a local `.env` file.
 
 Use a strict build before submitting changes:
 
-```console
+```sh
 cp example.env .env
 make site
 ```
@@ -32,14 +32,12 @@ The strict build rejects broken navigation, invalid configuration, missing
 pages, and MkDocs warnings. It writes the generated static site to `site/`.
 Remove that generated output when it is no longer needed:
 
-```console
+```sh
 make clean
 ```
 
-!!! note
-    The generated `site/` directory is build output. Edit the Markdown,
-    overrides, or stylesheets that produced it instead of committing rendered
-    HTML.
+> [!NOTE]
+> The generated `site/` directory is build output. Edit the Markdown, overrides, or stylesheets that produced it instead of committing rendered HTML.
 
 ## Material features
 
@@ -60,7 +58,7 @@ flows when a left-to-right chart would require horizontal scrolling.
 
 Build the same unprivileged Nginx image used by the publishing workflow:
 
-```console
+```sh
 cp example.env .env
 make build
 ```
@@ -75,13 +73,13 @@ Published images target these platforms:
 
 Verify every published architecture with Buildx:
 
-```console
+```sh
 make build-multiarch
 ```
 
 Override the platform list for a one-off test:
 
-```console
+```sh
 make build-multiarch \
   BUILDX_PLATFORM_OPTIONS="--platform linux/amd64,linux/arm64"
 ```

@@ -12,14 +12,14 @@ complete Material for MkDocs site from an unprivileged Nginx runtime.
 
 The canonical image is published to GitHub Container Registry (GHCR):
 
-```console
+```sh
 docker pull ghcr.io/scottgigawatt/plundarrpedia:latest
 ```
 
 Use `edge` only when intentionally testing the newest successful build from
 `main`:
 
-```console
+```sh
 docker pull ghcr.io/scottgigawatt/plundarrpedia:edge
 ```
 
@@ -35,7 +35,7 @@ and `linux/arm/v7`. Docker selects the correct platform automatically.
 
 ## ⚡ Run it
 
-```console
+```sh
 docker run --rm \
   --name plundarrpedia \
   --publish 8000:8080 \

@@ -55,7 +55,7 @@ architecture maps, examples, and troubleshooting routes for humans.
 > WireGuard configuration and endpoint metadata. Gluetun establishes and runs
 > the VPN tunnel.
 
-## ⚡ Fastest Path
+## Fastest path ⚡
 
 Run the production site locally with the same one-file Compose project used on
 ordinary Docker hosts, Synology Container Manager, and compatible NAS systems:
@@ -76,21 +76,19 @@ shell fallback, so it can also be overridden for one command:
 PLUNDARRPEDIA_HOST_PORT=8888 PLUNDARRPEDIA_TAG=edge make run
 ```
 
-> [!TIP]
-> Use `make env` to see the values Docker Compose will use after shell and
-> `.env` interpolation.
+Use `make env` to see the values Docker Compose will use after shell and `.env` interpolation.
 
-## 🧭 Pick a Reading Route
+## Pick a reading route 🧭
 
-| 🗺️ Route                                                                         | 🎯 What it covers                                                   |
-| -------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| [Start Here](https://scottgigawatt.github.io/plundarrpedia/start-here/)          | Choose the smallest project path that solves the job.               |
-| [Plundarr](https://scottgigawatt.github.io/plundarrpedia/projects/plundarr/)     | Generate and operate a complete media automation stack.             |
-| [Privateerr](https://scottgigawatt.github.io/plundarrpedia/projects/privateerr/) | Generate PIA WireGuard configuration for Gluetun.                   |
-| [Presets](https://scottgigawatt.github.io/plundarrpedia/projects/presets/)       | Choose Boudoirr, Jellyfin, Plex, CWA, Duplex, Watchtower, or custom |
-| [Platform Guides](https://scottgigawatt.github.io/plundarrpedia/guides/)         | Deploy on Linux Docker, Synology, or TrueNAS.                       |
+| Route                                                                            | What it covers                                                                 |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [Start Here](https://scottgigawatt.github.io/plundarrpedia/start-here/)          | Choose the smallest project path that solves the job.                          |
+| [Plundarr](https://scottgigawatt.github.io/plundarrpedia/projects/plundarr/)     | Generate and operate a complete media automation stack.                        |
+| [Privateerr](https://scottgigawatt.github.io/plundarrpedia/projects/privateerr/) | Generate PIA WireGuard configuration for Gluetun.                              |
+| [Presets](https://scottgigawatt.github.io/plundarrpedia/projects/presets/)       | Choose Boudoirr, Jellyfin, Plex, CWA, Duplex, Watchtower, Portainer, or custom |
+| [Platform Guides](https://scottgigawatt.github.io/plundarrpedia/guides/)         | Deploy on Linux Docker, Synology, or TrueNAS.                                  |
 
-## ✍️ Write and Preview the Wiki
+## Write and preview the wiki ✍️
 
 Markdown pages live under `docs/`. Each page uses a small YAML front matter
 block, one H1 heading, sentence-case headings, fenced code blocks, and relative
@@ -117,12 +115,9 @@ The rules live in [`.markdownlint-cli2.yaml`](./.markdownlint-cli2.yaml), and
 the complete writing conventions live in
 [`docs/CONTRIBUTING.md`](./docs/CONTRIBUTING.md).
 
-> [!NOTE]
-> MkDocs strict mode catches broken navigation and configuration warnings.
-> Markdownlint catches document structure and formatting problems. Both checks
-> are intentional because they detect different classes of mistakes.
+MkDocs strict mode catches broken navigation and configuration warnings. Markdownlint catches document structure and formatting problems. Both checks are intentional because they detect different classes of mistakes.
 
-## 🐳 Build the Production Image
+## Build the production image 🐳
 
 Plundarrpedia uses a multi-stage Dockerfile:
 
@@ -148,7 +143,7 @@ Published images support `linux/amd64`, `linux/arm64`, and `linux/arm/v7`.
 > `edge` follows successful builds from `main`. Use a semantic-version tag when
 > you need reproducible deployment behavior.
 
-## ⚙️ Useful Commands
+## Useful commands ⚙️
 
 | ⚙️ Command                | ✅ Use it when                                     |
 | ------------------------- | -------------------------------------------------- |
@@ -166,7 +161,7 @@ Published images support `linux/amd64`, `linux/arm64`, and `linux/arm/v7`.
 | `make logs`               | You want to follow the production container logs.  |
 | `make lint`               | You want every repository validation hook.         |
 
-## 🚀 Publishing
+## Publishing 🚀
 
 Changes merged to `main` follow two lanes:
 
@@ -178,7 +173,7 @@ GitHub Actions are pinned to full commit digests. Renovate proposes controlled
 updates for Actions, Python dependencies, Compose images, and Dockerfile base
 digests.
 
-## 🛡️ Security and Scope
+## Security and scope 🛡️
 
 See the [security policy](./docs/SECURITY.md) for supported releases and private
 vulnerability reporting instructions.
@@ -190,11 +185,9 @@ vulnerability reporting instructions.
 - Keep the runtime read-only, unprivileged, capability-free, and intentionally
   updated.
 
-> [!WARNING]
-> Documentation examples are public. Replace real tokens, hostnames, account
-> IDs, tunnel keys, and private network details before committing a page.
+Documentation examples are public. Replace real tokens, hostnames, account IDs, tunnel keys, and private network details before committing a page.
 
-## ⚖️ License and Community
+## License and community ⚖️
 
 Plundarrpedia is licensed under Apache 2.0; see [LICENSE](LICENSE).
 

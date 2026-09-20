@@ -45,8 +45,8 @@ Select `overlay-reset` or `recyclarr` before invoking its tool target. See [v2 c
 
 The published [Plundarr developer documentation](https://scottgigawatt.github.io/plundarr/) covers Maraudarr architecture, extension contracts, testing, and the generated Python reference.
 
-!!! caution
-    `make nuke PRESET=YOUR-PRESET` removes attributable Docker resources but preserves deployment files and application state. `make delete-config PRESET=YOUR-PRESET` deletes the selected configuration tree. Back up the deployment before either destructive operation.
+> [!CAUTION]
+> `make nuke PRESET=YOUR-PRESET` removes attributable Docker resources but preserves deployment files and application state. `make delete-config PRESET=YOUR-PRESET` deletes the selected configuration tree. Back up the deployment before either destructive operation.
 
 ## Privateerr standalone source
 

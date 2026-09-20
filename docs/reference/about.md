@@ -52,7 +52,7 @@ The container workflow follows the sibling project conventions: multi-platform B
 Edit Markdown under `docs/`, update `mkdocs.yml` when adding navigation, and
 follow the [writing guide](../CONTRIBUTING.md). Then validate:
 
-```console
+```sh
 make site
 make config
 make lint

@@ -53,10 +53,8 @@ Managers, indexers, dashboards, and playback servers normally stay on the
 project network and reach the download clients through the ports exposed by
 Gluetun.
 
-!!! warning
-    `network_mode: service:gluetun` means the download client does not own a
-    separate network identity. Publish its Web UI and inbound ports on Gluetun,
-    not on the download-client service.
+> [!WARNING]
+> `network_mode: service:gluetun` means the download client does not own a separate network identity. Publish its Web UI and inbound ports on Gluetun, not on the download-client service.
 
 ## The storage boundary
 

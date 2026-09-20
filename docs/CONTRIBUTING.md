@@ -80,8 +80,7 @@ page around a reader's task rather than the source repository's file layout.
 - Use relative links for pages and assets inside Plundarrpedia.
 - Use descriptive link text instead of “click here.”
 - Give copyable commands the `sh` language without prompt characters or prose comments. Use `console` only for command output or a terminal transcript, and use the correct format such as `yaml`, `text`, or `ini` for configuration.
-- Wrap prose naturally. The linter deliberately does not enforce a fixed line
-  length because tables, URLs, and Material attributes can be wider.
+- Keep each ordinary prose paragraph on one physical source line and use visual editor wrapping. Preserve semantic blank lines, lists, tables, and code blocks. The linter does not enforce a fixed line length.
 - Put one blank line around headings, lists, tables, code fences, and
   admonitions.
 - Explain acronyms the first time they appear on a route intended for new
@@ -100,27 +99,26 @@ Reserve callouts for information that justifies interrupting the reading flow. M
 
 These choices follow the practical parts of [GitHub's documentation style guide](https://docs.github.com/en/contributing/style-guide-and-content-model/style-guide), [GitHub's content design principles](https://docs.github.com/en/contributing/writing-for-github-docs/content-design-principles), and the [Google developer documentation style highlights](https://developers.google.com/style/highlights). Plundarrpedia keeps its existing light nautical voice, Material components, and task-oriented structure rather than copying another site's editorial system wholesale.
 
-## Material callouts
+## GitHub alerts
 
-Use callouts when the reader needs to distinguish optional advice from a
-security or data-loss boundary:
+Use native GitHub alerts for information readers must notice while scanning. The same source renders on GitHub and as Material admonitions through `pymdownx.quotes` on the published wiki. Do not use MkDocs-only `!!!` syntax or custom alert titles.
 
 ```markdown
-!!! note
-    Context that helps explain the surrounding instructions.
-
-!!! tip
-    A useful shortcut or operational improvement.
-
-!!! warning
-    A credible security, privacy, or service interruption risk.
-
-!!! danger
-    A likely destructive or irreversible action.
+> [!IMPORTANT]
+> Back up the deployment before replacing its configuration.
 ```
 
-Keep the callout itself direct. Nautical humor belongs in the surrounding prose,
-not in the part that tells a reader how to avoid losing data.
+Choose the type that matches the message:
+
+- `[!NOTE]`: useful context.
+- `[!TIP]`: advice that makes a task easier.
+- `[!IMPORTANT]`: information required for success.
+- `[!WARNING]`: immediate attention needed to avoid a problem.
+- `[!CAUTION]`: risks or destructive outcomes.
+
+Use one or two alerts per page when possible. Do not place them consecutively, nest them inside other elements, hide risks in collapsible content, or wrap routine commands in alerts. Keep the first quoted prose line directly below the marker. Use a blank quoted line only to separate paragraphs or delimit a list or code block.
+
+Keep the alert itself literal and direct. Nautical humor belongs in the surrounding prose, not in the instruction that prevents data loss. Check both GitHub's rendered Markdown and the strict-built wiki before merging changes to alert syntax or rendering.
 
 ## Public-data boundary
 
@@ -167,9 +165,8 @@ Run `make build` when the Docker context, theme, requirements, or production
 server can be affected. Run `make build-multiarch` when Dockerfile or workflow
 changes can affect the published platform set.
 
-!!! important
-    A clean Markdown lint does not prove that navigation links resolve or that
-    Material extensions render. A strict MkDocs build is required as well.
+> [!IMPORTANT]
+> A clean Markdown lint does not prove that navigation links resolve or that Material extensions render. A strict MkDocs build is required as well.
 
 ## Repository style
 

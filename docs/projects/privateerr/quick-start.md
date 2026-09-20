@@ -29,8 +29,8 @@ make test-vpn
 
 Privateerr writes `wg0.conf` and `privateerr.env` beneath the generated configuration tree. Gluetun consumes the handoff and establishes the live tunnel.
 
-!!! warning
-    `wg0.conf` contains live WireGuard connection material. Do not paste it into an issue, commit it, or include it in an unencrypted backup.
+> [!WARNING]
+> `wg0.conf` contains live WireGuard connection material. Do not paste it into an issue, commit it, or include it in an unencrypted backup.
 
 ## Generate files for another WireGuard deployment
 

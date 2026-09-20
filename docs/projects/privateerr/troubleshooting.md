@@ -92,5 +92,5 @@ The e2e path uses real credentials when supplied, launches Privateerr and
 Gluetun, validates the tunnel and forwarding expectations, and restores example
 files during cleanup.
 
-!!! caution
-    Always run `make clean-test` after live validation and inspect the worktree for generated VPN material before committing.
+> [!CAUTION]
+> Always run `make clean-test` after live validation and inspect the worktree for generated VPN material before committing.

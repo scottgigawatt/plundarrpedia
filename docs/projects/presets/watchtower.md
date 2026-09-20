@@ -29,8 +29,8 @@ make watchtower-run-once PRESET=watchtower
 
 The one-shot target pulls the configured image, runs with `--run-once`, and removes its temporary container when the pass completes.
 
-!!! caution
-    Automatic image replacement can introduce database migrations, changed configuration, or incompatible runtime behavior. Back up application state and keep tightly coordinated services excluded unless you have tested their upgrade path.
+> [!CAUTION]
+> Automatic image replacement can introduce database migrations, changed configuration, or incompatible runtime behavior. Back up application state and keep tightly coordinated services excluded unless you have tested their upgrade path.
 
 Containers labeled `com.centurylinklabs.watchtower.enable=false` remain excluded. Plundarrpedia and Calibre-Web Automated use that boundary so their updates stay operator-controlled.
 

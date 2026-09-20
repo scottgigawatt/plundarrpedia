@@ -40,8 +40,8 @@ dist/
     └── config/              # Persistent application state
 ```
 
-!!! important
-    Review `dist/plundarr/.env` before launching. PIA credentials, user/group IDs, host media paths, timezone, and port choices belong to your harbor and cannot be safely guessed by the generator.
+> [!IMPORTANT]
+> Review `dist/plundarr/.env` before launching. PIA credentials, user/group IDs, host media paths, timezone, and port choices belong to your harbor and cannot be safely guessed by the generator.
 
 ## Where to go next
 

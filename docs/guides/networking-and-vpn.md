@@ -58,11 +58,12 @@ torrent connectivity matters.
 
 ## Validation ladder
 
-```console
-docker compose config
-docker compose ps
-docker compose logs privateerr
-docker compose logs gluetun
+Run these commands from the Plundarr repository root for the default preset:
+
+```sh
+make config
+make ps
+docker compose --project-directory dist/plundarr logs privateerr gluetun
 make test-vpn
 ```
 
