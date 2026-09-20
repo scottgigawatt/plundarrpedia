@@ -53,6 +53,9 @@ nav:
       - Overview: projects/plundarr/index.md
       - Quick Start: projects/plundarr/quick-start.md
       - Configure the Stack: projects/plundarr/configuration.md
+      - Upgrade to v2: projects/plundarr/upgrading.md
+      - Homepage Login: projects/plundarr/homepage.md
+      - Media Monitoring: projects/plundarr/monitoring.md
       - Service Catalog: projects/plundarr/services.md
       - Troubleshooting: projects/plundarr/troubleshooting.md
 
@@ -71,6 +74,7 @@ nav:
       - Duplex: projects/presets/duplex.md
       - Media Servers and Books: projects/presets/media-servers-and-books.md
       - Watchtower: projects/presets/watchtower.md
+      - Portainer: projects/presets/portainer.md
 
   # Provide platform-specific routes after the project concepts are established.
   - Platform Guides:
@@ -201,6 +205,11 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.magiclink
   - pymdownx.mark
+
+  # Render native GitHub alerts as Material admonitions on the published site.
+  - pymdownx.quotes:
+      callouts: true
+
   - pymdownx.snippets
 
   # Render ordinary nested fences and route Mermaid blocks to its diagram class.

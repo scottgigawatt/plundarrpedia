@@ -44,9 +44,8 @@ replace real:
 - public IP addresses, private hostnames, and identifiable local paths;
 - account names, library names, and unsanitized application logs.
 
-!!! warning
-    Do not open a public issue containing vulnerability details or live secret
-    material. Follow the [security policy](SECURITY.md) instead.
+> [!WARNING]
+> Do not open a public issue containing vulnerability details or live secret material. Follow the [security policy](SECURITY.md) instead.
 
 ## Enforcement
 

@@ -377,6 +377,41 @@ body {
   box-shadow: 0 0.45rem 1.35rem var(--pedia-shadow);
 }
 
+/* Style GitHub alert types that Material does not define natively. */
+.md-typeset .admonition.important {
+  --pedia-alert-color: #9e60eb;
+  --pedia-alert-tint: #9e60eb1a;
+  --pedia-alert-icon: var(--md-admonition-icon--info);
+}
+
+.md-typeset .admonition.caution {
+  --pedia-alert-color: #ff1744;
+  --pedia-alert-tint: #ff17441a;
+  --pedia-alert-icon: var(--md-admonition-icon--danger);
+}
+
+.md-typeset .admonition.important,
+.md-typeset .admonition.caution {
+  border-color: var(--pedia-alert-color);
+}
+
+.md-typeset .admonition.important:focus-within,
+.md-typeset .admonition.caution:focus-within {
+  box-shadow: 0 0 0 0.2rem var(--pedia-alert-tint);
+}
+
+.md-typeset .important > .admonition-title,
+.md-typeset .caution > .admonition-title {
+  background-color: var(--pedia-alert-tint);
+}
+
+.md-typeset .important > .admonition-title::before,
+.md-typeset .caution > .admonition-title::before {
+  background-color: var(--pedia-alert-color);
+  -webkit-mask-image: var(--pedia-alert-icon);
+  mask-image: var(--pedia-alert-icon);
+}
+
 .md-typeset table:not([class]) {
   background: var(--pedia-surface);
   border: 1px solid var(--pedia-border);

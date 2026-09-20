@@ -47,9 +47,8 @@ You do not need every service. Start with the outcome you want, choose the small
 5. Start the VPN lane first and validate it before adding indexers and managers.
 6. Add requests, playback, dashboards, and maintenance tools in layers.
 
-!!! tip
-    A smaller working stack is easier to reason about than a 20-container stack
-    where every web UI is asking for its first-run setup at once.
+> [!TIP]
+> A smaller working stack is easier to reason about than a 20-container stack where every web UI is asking for its first-run setup at once.
 
 ## Before you launch
 

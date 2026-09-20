@@ -26,9 +26,12 @@ Most deployment targets accept `PRESET=YOUR-PRESET`. Omit it for the default `pl
 | `make down PRESET=YOUR-PRESET` | Stop the project while preserving volumes, images, environment, config, and backups. |
 | `make ps PRESET=YOUR-PRESET` | Print compact service status. |
 | `make logs PRESET=YOUR-PRESET` | Follow the selected project logs. |
-| `make backup PRESET=YOUR-PRESET` | Archive the selected configuration tree. |
+| `make backup PRESET=YOUR-PRESET` | Archive the host config tree; export databases and named-volume backups first. |
 | `make watchtower-run-once PRESET=watchtower` | Run one host-wide Watchtower update pass. |
 | `make kometa-overlay-reset PRESET=duplex` | Run the profile-gated overlay repair tool. |
+| `make recyclarr-preview PRESET=plundarr` | Preview the selected Recyclarr configuration without applying it. |
+| `make recyclarr-sync PRESET=plundarr` | Apply the reviewed configuration to Radarr and Sonarr. |
+| `make clean` | Remove disposable developer artifacts without touching deployments or Docker resources. |
 | `make test-unit` | Run Maraudarr unit tests. |
 | `make test` | Run the offline generator, policy, workflow, and preset matrix. |
 | `make test-vpn` | Validate an already-running VPN and downloader lane. |
@@ -38,10 +41,12 @@ Most deployment targets accept `PRESET=YOUR-PRESET`. Omit it for the default `pl
 | `make docs` | Build Plundarr's strict developer documentation. |
 | `make docs-serve` | Preview Plundarr's developer documentation. |
 
+Select `overlay-reset` or `recyclarr` before invoking its tool target. See [v2 command replacements](../projects/plundarr/upgrading.md#update-command-names) for older scripts and [Tracearr backup exports](../projects/plundarr/monitoring.md#back-up-and-update) before relying on a config archive.
+
 The published [Plundarr developer documentation](https://scottgigawatt.github.io/plundarr/) covers Maraudarr architecture, extension contracts, testing, and the generated Python reference.
 
-!!! caution
-    `make nuke PRESET=YOUR-PRESET` removes attributable Docker resources but preserves deployment files and application state. `make delete-config PRESET=YOUR-PRESET` deletes the selected configuration tree. Back up the deployment before either destructive operation.
+> [!CAUTION]
+> `make nuke PRESET=YOUR-PRESET` removes attributable Docker resources but preserves deployment files and application state. `make delete-config PRESET=YOUR-PRESET` deletes the selected configuration tree. Back up the deployment before either destructive operation.
 
 ## Privateerr standalone source
 
@@ -57,6 +62,7 @@ Use these only when you need the focused Privateerr repository outside Plundarr:
 | `make backup` | Archive the complete Privateerr configuration directory. |
 | `make restore-test-config` | Restore checked-in safe example files. |
 | `make clean-test` | Stop test containers and restore example state. |
+| `make clean` | Remove disposable developer artifacts; leave the stack and generated VPN state alone. |
 | `make test` | Run offline policy and helper tests. |
 | `make test-e2e` | Run live Buccaneerr validation with supplied credentials. |
 | `make build-platforms` | Validate both images on published architectures. |
@@ -70,6 +76,7 @@ make ship PRESET=plex
 make ship PRESET=calibre-web-automated
 make ship PRESET=duplex ADD_SERVICES=watchtower
 make ship PRESET=watchtower
+make ship PRESET=portainer
 ```
 
 ## Plundarrpedia

@@ -15,7 +15,7 @@ file when you want to change selected services.
 Linux-based media containers commonly use a numeric user and group ID. On the
 host, identify the account that owns the media directories:
 
-```console
+```sh
 id media
 ```
 
@@ -55,7 +55,17 @@ Choose a private subnet that does not overlap:
 - another Docker network;
 - a remote site you route to.
 
-The default Plundarr preset uses `172.20.0.0/16` with a smaller container allocation range. Other presets use separate allocations through `172.28.0.0/16`; `172.26.0.0/16` is reserved for the external Paperless deployment. These are collision-avoiding defaults, not universal requirements.
+The default Plundarr preset uses `172.20.0.0/16` with a smaller container allocation range. Other presets use separate allocations through `172.28.0.0/16`; Watchtower uses `172.26.0.0/16`, Portainer uses `172.27.0.0/16`, and Custom uses `172.28.0.0/16`. These are collision-avoiding defaults, not universal requirements.
+
+## VPN region selection
+
+In a generated Plundarr deployment, `PIA_AUTOCONNECT=true` selects a low-latency eligible region automatically and ignores `PIA_PREFERRED_REGION`. To choose a specific region, set `PIA_AUTOCONNECT=false` and `PIA_PREFERRED_REGION` to its PIA region ID in `dist/<preset>/.env`. The generated fallback ID is `ca`; verify that your chosen region supports port forwarding when `PIA_PF=true`.
+
+Recreate the affected VPN lane after changing these values, then run `make test-vpn PRESET=YOUR-PRESET`. A plain restart does not reload environment changes. Privateerr generates the handoff; Gluetun establishes the tunnel.
+
+## Dashboard and monitoring
+
+Configure [Homepage password login](homepage.md) before opening the dashboard. Tracearr is a removable default in Plundarr; follow [media monitoring](monitoring.md) for first-run setup, Homepage integration, architecture limits, and database backup exports.
 
 ## Download client selection
 
@@ -104,6 +114,28 @@ When adding NZBGet to Radarr or Sonarr, use host `gluetun`, port `6789`, no
 SSL, and the generated `NZBGET_USER` / `NZBGET_PASS` values. A browser reaches
 the host-side `NZBGET_WEBUI_PORT`; connected containers use the fixed internal
 port.
+
+## Music and quality synchronization
+
+Add Lidarr for music or Recyclarr for deliberate Radarr/Sonarr quality synchronization:
+
+```sh
+make ship PRESET=plundarr ADD_SERVICES=lidarr,recyclarr
+```
+
+Keep any other selected additions and removals in the same command. Set `HOST_MUSIC_PATH` to the host music library. Lidarr supports amd64 and arm64, not arm/v7, and uses the shared downloader paths and Prowlarr integration.
+
+Recyclarr adds Radarr and Sonarr as dependencies and stays behind the `tools` profile. Put their API keys in the generated `.env`, review `dist/plundarr/config/recyclarr/recyclarr.yml`, and start the target applications before previewing:
+
+```sh
+make recyclarr-preview PRESET=plundarr
+```
+
+The seeded configuration synchronizes quality-size definitions and preserves operator edits on regeneration. Applying it changes the configured applications; inspect the preview before running:
+
+```sh
+make recyclarr-sync PRESET=plundarr
+```
 
 ## Secrets
 

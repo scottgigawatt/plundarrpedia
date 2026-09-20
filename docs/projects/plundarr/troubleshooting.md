@@ -80,6 +80,14 @@ IP will fail by design.
 On Synology, also confirm the DSM firewall allows the host port and, when
 needed, traffic sourced from the Compose subnet.
 
+## Homepage login fails
+
+Use the generated password from the deployment `.env`; no username is required. Check that `HOMEPAGE_EXTERNAL_URL` exactly matches the browser URL and `HOMEPAGE_ALLOWED_HOSTS` contains its hostname and nonstandard port without a scheme. Recreate Homepage after environment changes. Behind HTTPS, verify the proxy preserves the host and forwarded scheme. See [Homepage login](homepage.md) for password rotation and session invalidation.
+
+## Kometa or PATTRMM cannot mount the configuration
+
+Confirm `KOMETA_RUNTIME_CONFIG_PATH` points to an existing readable YAML file, not a directory. Both services receive the same `/config/config.yml`. Maraudarr does not clone or populate the external checkout; follow [Duplex configuration](../presets/duplex.md#keep-kometa-state-external) before startup.
+
 ## NZBGet is healthy but managers cannot connect
 
 - Use `gluetun:6789` from Radarr or Sonarr; do not use the browser-facing host
@@ -100,4 +108,4 @@ needed, traffic sourced from the Compose subnet.
 
 ## Safe reset
 
-Back up `dist/<preset>/config/` before changing application state. `make down PRESET=YOUR-PRESET` preserves volumes, images, environment files, configuration, and backups. `make nuke PRESET=YOUR-PRESET` removes attributable Docker resources but preserves deployment files and application state. Only `make delete-config PRESET=YOUR-PRESET` deletes the generated configuration tree.
+Back up `dist/<preset>/config/`, the private `.env`, and external application state before changing it. Export [Tracearr backups](monitoring.md#back-up-and-update) first: a host config archive does not contain its named-volume database. `make down PRESET=YOUR-PRESET` preserves volumes, images, environment files, configuration, and backups. `make nuke PRESET=YOUR-PRESET` removes attributable Docker resources but preserves deployment files and application state. Only `make delete-config PRESET=YOUR-PRESET` deletes the generated configuration tree.

@@ -19,6 +19,9 @@ image.
 - Treat Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, and Watchtower
   as Plundarr presets rather than separate maintained documentation products.
 - Prefer task-oriented guides over copies of project READMEs.
+- Follow `docs/CONTRIBUTING.md` for Markdown style. Use native GitHub alerts,
+  sentence-case headings, `sh` fences for commands, and one source line per prose
+  paragraph. Verify alerts in GitHub and the built wiki.
 
 ## Repository layout
 

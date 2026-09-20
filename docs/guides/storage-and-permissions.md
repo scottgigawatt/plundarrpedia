@@ -47,7 +47,7 @@ Container images often accept `PUID` and `PGID`. Those values must correspond to
 host ownership; a username inside one container does not grant host access by
 magic.
 
-```console
+```sh
 id media
 stat -c '%u:%g %a %n' /srv/media/downloads /srv/media/movies
 ```
@@ -70,6 +70,10 @@ On SELinux-enforcing distributions, normal Unix ownership can look correct while
 the security label blocks the container. Use your distribution's supported
 container volume labeling (`:z`/`:Z` where appropriate) and understand whether
 the directory is shared between multiple services before relabeling it.
+
+## Named-volume application backups
+
+Tracearr stores its database, Redis state, and internal backup workspace in named Docker volumes. Plundarr's `make backup` archives the host configuration tree only; it does not dump those databases or copy their volumes. Export a consistent [Tracearr application backup](../projects/plundarr/monitoring.md#back-up-and-update) before archiving configuration, and keep the matching private `.env` and an off-host copy. Back up external Kometa and Plex state separately when their paths sit outside the generated config tree.
 
 ## Back up state, not caches
 

@@ -30,6 +30,8 @@ Privateerr and Gluetun are separate responsibilities: Privateerr writes the file
 | Radarr | Movie acquisition and organization. | You manage a movie library. |
 | Sonarr | Television acquisition and organization. | You manage episodic television. |
 | Sonarr Anime | A second Sonarr with independent rules. | Anime needs distinct naming, profiles, or indexers. |
+| Lidarr | Music acquisition and organization. | You manage a music library on amd64 or arm64. |
+| Recyclarr | Profile-gated Radarr/Sonarr quality synchronization. | You explicitly preview and apply quality settings. |
 | Whisparr | Adult media acquisition and organization. | You use the Boudoirr preset or add its service deliberately. |
 | Bazarr | Subtitle acquisition. | Movies or shows need automated subtitles. |
 | Seerr | Request portal. | Other people should request media without entering a manager. |
@@ -54,16 +56,18 @@ Calibre-Web Automated is a removable default in Plundarr and the core of its foc
 | Kometa | Collections, metadata, and overlays from external configuration. | You want the core of the Duplex preset. |
 | ImageMaid | Plex artwork reporting and cleanup. | You can grant carefully scoped access to Plex application data. |
 | PATTRMM | Returning-soon metadata and overlays for Kometa. | You want the removable Duplex helper. |
-| Tautulli | Plex activity, history, and analytics. | You want the Duplex monitoring core. |
+| Tautulli | Plex activity, history, and analytics. | You deliberately select an optional Plex monitor. |
 | Notifiarr | Host and application notifications. | You want the removable Duplex notification route. |
 | Overlay Reset | One-shot Kometa overlay repair. | You explicitly invoke the dry-run-first `tools` profile. |
 
-Kometa, ImageMaid, and Tautulli are Duplex core services. PATTRMM, Notifiarr, and Overlay Reset are removable defaults. Watchtower remains optional.
+Kometa and ImageMaid are Duplex core services. PATTRMM and Notifiarr are removable defaults. Tautulli, Overlay Reset, and Watchtower are optional; select Overlay Reset before invoking its one-shot command. See the [Duplex guide](../presets/duplex.md) for the shared Kometa configuration file.
 
 ## Operations
 
 | Service | Role | Select it when |
 | --- | --- | --- |
+| Tracearr | Plex, Jellyfin, and Emby monitoring with database and Redis companions. | You want Plundarr's removable default monitor; amd64 or arm64 is required. |
+| Portainer | Docker host management through its socket. | You explicitly select it or use the standalone preset. |
 | Homepage | Dashboard for the generated fleet. | You want one launchpad and health view. |
 | Duplicati | Configuration and host-data backups. | You need scheduled encrypted backups. |
 | Speedtest Tracker | Connection-performance history. | Network trends matter to troubleshooting. |
@@ -72,6 +76,8 @@ Kometa, ImageMaid, and Tautulli are Duplex core services. PATTRMM, Notifiarr, an
 
 > [!CAUTION]
 > Automatic updates can introduce migrations, changed healthchecks, or incompatible configuration. Run only one persistent Watchtower daemon per host and keep tightly coordinated containers excluded until their upgrade path is tested.
+
+Read [Tracearr setup and backups](monitoring.md), [Homepage login](homepage.md), [Portainer setup](../presets/portainer.md), and [Recyclarr preview/sync](configuration.md#music-and-quality-synchronization) before launching those services. Generator architecture support does not guarantee every selected application supports the same platform.
 
 ## Inspect dependency resolution
 

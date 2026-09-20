@@ -49,7 +49,7 @@ Plundarrpedia connects Plundarr, Privateerr, generated presets, containers, path
 
     ---
 
-    Generate Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, Watchtower, or a custom project from the same maintained catalog.
+    Generate Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, Watchtower, Portainer, or a custom project from the same maintained catalog.
 
     [:octicons-arrow-right-24: Compare presets](projects/presets/index.md)
 
@@ -92,10 +92,8 @@ Plundarrpedia connects Plundarr, Privateerr, generated presets, containers, path
   <span class="flow-map__step">📺 Playback / books / Plex tools</span>
 </div>
 
-!!! important "Privateerr draws the map; Gluetun sails the tunnel"
-    Privateerr is deliberately not a VPN client. It generates `wg0.conf` and
-    endpoint metadata. Gluetun is the component that establishes and maintains
-    the VPN tunnel.
+> [!IMPORTANT]
+> **Privateerr draws the map; Gluetun sails the tunnel.** Privateerr is deliberately not a VPN client. It generates `wg0.conf` and endpoint metadata. Gluetun is the component that establishes and maintains the VPN tunnel.
 
 ## What makes this wiki different
 

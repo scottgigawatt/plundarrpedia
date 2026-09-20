@@ -21,6 +21,23 @@ make logs
 make config
 ```
 
+## A local build cannot find the PIA scripts
+
+If the build cannot copy `docker/pia-manual-connections/LICENSE`, initialize the public submodule from the Privateerr repository root:
+
+```sh
+git submodule sync --recursive
+git submodule update --init --recursive
+git submodule status
+```
+
+Current checkouts use HTTPS and need no SSH key for the public PIA repository. A leading `-` in submodule status means it is still uninitialized. If you intentionally keep an older checkout with an SSH submodule URL, set a local HTTPS override before retrying initialization:
+
+```sh
+git config submodule.docker/pia-manual-connections.url https://github.com/pia-foss/manual-connections.git
+git submodule update --init --recursive
+```
+
 ## The files exist but Gluetun does not start
 
 Confirm all three boundaries:
@@ -64,7 +81,7 @@ client port still produces poor inbound connectivity.
 
 ## Testing the full path
 
-Privateerr's repository includes the test-only Buccaneer validator:
+Privateerr's repository includes the test-only Buccaneerr validator:
 
 ```sh
 make test-e2e
@@ -75,5 +92,5 @@ The e2e path uses real credentials when supplied, launches Privateerr and
 Gluetun, validates the tunnel and forwarding expectations, and restores example
 files during cleanup.
 
-!!! caution
-    Always run `make clean-test` after live validation and inspect the worktree for generated VPN material before committing.
+> [!CAUTION]
+> Always run `make clean-test` after live validation and inspect the worktree for generated VPN material before committing.

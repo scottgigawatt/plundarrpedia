@@ -9,6 +9,8 @@ status: updated
 
 Privateerr remains an actively maintained standalone project and a first-class Plundarr integration. Use a VPN-enabled Plundarr preset for a complete generated deployment, or use standalone Privateerr when you need its WireGuard configuration and metadata without the rest of the stack.
 
+For existing checkouts, review the [v2 command replacements](../plundarr/upgrading.md#update-command-names). Privateerr v2 retains its generated file paths and container interface.
+
 ## Generate the complete Plundarr route
 
 ```sh
@@ -27,8 +29,8 @@ make test-vpn
 
 Privateerr writes `wg0.conf` and `privateerr.env` beneath the generated configuration tree. Gluetun consumes the handoff and establishes the live tunnel.
 
-!!! warning
-    `wg0.conf` contains live WireGuard connection material. Do not paste it into an issue, commit it, or include it in an unencrypted backup.
+> [!WARNING]
+> `wg0.conf` contains live WireGuard connection material. Do not paste it into an issue, commit it, or include it in an unencrypted backup.
 
 ## Generate files for another WireGuard deployment
 
