@@ -49,7 +49,7 @@ Plundarrpedia connects Plundarr, Privateerr, generated presets, containers, path
 
     ---
 
-    Generate Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, Watchtower, or a custom project from the same maintained catalog.
+    Generate Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, Watchtower, Portainer, or a custom project from the same maintained catalog.
 
     [:octicons-arrow-right-24: Compare presets](projects/presets/index.md)
 

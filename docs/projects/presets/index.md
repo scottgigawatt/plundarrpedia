@@ -13,13 +13,14 @@ Maraudarr generates every normal deployment under `dist/<preset>/` with one comm
 
 | Preset | Primary purpose | Required core | Removable defaults |
 | --- | --- | --- | --- |
-| `plundarr` | Movies, television, subtitles, ebooks, requests, monitoring, and VPN-protected downloads | Privateerr, Gluetun, Prowlarr, Radarr, Sonarr, Bazarr, Seerr, Homepage, Duplicati, and monitoring services | qBittorrent, Calibre-Web Automated, Cleanuparr, Watchtower |
+| `plundarr` | Movies, television, subtitles, ebooks, requests, monitoring, and VPN-protected downloads | Privateerr, Gluetun, Prowlarr, Radarr, Sonarr, Bazarr, Seerr, Homepage, Duplicati, and monitoring services | qBittorrent, Calibre-Web Automated, Cleanuparr, Watchtower, Tracearr |
 | `boudoirr` | Whisparr-focused automation through the same VPN lane | Privateerr, Gluetun, FlareSolverr, Prowlarr, Whisparr | qBittorrent, Cleanuparr, Watchtower |
 | `jellyfin` | One focused Jellyfin media server | Jellyfin | None |
 | `plex` | One focused Plex Media Server | Plex | None |
 | `calibre-web-automated` | Ebook library and automatic ingest | Calibre-Web Automated | None |
-| `duplex` | Plex metadata, artwork, monitoring, notifications, and recovery | Kometa, ImageMaid, Tautulli | PATTRMM, Notifiarr, Overlay Reset |
+| `duplex` | Plex metadata, artwork, notifications, and optional recovery | Kometa, ImageMaid | PATTRMM, Notifiarr |
 | `watchtower` | Persistent or one-shot updates for eligible host containers | Watchtower | None |
+| `portainer` | Docker host management through Portainer Community Edition | Portainer | None |
 | `custom` | A deployment assembled service by service | None | None |
 
 Preset core services cannot be removed. Defaults are preselected conveniences that you may remove interactively or with `REMOVE_SERVICES`. Maraudarr resolves required companions before writing the final project.
@@ -45,17 +46,21 @@ make ship PRESET=plundarr REMOVE_SERVICES=qbittorrent,cleanuparr ADD_SERVICES=nz
 make ship PRESET=plundarr REMOVE_SERVICES=calibre-web-automated
 ```
 
+Keep your complete `ADD_SERVICES` and `REMOVE_SERVICES` selection when regenerating; preserving environment values does not preserve a previous service selection. Tracearr is the default Plundarr monitor; Tautulli and Overlay Reset are optional. See [media monitoring](../plundarr/monitoring.md) and the [Duplex guide](duplex.md).
+
 The old `OPTIONAL_SERVICES` interface has been removed. Maraudarr fails fast when it appears so an old automation command cannot silently generate the wrong fleet.
 
 ## Run presets side by side
 
-Each preset has a separate Compose project, network allocation, host-port range, and `dist/<preset>/` directory. The generated defaults occupy a predictable sequence from `172.20.0.0/16` through `172.28.0.0/16`, with `172.26.0.0/16` reserved for the separately deployed Paperless project.
+Each preset has its own Compose project and `dist/<preset>/` directory. Bridge-network defaults run from `172.20.0.0/16` through `172.28.0.0/16`: Watchtower uses `172.26.0.0/16`, Portainer uses `172.27.0.0/16`, and Custom uses `172.28.0.0/16`. Some presets offset host ports; always check the generated values before running projects together.
 
 Change a subnet when it overlaps your local-area network, another Docker network, or a route reached through a virtual private network. Plex uses host networking and is the main exception to the bridge-network pattern.
 
 ## Move from a deprecated standalone chart
 
 Use the matching Plundarr preset as a migration target, not an in-place Compose replacement:
+
+See [Upgrade to v2](../plundarr/upgrading.md) for the full state-preservation and rollback checklist.
 
 1. Back up the old environment and application state.
 2. Generate the matching preset with the services you intend to keep.

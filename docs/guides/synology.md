@@ -139,6 +139,10 @@ the deployment.
 - Enable WebSocket and HTTP/1.1 proxy support for applications that require
   persistent connections.
 
+### Homepage behind HTTPS
+
+Before opening Homepage, set `HOMEPAGE_EXTERNAL_URL` to its HTTPS browser URL and `HOMEPAGE_ALLOWED_HOSTS` to the matching hostname and optional nonstandard port without the scheme. Configure the DSM reverse proxy and certificate separately, forwarding to `HOMEPAGE_WEBUI_PORT` and preserving the original host and forwarded HTTPS scheme. Recreate Homepage after editing `.env`, then sign in with the generated password. See [Homepage login](../projects/plundarr/homepage.md) for the complete setup and recovery steps.
+
 ## 8. Validate in layers
 
 Start the project, then validate the VPN lane before configuring the rest of the

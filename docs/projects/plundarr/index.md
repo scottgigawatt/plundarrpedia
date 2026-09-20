@@ -25,7 +25,7 @@ to validate the result.
 - Keeps selected download clients behind Gluetun while other apps use the
   project network.
 - Preserves environment values when a stack is regenerated.
-- Offers maintained Plundarr, Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, Watchtower, and custom presets.
+- Offers maintained Plundarr, Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, Watchtower, Portainer, and custom presets.
 - Produces a Synology-friendly deployment artifact without becoming
   Synology-only.
 
@@ -51,6 +51,7 @@ dist/
 - [:material-tune: **Understand the important settings**](configuration.md)
 - [:material-view-grid-plus: **Browse available services**](services.md)
 - [:material-lifebuoy: **Recover from common failures**](troubleshooting.md)
+- [:material-update: **Upgrade an existing deployment**](upgrading.md)
 
 </div>
 
