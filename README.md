@@ -20,8 +20,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/pages.yml"><img src="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/pages.yml/badge.svg?branch=main" alt="GitHub Pages deployment status on main" /></a>
-  <a href="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/build-and-push.yml"><img src="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/build-and-push.yml/badge.svg?branch=main" alt="Container build status on main" /></a>
+  <a href="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/pages.yml"><img src="https://img.shields.io/github/actions/workflow/status/scottgigawatt/plundarrpedia/pages.yml?branch=main&amp;label=Wiki%20deploy&amp;logo=githubactions&amp;logoColor=white" alt="GitHub Pages deployment status on main" /></a>
+  <a href="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/build-and-push.yml"><img src="https://img.shields.io/github/actions/workflow/status/scottgigawatt/plundarrpedia/build-and-push.yml?branch=main&amp;label=Image%20build&amp;logo=githubactions&amp;logoColor=white" alt="Container build status on main" /></a>
   <a href="https://github.com/scottgigawatt/plundarrpedia/pkgs/container/plundarrpedia"><img src="https://img.shields.io/badge/Fleet-amd64%20%7C%20arm64%20%7C%20arm%2Fv7-6D28D9?logo=docker&amp;logoColor=white" alt="Plundarrpedia images for amd64, arm64, and arm/v7" /></a>
 </p>
 
