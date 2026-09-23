@@ -174,7 +174,7 @@ Rendered Compose can contain credentials, tokens, and private paths that came fr
 
 Use Dockge's container logs, or the TrueNAS Apps logs for a custom application, to confirm this order:
 
-1. Privateerr generates `wg0.conf` and `privateerr.env`.
+1. Privateerr generates or validates the saved `wg0.conf` and `privateerr.env` pair.
 2. Gluetun reads those files and establishes the WireGuard tunnel.
 3. The selected download client starts in Gluetun's network namespace.
 4. The download client can write to the TrueNAS download dataset.
@@ -189,7 +189,7 @@ Treat the generated Plundarr project as the source of truth:
 1. Back up `config/`, `compose.yaml`, and `.env` through a secret-aware process.
 2. Copy the current Dockge `.env` back to `dist/plundarr/.env`, then run `make ship` in the Plundarr checkout with the complete `ADD_SERVICES` and `REMOVE_SERVICES` selection. Review the regenerated files.
 3. Validate them with `docker compose --project-directory dist/plundarr config --quiet`.
-4. Copy the reviewed Compose file and `.env` into the Dockge stack directory. Preserve existing application state; install seeds only for newly selected services and review regenerated Homepage service cards separately.
+4. Copy the reviewed Compose file and `.env` into the Dockge stack directory. Preserve application state; install seeds only for new services and review regenerated Homepage cards separately. When adopting VPN recovery, also transfer the verified updated Gluetun wrapper after reviewing custom changes; see [recovery upgrades](../projects/privateerr/automatic-recovery.md#upgrade-a-generated-deployment).
 5. Use Dockge to pull the selected images and recreate the stack.
 6. Repeat the VPN-lane validation before updating application settings.
 

@@ -5,8 +5,7 @@ utilities, and practical self-hosted media automation. The container serves the
 complete Material for MkDocs site from an unprivileged Nginx runtime.
 
 > [!IMPORTANT]
-> Privateerr generates PIA WireGuard configuration and endpoint metadata.
-> Gluetun establishes and runs the VPN tunnel.
+> Privateerr generates PIA WireGuard settings and can supervise stale-connection recovery. Gluetun establishes and runs the VPN tunnel.
 
 ## 📦 GHCR image
 

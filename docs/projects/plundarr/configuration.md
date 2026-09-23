@@ -61,7 +61,24 @@ The default Plundarr preset uses `172.20.0.0/16` with a smaller container alloca
 
 In a generated Plundarr deployment, `PIA_AUTOCONNECT=true` selects a low-latency eligible region automatically and ignores `PIA_PREFERRED_REGION`. To choose a specific region, set `PIA_AUTOCONNECT=false` and `PIA_PREFERRED_REGION` to its PIA region ID in `dist/<preset>/.env`. The generated fallback ID is `ca`; verify that your chosen region supports port forwarding when `PIA_PF=true`.
 
-Recreate the affected VPN lane after changing these values, then run `make test-vpn PRESET=YOUR-PRESET`. A plain restart does not reload environment changes. Privateerr generates the handoff; Gluetun establishes the tunnel.
+Recovery-enabled Privateerr reuses a valid saved pair on startup. To apply a region or forwarding-selection change immediately, stop the selected stack, generate fresh files in a disposable one-shot run, then recreate the full stack:
+
+```sh
+docker compose --project-directory dist/YOUR-PRESET stop
+docker compose --project-directory dist/YOUR-PRESET run --rm --no-deps -e PRIVATEERR_AUTO_RECOVER=false -e PRIVATEERR_KEEPALIVE=false privateerr
+make up PRESET=YOUR-PRESET
+make test-vpn PRESET=YOUR-PRESET
+```
+
+Run this from the Plundarr checkout and replace `YOUR-PRESET`. Stopping the supervisor prevents concurrent writers. A plain restart does not reload environment changes, and recreation alone does not rotate a healthy saved connection. For Privateerr's standalone checkout, stop its application services, run `make run-privateerr`, then recreate them.
+
+In Synology Container Manager, stop the project before generation and rebuild it afterward. For a UI-only change, temporarily set `PRIVATEERR_AUTO_RECOVER=false`, rebuild and verify fresh generation, then restore `true` and rebuild again.
+
+## Automatic VPN recovery
+
+Plundarr v2.1.0 enables recovery when the resolved service selection includes Privateerr and Gluetun, including core services and downloader dependencies. Maraudarr generates the private shared API key and preserves existing keys, timing controls, image pins, and explicit opt-outs. See [automatic recovery](../privateerr/automatic-recovery.md) before upgrading existing deployments or customizing the wrapper.
+
+Generated Privateerr no longer needs privileged mode. It runs as UID 0 with capabilities dropped, `no-new-privileges`, and Docker-applied namespace IPv6 settings. Gluetun retains its separate tunnel privileges. Keep image and generated-chart versions compatible; an image-only update does not rewrite container options.
 
 ## Dashboard and monitoring
 
@@ -73,8 +90,7 @@ The selected client changes the VPN namespace and service dependencies:
 
 === "qBittorrent"
 
-    Best when the automation lane retrieves torrents. Its listening port may
-    need to follow the port assigned by PIA/Gluetun.
+    Best when the automation lane retrieves torrents. Gluetun's hook sets its assigned PIA port and VPN interface. Keep the generated Web UI port mapping and `WEBUI_PORT` synchronized. Explicit Compose-managed Gluetun updates also restart qBittorrent; automatic API recovery preserves both containers.
 
 === "SABnzbd"
 

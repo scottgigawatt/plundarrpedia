@@ -1,16 +1,13 @@
 ---
 title: Privateerr
-description: A small image that runs PIA's official scripts and produces WireGuard configuration plus Gluetun metadata.
+description: Generate PIA WireGuard settings and recover stale Gluetun connections inside the existing Privateerr container.
 icon: material/shield-key
 status: updated
 ---
 
 # Privateerr ⚓
 
-Privateerr packages the official, unmodified
-[`pia-foss/manual-connections`](https://github.com/pia-foss/manual-connections)
-scripts into a small Alpine container. It adds repeatable commands, friendly
-defaults, a health signal, and a metadata handoff for Docker Compose stacks.
+Privateerr packages the official, unmodified [`pia-foss/manual-connections`](https://github.com/pia-foss/manual-connections) scripts into an Alpine container. It generates matching WireGuard configuration and metadata, then can stay running to recover stale Gluetun connections through a standard-library Python supervisor. The shell adapter remains the boundary to PIA's scripts.
 
 **Privateerr remains actively maintained.** Privateerr is maintained both as a standalone project and as the `privateerr` service in every VPN-enabled Plundarr preset. Use Plundarr when you want the complete generated Privateerr-to-Gluetun lane, or use the standalone project when you want Privateerr to generate files for another WireGuard deployment.
 
@@ -29,6 +26,12 @@ endpoint, Gluetun needs the matching server name to perform PIA port forwarding.
 Privateerr discovers that relationship before Gluetun starts and records it in
 a machine-readable file.
 
+## Recovery without another service
+
+[Automatic recovery](automatic-recovery.md) is enabled in fresh Plundarr v2.1.0 deployments containing both Privateerr and Gluetun, and in Privateerr's standalone environment example. It applies fresh connection settings through Gluetun's authenticated API while preserving the shared network namespace. Existing custom deployments without the setting retain generation-only behavior.
+
+The repository example includes qBittorrent and the test-only Buccaneerr validator. Buccaneerr intentionally interrupts the demo tunnel to verify recovery; it is not an extra production service. The [quick start](quick-start.md#run-the-standalone-example-stack) separates that test example from a lasting deployment.
+
 ## Images and platforms
 
 Published images are available from GHCR and Docker Hub for `linux/amd64`,
@@ -45,10 +48,12 @@ Use `edge` only when intentionally testing the newest successful `main` build.
 ## Trust boundary
 
 - PIA's scripts remain visibly upstream and unmodified in a Git submodule.
-- Privateerr-owned scripts wrap those upstream scripts and create metadata.
+- The Python supervisor owns validation, recovery timing, and safe publication; Privateerr-owned shell scripts invoke the upstream scripts and create metadata.
+- Test and lint tools stay in Buccaneerr. Production Python uses only the standard library.
 - The build uses pinned inputs, scans images with Trivy, publishes
   multi-architecture manifests, and attaches SBOM/provenance information.
 - `wg0.conf` is secret material even though it is generated rather than typed.
 
+[Read the developer documentation](https://scottgigawatt.github.io/privateerr/){ .md-button }
 [View Privateerr on GitHub](https://github.com/scottgigawatt/privateerr){ .md-button }
 [Use Privateerr with Plundarr](quick-start.md){ .md-button .md-button--primary }

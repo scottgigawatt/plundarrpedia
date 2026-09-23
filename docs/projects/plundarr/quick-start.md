@@ -59,6 +59,7 @@ Edit `dist/plundarr/.env`. At minimum, review:
 | Host path variables | Must point to real download, media, ebook, backup, and configuration locations. |
 | `HOMEPAGE_EXTERNAL_URL` / `HOMEPAGE_ALLOWED_HOSTS` | Must match the browser URL and allowed hostname/port; see [Homepage login](homepage.md). |
 | `HOMEPAGE_AUTH_PASSWORD` / `HOMEPAGE_AUTH_SECRET` | Generated login password and session secret; read locally and keep private. |
+| `PRIVATEERR_AUTO_RECOVER` / `PRIVATEERR_GLUETUN_API_KEY` | Recovery is enabled for the paired VPN services; keep the generated shared key private. |
 | `TZ` | Keeps logs and schedules aligned with your location. |
 | `COMPOSE_NETWORK_*` | Must not overlap another Docker, local-area network, or virtual private network route. |
 | `*_WEBUI_PORT` | Must not collide with another host service. |
@@ -129,6 +130,8 @@ make config PRESET=YOUR-PRESET
 ```
 
 Replace `YOUR-PRESET` with the deployment ID and repeat your complete `ADD_SERVICES` / `REMOVE_SERVICES` selection, or review it in `make configure`. Regeneration preserves known environment values and does not overwrite application state. Values for temporarily unselected services remain in a marked footer so they can return later.
+
+For an existing VPN deployment, review [recovery upgrades](../privateerr/automatic-recovery.md#upgrade-a-generated-deployment): image pins are preserved, and only the known unchanged Gluetun wrapper is upgraded automatically.
 
 Back up the private `.env`, host configuration, and external application state before a major migration. Export [Tracearr database backups](monitoring.md#back-up-and-update) separately; `make backup` does not dump named volumes. Inspect the generated `.env`, service selection, and mounts before recreating containers with `make up PRESET=YOUR-PRESET`.
 

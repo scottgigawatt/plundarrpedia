@@ -84,7 +84,7 @@ Use `make env` to see the values Docker Compose will use after shell and `.env` 
 | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | [Start Here](https://scottgigawatt.github.io/plundarrpedia/start-here/)          | Choose the smallest project path that solves the job.                          |
 | [Plundarr](https://scottgigawatt.github.io/plundarrpedia/projects/plundarr/)     | Generate and operate a complete media automation stack.                        |
-| [Privateerr](https://scottgigawatt.github.io/plundarrpedia/projects/privateerr/) | Generate PIA WireGuard configuration for Gluetun.                              |
+| [Privateerr](https://scottgigawatt.github.io/plundarrpedia/projects/privateerr/) | Generate PIA settings and recover stale Gluetun connections.                   |
 | [Presets](https://scottgigawatt.github.io/plundarrpedia/projects/presets/)       | Choose Boudoirr, Jellyfin, Plex, CWA, Duplex, Watchtower, Portainer, or custom |
 | [Platform Guides](https://scottgigawatt.github.io/plundarrpedia/guides/)         | Deploy on Linux Docker, Synology, or TrueNAS.                                  |
 
@@ -132,11 +132,11 @@ make build-multiarch
 
 Published images support `linux/amd64`, `linux/arm64`, and `linux/arm/v7`.
 
-| 📦 Channel      | 🐳 Image                                          |
+| 📦 Channel | 🐳 Image |
 | --------------- | ------------------------------------------------- |
-| Stable          | `ghcr.io/scottgigawatt/plundarrpedia:latest`      |
-| Preview         | `ghcr.io/scottgigawatt/plundarrpedia:edge`        |
-| Exact release   | `ghcr.io/scottgigawatt/plundarrpedia:1.0.0`       |
+| Stable | `ghcr.io/scottgigawatt/plundarrpedia:latest` |
+| Preview | `ghcr.io/scottgigawatt/plundarrpedia:edge` |
+| Exact release | `ghcr.io/scottgigawatt/plundarrpedia:2.1.0` |
 | Source revision | `ghcr.io/scottgigawatt/plundarrpedia:sha-cfa2fb5` |
 
 > [!CAUTION]
