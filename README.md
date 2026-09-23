@@ -20,6 +20,7 @@
   <img src="https://img.shields.io/github/license/scottgigawatt/plundarrpedia?label=Legal%20Scroll&color=blue" alt="Legal Scroll" />
   <img src="https://img.shields.io/badge/MkDocs-Material-526CFE?logo=materialformkdocs" alt="Material for MkDocs" />
   <img src="https://img.shields.io/badge/Served-by%20Unprivileged%20Nginx-009639?logo=nginx" alt="Unprivileged Nginx" />
+  <a href="https://www.bestpractices.dev/projects/14769"><img src="https://www.bestpractices.dev/projects/14769/badge" alt="OpenSSF Best Practices status" /></a>
   <img src="https://img.shields.io/badge/Scanned-Trivy%20Bilge%20Check-teal?logo=aqua" alt="Trivy Bilge Check" />
   <img src="https://img.shields.io/badge/Multi--Arch-amd64%20%7C%20arm64%20%7C%20arm%2Fv7-blue?logo=docker" alt="Multi-Arch amd64, arm64, and arm/v7" />
   <img src="https://img.shields.io/badge/Harbors-Synology%20%7C%20TrueNAS%20%7C%20Docker-blue" alt="Synology, TrueNAS, and Docker" />
