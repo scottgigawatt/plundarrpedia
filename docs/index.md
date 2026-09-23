@@ -40,8 +40,7 @@ Plundarrpedia connects Plundarr, Privateerr, generated presets, containers, path
 
     ---
 
-    Use Privateerr to run PIA's official scripts, then hand the result to
-    Gluetun or another WireGuard client.
+    Generate PIA WireGuard settings with Privateerr, then enable its internal supervisor for Gluetun recovery when needed.
 
     [:octicons-arrow-right-24: Start with Privateerr](projects/privateerr/quick-start.md)
 
@@ -93,7 +92,7 @@ Plundarrpedia connects Plundarr, Privateerr, generated presets, containers, path
 </div>
 
 > [!IMPORTANT]
-> **Privateerr draws the map; Gluetun sails the tunnel.** Privateerr is deliberately not a VPN client. It generates `wg0.conf` and endpoint metadata. Gluetun is the component that establishes and maintains the VPN tunnel.
+> **Privateerr draws the map; Gluetun sails the tunnel.** Privateerr generates `wg0.conf` and endpoint metadata, and its optional supervisor refreshes stale settings through Gluetun's API. Gluetun establishes and maintains the tunnel. See [automatic recovery](projects/privateerr/automatic-recovery.md) for setup and upgrade guidance.
 
 ## What makes this wiki different
 

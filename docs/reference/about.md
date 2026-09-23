@@ -14,8 +14,8 @@ into a stale copy of a README.
 
 - Current Plundarr repository documentation, generator behavior, service
   catalog, setup notes, helper scripts, and tests.
-- Current Privateerr documentation, Compose handoff, image/release model, and
-  validation workflow.
+- Current Privateerr documentation, supervisor behavior, Compose handoff, image/release model, and validation workflow.
+- The [Privateerr developer site](https://scottgigawatt.github.io/privateerr/) and [Maraudarr developer site](https://scottgigawatt.github.io/plundarr/) for Python contracts, architecture, and contributor testing.
 - Current Plundarr preset catalog, service charts, generated output, and migration boundaries.
 - Current Docker, Material for MkDocs, Synology, and TrueNAS documentation for
   behavior owned by those platforms.
@@ -46,6 +46,14 @@ HTML and CSS, so they render under the same self-contained Content Security
 Policy on GitHub Pages and in the production container.
 
 The container workflow follows the sibling project conventions: multi-platform Buildx output, Open Container Initiative (OCI) metadata, Trivy scanning, software bills of materials (SBOMs), provenance, GitHub Container Registry (GHCR) publishing, and Renovate-managed dependency updates.
+
+## Container security review
+
+The September 2026 runtime cleanup removes unused Nginx modules for XML transformation, JavaScript, image filtering, and geolocation, including their transitive libraries. The site keeps its unprivileged user, read-only deployment, healthcheck, and Content Security Policy. Fixed nghttp2 comes from a narrow Alpine edge package exception until stable includes it.
+
+Docker Scout reports three remaining PCRE2 alerts: CVE-2026-89157, CVE-2026-89160, and CVE-2026-89162. The runtime already contains PCRE2 10.48, whose [upstream release notes](https://github.com/PCRE2Project/pcre2/releases/tag/pcre2-10.48) include all three fixes. The findings remain visible; no scanner exclusions hide them. Recheck the exact image digest and package versions when dependencies or advisory databases change.
+
+Privateerr's [container scan review](https://scottgigawatt.github.io/privateerr/container-scan-review/) covers the related Privateerr, Buccaneerr, and Maraudarr images. Scanner counts describe a dated artifact and database snapshot, not a guarantee of security.
 
 ## Contributing
 

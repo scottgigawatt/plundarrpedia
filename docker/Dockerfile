@@ -75,6 +75,8 @@ ARG NGINX_UNPRIVILEGED_TAG
 #
 # Image metadata that can be overridden using build args.
 #
+ARG EDGE_APK_REPOSITORY=https://dl-cdn.alpinelinux.org/alpine/edge/main
+ARG NGHTTP2_APK_MIN_VERSION=1.70.0-r0
 ARG IMAGE_CREATED=unknown
 ARG IMAGE_REVISION=unknown
 ARG IMAGE_VERSION=latest
@@ -94,6 +96,22 @@ LABEL org.opencontainers.image.title="Plundarrpedia" \
       org.opencontainers.image.revision="${IMAGE_REVISION}" \
       org.opencontainers.image.version="${IMAGE_VERSION}" \
       org.opencontainers.image.base.name="docker.io/${NGINX_UNPRIVILEGED_IMAGE}:${NGINX_UNPRIVILEGED_TAG}"
+
+#
+# Remove unused dynamic modules and their XML, image, and geolocation libraries.
+# This static site needs only Nginx's built-in HTTP features; no module is loaded.
+# Upgrade the base libraries and use fixed nghttp2 until stable Alpine includes it.
+#
+USER 0
+RUN apk del --no-cache \
+        nginx-module-geoip \
+        nginx-module-image-filter \
+        nginx-module-njs \
+        nginx-module-xslt && \
+    apk upgrade --no-cache && \
+    apk add --no-cache \
+        --repository="${EDGE_APK_REPOSITORY}" \
+        "nghttp2-libs>=${NGHTTP2_APK_MIN_VERSION}"
 
 #
 # Copy the hardened server configuration and generated static site.

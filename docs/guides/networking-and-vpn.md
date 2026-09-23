@@ -31,6 +31,10 @@ the dependent service shares Gluetun's interfaces, IP address, and port space.
 Publish the download client's Web UI port on Gluetun. Inside the shared
 namespace, the services can use `127.0.0.1` to reach each other.
 
+Privateerr stays outside that namespace so it can reach PIA during a tunnel outage. Its [automatic recovery](../projects/privateerr/automatic-recovery.md) uses Gluetun's internal API, preserving the container and namespace. Keep the control and health ports unpublished.
+
+For qBittorrent, the generated hook synchronizes the forwarded port and VPN interface. Keep the Web UI mapping and internal listener aligned. `depends_on.restart: true` follows planned Compose updates of Gluetun; an external replacement may still require recreating its dependent applications.
+
 ## Host exposure
 
 Publishing `8080:8080` means host port 8080 forwards to container port 8080. It

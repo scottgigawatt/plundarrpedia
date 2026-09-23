@@ -11,6 +11,12 @@ status: new
 
 Use this guide for a v1 Plundarr deployment or a retired standalone Boudoirr, Duplex, Jellyfin, or Calibre-Web Automated chart. Privateerr remains actively maintained separately and through Plundarr. Routine regeneration of an existing v2 preset is covered in the [quick start](quick-start.md#regenerate-an-existing-deployment).
 
+## Adopt v2.1 VPN recovery
+
+Plundarr v2.1.0 adds automatic recovery to generated deployments containing Privateerr and Gluetun. Use Privateerr v2.1.0 or later before recreating the hardened generated service. Follow [the recovery upgrade checklist](../privateerr/automatic-recovery.md#upgrade-a-generated-deployment) for preserved image pins, new settings, the shared key, and custom wrappers. Existing v2 deployments keep their `dist/<preset>/` layout and application state.
+
+Image-only updates retain previous privileges and do not enable an absent recovery flag. Regeneration and container recreation apply the new chart. Intentional region changes also need [explicit regeneration](configuration.md#vpn-region-selection) because the supervisor reuses healthy saved files.
+
 ## Inventory and back up first
 
 Record the existing Compose project name, selected services, image versions, host ports, mounts, and named volumes. Back up the old Compose file, private `.env`, application configuration, and external Kometa/Plex state. Export databases through their application backup tools and retain a verified off-host copy.

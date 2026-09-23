@@ -58,7 +58,7 @@ Giving every container full control of every shared folder makes a permissions e
 
 ## 4. Confirm the VPN device
 
-Gluetun needs `/dev/net/tun` plus the `NET_ADMIN` capability declared in the generated Compose file.
+Gluetun needs `/dev/net/tun` plus the `NET_ADMIN` capability declared in the generated Compose file. Privateerr v2.1.0 uses a separate unprivileged service with capabilities dropped; do not grant it Gluetun's network privileges. Review [recovery upgrades](../projects/privateerr/automatic-recovery.md#upgrade-a-generated-deployment) before rebuilding an older project.
 
 ```sh
 ls -l /dev/net/tun

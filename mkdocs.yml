@@ -64,6 +64,7 @@ nav:
       - Overview: projects/privateerr/index.md
       - Quick Start: projects/privateerr/quick-start.md
       - Config Handoff: projects/privateerr/config-handoff.md
+      - Automatic Recovery: projects/privateerr/automatic-recovery.md
       - Troubleshooting: projects/privateerr/troubleshooting.md
 
   # Keep the deprecated standalone Boudoirr, Duplex, Jellyfin, and

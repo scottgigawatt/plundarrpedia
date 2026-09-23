@@ -33,7 +33,8 @@ Most deployment targets accept `PRESET=YOUR-PRESET`. Omit it for the default `pl
 | `make recyclarr-sync PRESET=plundarr` | Apply the reviewed configuration to Radarr and Sonarr. |
 | `make clean` | Remove disposable developer artifacts without touching deployments or Docker resources. |
 | `make test-unit` | Run Maraudarr unit tests. |
-| `make test` | Run the offline generator, policy, workflow, and preset matrix. |
+| `make test` | Run the generator, strict Python types, policy, workflow, and preset matrix checks. |
+| `make test-types` | Run the pinned strict Python checker in a disposable test image. |
 | `make test-vpn` | Validate an already-running VPN and downloader lane. |
 | `make test-e2e` | Launch and validate the focused live VPN path. |
 | `make test-image` | Test the hardened Maraudarr image. |
@@ -54,8 +55,9 @@ Use these only when you need the focused Privateerr repository outside Plundarr:
 
 | Command | Purpose |
 | --- | --- |
-| `make run-privateerr` | Generate fresh `wg0.conf` and `privateerr.env`. |
-| `make up` / `make down` | Start or stop the Privateerr and Gluetun example stack. |
+| `make` / `make help` | Show the command menu. |
+| `make run-privateerr` | Generate fresh files once with recovery and keepalive disabled for that run. |
+| `make up` / `make down` | Start or stop Privateerr, Gluetun, qBittorrent, and the Buccaneerr test example. |
 | `make env` | Print evaluated environment values. |
 | `make config` | Render the resolved Compose model. |
 | `make ps` / `make logs` | Inspect service status or logs. |
@@ -63,9 +65,17 @@ Use these only when you need the focused Privateerr repository outside Plundarr:
 | `make restore-test-config` | Restore checked-in safe example files. |
 | `make clean-test` | Stop test containers and restore example state. |
 | `make clean` | Remove disposable developer artifacts; leave the stack and generated VPN state alone. |
-| `make test` | Run offline policy and helper tests. |
+| `make test` | Run Python tests, strict types, lint, policy, and helper checks in Buccaneerr. |
+| `make test-types` | Run strict Pyright checks in Buccaneerr. |
+| `make test-precommit` | Run all repository hooks through Buccaneerr. |
+| `make spellcheck` | Check project spelling using the VS Code vocabulary. |
+| `make docs` / `make docs-serve` | Build or preview the developer site and Python reference. |
+| `make test-recovery-api` | Test real Gluetun/qBittorrent API behavior without PIA credentials. |
+| `make test-recovery-live` | Test isolated live PIA recovery and incoming TCP with local credentials. |
 | `make test-e2e` | Run live Buccaneerr validation with supplied credentials. |
 | `make build-platforms` | Validate both images on published architectures. |
+
+The [Privateerr developer site](https://scottgigawatt.github.io/privateerr/) covers the supervisor architecture, Python reference, and testing contracts. `make up` and `make test-e2e` include a deliberate VPN interruption by default; use the [standalone guide](../projects/privateerr/quick-start.md#run-the-standalone-example-stack) for a lasting three-service deployment. Stop any supervisor sharing the output directory before one-shot generation.
 
 ## Preset examples
 

@@ -24,29 +24,23 @@ container may speak to several lanes, but each lane has one job.
 
 ## The VPN boundary
 
-```mermaid
-flowchart TB
-    accTitle: VPN configuration and network path
-    accDescr: Privateerr supplies Gluetun, download clients share its network, and Gluetun connects to PIA.
+<div class="flow-map" role="group" aria-label="VPN configuration handoff">
+  <span class="flow-map__step">🏴‍☠️ Privateerr</span>
+  <span class="flow-map__arrow">writes →</span>
+  <span class="flow-map__step">📜 Shared VPN configuration</span>
+  <span class="flow-map__arrow">read at startup →</span>
+  <span class="flow-map__step">🛡️ Gluetun</span>
+</div>
 
-    privateerr["🏴‍☠️ Privateerr"]
-    config[("📜 Shared VPN<br/>configuration")]
-    managers["🎬 Radarr / Sonarr<br/>🔎 Prowlarr"]
-    pia["🌐 PIA endpoint"]
+<div class="flow-map flow-map--support" role="group" aria-label="Download traffic path">
+  <span class="flow-map__step">📥 Download clients</span>
+  <span class="flow-map__arrow">shared network →</span>
+  <span class="flow-map__step">🔐 Gluetun's WireGuard tunnel</span>
+  <span class="flow-map__arrow">encrypted traffic →</span>
+  <span class="flow-map__step">🌐 PIA endpoint</span>
+</div>
 
-    privateerr -->|writes| config
-
-    subgraph namespace["🛡️ Gluetun network namespace"]
-        direction TB
-        gluetun["🔐 Gluetun<br/>VPN tunnel and exposed ports"]
-        clients["📥 qBittorrent / SABnzbd / NZBGet<br/>share Gluetun's network stack"]
-        gluetun ---|same network namespace| clients
-    end
-
-    config -->|read by| gluetun
-    managers -->|project network<br/>through exposed ports| gluetun
-    gluetun -->|🔒 encrypted WireGuard tunnel| pia
-```
+Privateerr also uses Gluetun's internal authenticated API to replace stale connection settings. Radarr, Sonarr, and Prowlarr reach download-client Web UIs through Gluetun on the project network.
 
 Only selected download clients need to share Gluetun's network namespace.
 Managers, indexers, dashboards, and playback servers normally stay on the
@@ -54,7 +48,7 @@ project network and reach the download clients through the ports exposed by
 Gluetun.
 
 > [!WARNING]
-> `network_mode: service:gluetun` means the download client does not own a separate network identity. Publish its Web UI and inbound ports on Gluetun, not on the download-client service.
+> `network_mode: service:gluetun` means the download client does not own a separate network identity. Publish its Web UI on Gluetun, not on the download-client service. PIA-forwarded peer ports arrive through the VPN tunnel and do not need host publication.
 
 ## The storage boundary
 
@@ -81,7 +75,7 @@ Host
 
 - **Maraudarr** generates Plundarr; it is not a long-running media service.
 - **Presets** select a maintained deployment shape; they are not separate generator implementations.
-- **Privateerr** generates PIA files; it does not carry traffic.
+- **Privateerr** generates PIA files and supervises stale-connection recovery through Gluetun's API; it does not carry traffic.
 - **Gluetun** carries VPN traffic and coordinates port forwarding.
 - **Download clients** retrieve files; they should not organize the library.
 - **Radarr/Sonarr** import and organize; they should not be the download engine.
