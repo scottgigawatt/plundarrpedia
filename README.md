@@ -136,7 +136,7 @@ Published images support `linux/amd64`, `linux/arm64`, and `linux/arm/v7`.
 | --------------- | ------------------------------------------------- |
 | Stable | `ghcr.io/scottgigawatt/plundarrpedia:latest` |
 | Preview | `ghcr.io/scottgigawatt/plundarrpedia:edge` |
-| Exact release | `ghcr.io/scottgigawatt/plundarrpedia:1.0.0` |
+| Exact release | `ghcr.io/scottgigawatt/plundarrpedia:2.1.0` |
 | Source revision | `ghcr.io/scottgigawatt/plundarrpedia:sha-cfa2fb5` |
 
 > [!CAUTION]

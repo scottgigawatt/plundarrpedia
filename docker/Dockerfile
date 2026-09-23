@@ -73,10 +73,14 @@ ARG NGINX_UNPRIVILEGED_IMAGE
 ARG NGINX_UNPRIVILEGED_TAG
 
 #
-# Image metadata that can be overridden using build args.
+# Use the fixed HTTP library until Alpine stable includes the security update.
 #
 ARG EDGE_APK_REPOSITORY=https://dl-cdn.alpinelinux.org/alpine/edge/main
 ARG NGHTTP2_APK_MIN_VERSION=1.70.0-r0
+
+#
+# Image metadata that can be overridden using build args.
+#
 ARG IMAGE_CREATED=unknown
 ARG IMAGE_REVISION=unknown
 ARG IMAGE_VERSION=latest
