@@ -7,6 +7,11 @@
 //
 
 {
+    //
+    // Use the bundled Ruff executable without Python environment discovery.
+    //
+    "ruff.importStrategy": "useBundled",
+
     "cSpell.words": [
         "accDescr",
         "argjson",
