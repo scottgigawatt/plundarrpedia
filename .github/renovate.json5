@@ -15,7 +15,7 @@
         ":enablePreCommit"
     ],
     "timezone": "America/New_York",
-    "schedule": ["before 8am on monday"],
+    "schedule": ["before 8am"],
     "dependencyDashboard": true,
 
     // Merge dependency PRs after required checks pass; keep branches current.
