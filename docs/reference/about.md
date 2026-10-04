@@ -49,9 +49,9 @@ The container workflow follows the sibling project conventions: multi-platform B
 
 ## Container security review
 
-The September 2026 runtime cleanup removes unused Nginx modules for XML transformation, JavaScript, image filtering, and geolocation, including their transitive libraries. The site keeps its unprivileged user, read-only deployment, healthcheck, and Content Security Policy. Fixed nghttp2 comes from a narrow Alpine edge package exception until stable includes it.
+The September 2026 runtime cleanup removes unused Nginx modules for XML transformation, JavaScript, image filtering, and geolocation, including their transitive libraries. The site keeps its unprivileged user, read-only deployment, healthcheck, and Content Security Policy. Alpine 3.24 now provides fixed nghttp2 1.70.0 in its stable repositories for all three supported platforms, so the image uses stable package upgrades without an edge repository exception.
 
-Docker Scout reports three remaining PCRE2 alerts: CVE-2026-89157, CVE-2026-89160, and CVE-2026-89162. The runtime already contains PCRE2 10.48, whose [upstream release notes](https://github.com/PCRE2Project/pcre2/releases/tag/pcre2-10.48) include all three fixes. The findings remain visible; no scanner exclusions hide them. Recheck the exact image digest and package versions when dependencies or advisory databases change.
+The image requires PCRE2 10.49 or newer to fix CVE-2026-103111; see the [upstream security release](https://github.com/PCRE2Project/pcre2/releases/tag/pcre2-10.49). The earlier CVE-2026-89157, CVE-2026-89160, and CVE-2026-89162 alerts no longer appear in the October 4, 2026 Docker Scout review. Fresh Trivy scans cover all three supported platforms without scanner exclusions. Recheck the exact image digest and package versions when dependencies or advisory databases change.
 
 Privateerr's [container scan review](https://scottgigawatt.github.io/privateerr/container-scan-review/) covers the related Privateerr, Buccaneerr, and Maraudarr images. Scanner counts describe a dated artifact and database snapshot, not a guarantee of security.
 

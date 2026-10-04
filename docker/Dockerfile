@@ -73,12 +73,6 @@ ARG NGINX_UNPRIVILEGED_IMAGE
 ARG NGINX_UNPRIVILEGED_TAG
 
 #
-# Use the fixed HTTP library until Alpine stable includes the security update.
-#
-ARG EDGE_APK_REPOSITORY=https://dl-cdn.alpinelinux.org/alpine/edge/main
-ARG NGHTTP2_APK_MIN_VERSION=1.70.0-r0
-
-#
 # Image metadata that can be overridden using build args.
 #
 ARG IMAGE_CREATED=unknown
@@ -104,7 +98,7 @@ LABEL org.opencontainers.image.title="Plundarrpedia" \
 #
 # Remove unused dynamic modules and their XML, image, and geolocation libraries.
 # This static site needs only Nginx's built-in HTTP features; no module is loaded.
-# Upgrade the base libraries and use fixed nghttp2 until stable Alpine includes it.
+# Upgrade the stable Alpine libraries and require the fixed PCRE2 release.
 #
 USER 0
 RUN apk del --no-cache \
@@ -113,9 +107,7 @@ RUN apk del --no-cache \
         nginx-module-njs \
         nginx-module-xslt && \
     apk upgrade --no-cache && \
-    apk add --no-cache \
-        --repository="${EDGE_APK_REPOSITORY}" \
-        "nghttp2-libs>=${NGHTTP2_APK_MIN_VERSION}"
+    apk add --no-cache "pcre2>=10.49-r0"
 
 #
 # Copy the hardened server configuration and generated static site.
