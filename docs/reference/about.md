@@ -51,7 +51,9 @@ The container workflow follows the sibling project conventions: multi-platform B
 
 The September 2026 runtime cleanup removes unused Nginx modules for XML transformation, JavaScript, image filtering, and geolocation, including their transitive libraries. The site keeps its unprivileged user, read-only deployment, healthcheck, and Content Security Policy. Alpine 3.24 now provides fixed nghttp2 1.70.0 in its stable repositories for all three supported platforms, so the image uses stable package upgrades without an edge repository exception.
 
-The image requires PCRE2 10.49 or newer to fix CVE-2026-103111; see the [upstream security release](https://github.com/PCRE2Project/pcre2/releases/tag/pcre2-10.49). The earlier CVE-2026-89157, CVE-2026-89160, and CVE-2026-89162 alerts no longer appear in the October 4, 2026 Docker Scout review. Fresh Trivy scans cover all three supported platforms without scanner exclusions. Recheck the exact image digest and package versions when dependencies or advisory databases change.
+The image requires PCRE2 10.49 or newer to fix CVE-2026-103111; see the [upstream security release](https://github.com/PCRE2Project/pcre2/releases/tag/pcre2-10.49). The earlier CVE-2026-89157, CVE-2026-89160, and CVE-2026-89162 alerts no longer appear in the October 7, 2026 Docker Scout review. Fresh Trivy and Docker Scout scans cover all three supported platforms without scanner exclusions. Recheck the exact image digest and package versions when dependencies or advisory databases change.
+
+The October 7, 2026 review found CVE-2026-85091 in zlib 1.3.2-r0 on both published `latest` and `edge` images. The image now requires zlib 1.3.2-r1 or newer, matching the [Alpine 3.24 security record](https://secdb.alpinelinux.org/v3.24/main.json). Trivy rates the finding medium and Docker Scout rates it high. A new stable release is required to deliver this fix through `latest`.
 
 Privateerr's [container scan review](https://scottgigawatt.github.io/privateerr/container-scan-review/) covers the related Privateerr, Buccaneerr, and Maraudarr images. Scanner counts describe a dated artifact and database snapshot, not a guarantee of security.
 
