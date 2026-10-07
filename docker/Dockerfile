@@ -98,7 +98,7 @@ LABEL org.opencontainers.image.title="Plundarrpedia" \
 #
 # Remove unused dynamic modules and their XML, image, and geolocation libraries.
 # This static site needs only Nginx's built-in HTTP features; no module is loaded.
-# Upgrade the stable Alpine libraries and require the fixed PCRE2 release.
+# Upgrade the stable Alpine libraries and require fixed PCRE2 and zlib releases.
 #
 USER 0
 RUN apk del --no-cache \
@@ -107,7 +107,9 @@ RUN apk del --no-cache \
         nginx-module-njs \
         nginx-module-xslt && \
     apk upgrade --no-cache && \
-    apk add --no-cache "pcre2>=10.49-r0"
+    apk add --no-cache \
+        "pcre2>=10.49-r0" \
+        "zlib>=1.3.2-r1"
 
 #
 # Copy the hardened server configuration and generated static site.
