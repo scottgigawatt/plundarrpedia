@@ -15,14 +15,19 @@
         ":enablePreCommit"
     ],
     "timezone": "America/New_York",
-    "schedule": ["before 8am"],
+    "schedule": ["* 0-7 1 * *"],
+    "automergeSchedule": ["* 0-7 1 * *"],
+    "updateNotScheduled": false,
+    "prConcurrentLimit": 2,
     "dependencyDashboard": true,
 
-    // Merge dependency PRs after required checks pass; keep branches current.
+    //
+    // Merge routine dependency PRs during maintenance windows after checks pass.
+    //
     "automerge": true,
     "automergeType": "pr",
     "automergeStrategy": "squash",
-    "platformAutomerge": true,
+    "platformAutomerge": false,
     "rebaseWhen": "behind-base-branch",
     "labels": ["dependencies"],
     "assignees": ["scottgigawatt"],
@@ -57,6 +62,9 @@
             "versioningTemplate": "docker"
         }
     ],
+    //
+    // Preserve dependency tracking and pinning before applying maintenance policy.
+    //
     "packageRules": [
         {
             "groupName": "pre-commit hooks",
@@ -77,6 +85,47 @@
         {
             "groupName": "MkDocs dependencies",
             "matchManagers": ["pip_requirements"]
+        },
+
+        //
+        // Batch routine CI, hooks, and site tooling on the first day of each month.
+        //
+        {
+            "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+            "groupName": "monthly maintenance"
+        },
+
+        //
+        // Keep all image pins together in the weekly production update window.
+        //
+        {
+            "matchDatasources": ["docker"],
+            "schedule": ["* 0-7 * * 1"],
+            "automergeSchedule": ["* 0-7 * * 1"],
+            "groupName": "weekly production dependencies"
+        },
+
+        //
+        // Require dashboard approval and individual review for major updates.
+        //
+        {
+            "matchUpdateTypes": ["major"],
+            "dependencyDashboardApproval": true,
+            "automerge": false,
+            "groupName": null
         }
-    ]
+    ],
+
+    //
+    // Open detected security updates promptly and leave them for manual review.
+    //
+    "vulnerabilityAlerts": {
+        "enabled": true,
+        "dependencyDashboardApproval": false,
+        "groupName": null,
+        "automerge": false,
+        "schedule": ["at any time"],
+        "automergeSchedule": ["at any time"],
+        "updateNotScheduled": true
+    }
 }
