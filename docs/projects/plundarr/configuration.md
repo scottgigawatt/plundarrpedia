@@ -61,7 +61,7 @@ The default Plundarr preset uses `172.20.0.0/16` with a smaller container alloca
 
 In a generated Plundarr deployment, `PIA_AUTOCONNECT=true` selects a low-latency eligible region automatically and ignores `PIA_PREFERRED_REGION`. To choose a specific region, set `PIA_AUTOCONNECT=false` and `PIA_PREFERRED_REGION` to its PIA region ID in `dist/<preset>/.env`. The generated fallback ID is `ca`; verify that your chosen region supports port forwarding when `PIA_PF=true`.
 
-Recovery-enabled Privateerr reuses a valid saved pair on startup. To apply a region or forwarding-selection change immediately, stop the selected stack, generate fresh files in a disposable one-shot run, then recreate the full stack:
+Recovery-enabled Privateerr reuses a valid saved pair on startup. Restarting the stack does not repeat automatic latency selection or replace a healthy connection. To deliberately refresh server selection or apply a region or forwarding-selection change immediately, stop the selected stack, generate fresh files in a disposable one-shot run, then recreate the full stack:
 
 ```sh
 docker compose --project-directory dist/YOUR-PRESET stop
