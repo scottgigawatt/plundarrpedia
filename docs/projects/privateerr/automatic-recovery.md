@@ -75,7 +75,9 @@ Detection can take several minutes because Gluetun must first report a failure a
 
 Both Compose examples expose `PIA_AUTOCONNECT` and `PIA_PREFERRED_REGION`, defaulting to automatic selection and preferred region `ca`. With automatic selection disabled, recovery stays within the pinned region. Automatic recovery prefers eligible endpoints in the saved region before considering other regions; it does not repeat the startup latency benchmark. `PIA_PF=true` limits selection to regions advertising forwarding. Dedicated-IP setups keep their dedicated endpoint.
 
-A healthy saved connection is reused at startup. To change its region immediately, follow the [explicit regeneration procedure](../plundarr/configuration.md#vpn-region-selection); changing `.env` alone sets future selection policy but does not rotate the current healthy tunnel.
+Before automatic recovery, restarting Privateerr generated fresh files and could select a different low-latency PIA server when `PIA_AUTOCONNECT=true`. With `PRIVATEERR_AUTO_RECOVER=true`, startup reuses a valid saved pair. Restarting the stack does not rerun the latency benchmark or choose a new server; Privateerr retains the connection while Gluetun reports a healthy tunnel. With recovery disabled, startup still generates fresh files.
+
+To deliberately refresh server selection or apply a region change, follow the [explicit regeneration procedure](../plundarr/configuration.md#vpn-region-selection). Stop the supervisor before the one-shot run so only one process writes the shared files. Changing `.env` alone sets future selection policy but does not rotate the current healthy tunnel.
 
 ## Keep privileges and restart policies distinct
 
