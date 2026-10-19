@@ -17,7 +17,7 @@ ARG MKDOCS_MATERIAL_TAG=9.7.7@sha256:51b87149d227691486b5f08993d28c65ca7e4990010
 # Default runtime image and tag that can be overridden using build args.
 #
 ARG NGINX_UNPRIVILEGED_IMAGE=nginxinc/nginx-unprivileged
-ARG NGINX_UNPRIVILEGED_TAG=1.31.6-alpine3.24@sha256:884e0b7f42f303641b0f4e78755aea647521dca0b89ca3be7992ad78b5c07434
+ARG NGINX_UNPRIVILEGED_TAG=1.31.7-alpine3.24@sha256:b5047b9b76845eac124358373c6852377c52e4b05834a47647e955dd91cb8f1e
 
 #
 # Use the specified MkDocs Material image as the shared documentation toolchain.
