@@ -53,7 +53,7 @@ The September 2026 runtime cleanup removes unused Nginx modules for XML transfor
 
 The runtime requires PCRE2 10.49-r0 or newer and zlib 1.3.2-r1 or newer from Alpine's stable repositories. These minimum versions keep the resolved library fixes in place when the base image changes.
 
-The October 9, 2026 review found no vulnerabilities in the published `latest` (`v2.1.3`) and `edge` images with Docker Scout across `linux/amd64`, `linux/arm64`, and `linux/arm/v7`, without scanner exclusions. The publication workflow also scans the native runtime image with Trivy. The stable release includes the zlib fix. Recheck the exact image digest and package versions when dependencies or advisory databases change.
+The October 19, 2026 review found 24 Docker Scout findings in `libcurl 8.22.0-r0` on each published `latest` (`v2.1.4`) and `edge` platform, while Trivy reported none. The actual image package inventories confirmed the affected library; the earlier clean scan was a dated snapshot. The runtime now removes unused curl and its transitive libraries instead of adding a second Alpine repository. Nginx and its entrypoint scripts do not use curl, and the healthcheck uses BusyBox `wget`. Recheck the exact image digest, package inventory, and advisory databases when comparing scanner results.
 
 Privateerr's [container scan review](https://scottgigawatt.github.io/privateerr/container-scan-review/) covers the related Privateerr, Buccaneerr, and Maraudarr images. Scanner counts describe a dated artifact and database snapshot, not a guarantee of security.
 
