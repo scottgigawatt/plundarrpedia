@@ -96,12 +96,14 @@ LABEL org.opencontainers.image.title="Plundarrpedia" \
       org.opencontainers.image.base.name="docker.io/${NGINX_UNPRIVILEGED_IMAGE}:${NGINX_UNPRIVILEGED_TAG}"
 
 #
-# Remove unused dynamic modules and their XML, image, and geolocation libraries.
+# Remove unused curl, dynamic modules, and their transitive libraries.
 # This static site needs only Nginx's built-in HTTP features; no module is loaded.
+# The healthcheck uses BusyBox wget rather than curl.
 # Upgrade the stable Alpine libraries and require fixed PCRE2 and zlib releases.
 #
 USER 0
 RUN apk del --no-cache \
+        curl \
         nginx-module-geoip \
         nginx-module-image-filter \
         nginx-module-njs \
