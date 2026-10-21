@@ -33,26 +33,42 @@ This guide applies throughout the repository. Before editing, inspect any applic
 - Keep `linux/amd64`, `linux/arm64`, and `linux/arm/v7` support. Surface any base-image limitation for review rather than silently dropping a platform.
 - Never commit credentials, tokens, webhook URLs, live WireGuard keys or `wg0.conf`, private hostnames, identifying local paths, real deployment addresses, or unsanitized logs/screenshots. Use obvious placeholders and reserved examples such as `replace-me` and `192.0.2.10`.
 - Do not print secrets through environment dumps, Compose interpolation, shell tracing, or diagnostic output. Validate with public example values and keep sensitive reports private under the security policy.
+- Prefer `.env` variables over hardcoded deployment values where users need a safe override. Keep public defaults in `example.env` and local deployment values in the ignored `.env` file.
 
 ## Style and code quality
 
 - Honor `.editorconfig`: UTF-8, LF, final newline, no trailing whitespace, two-space indentation for ordinary Markdown/YAML/HTML, four spaces for workflow YAML, and tabs for Make recipes. Follow the configured exceptions rather than reformatting unrelated files.
 - Keep public prose useful first and lightly nautical second. Explain acronyms and platform assumptions; provide paths for ordinary Docker hosts and NAS readers where relevant. Commands, warnings, code, and operational comments stay plain English.
-- Preserve copyright, license attribution, file-purpose headers, and useful section comments. Explain intent, constraints, and non-obvious tradeoffs instead of restating syntax. Do not remove upstream attribution merely because policy guidance is being made standalone.
+- Preserve the local top-of-file header order: copyright, blank comment separator, license, blank comment separator, then `filename: purpose`, with aligned continuation lines when needed. The current owned-source wording is `Copyright 2026 Scott Gigawatt` and `Licensed under the Apache License, Version 2.0.`; retain existing years, owners, upstream attribution, and required notices rather than blanket-rewriting them. New source files should follow the nearest applicable local header, not add headers ahead of required page front matter.
+- Use language-appropriate comment delimiters and blank comment separators: `#` for YAML, Make, Dockerfile, environment, and Nginx source; `//` for JSON5; `/* ... */` with aligned asterisk-only separator lines for CSS; `<!-- ... -->` for HTML/Markdown comments; and `{# ... #}` for Jinja templates. Preserve each file family's existing layout. For example, the Makefile header is:
+
+  ```makefile
+  #
+  # Copyright 2026 Scott Gigawatt
+  #
+  # Licensed under the Apache License, Version 2.0.
+  #
+  # Makefile: Automation for building, previewing, validating, and running
+  #           Plundarrpedia through its Docker Compose application.
+  #
+  ```
+
+- Require framed separator-block comments for workflow and configuration sections: place the section explanation between blank comment lines using the file's native comment syntax. Preserve the existing layout and plain-English purpose, constraints, and non-obvious tradeoffs rather than replacing it with terse labels or syntax narration.
+- Preserve the aligned inline option comments in Compose, including comments for shared anchors, build arguments, and service options. Keep explanations accurate when an authorized change modifies the option; do not strip or reflow unrelated comments.
 - Use the existing formatter and linter configuration. Do not add blanket suppressions, disable checks, or expand secret baselines to hide failures; any necessary exception must be narrow and explained.
-- For shell changes, respect the selected interpreter, quote expansions, check failures, avoid `eval` and unsafe pipelines, and handle temporary files and destructive paths deliberately. Validate executable examples as well as scripts where practical.
-- For Python changes, use an isolated environment, explicit imports, clear names, small cohesive functions, and actionable error handling. There is no Python application test suite or dedicated Python formatter/type-checker configured here; do not invent one or claim a site build tests application code.
+- For workflow shell fragments, honor the selected shell, quote expansions, and propagate failures; validate relevant changes with the configured Actionlint hook. Do not introduce application-language standards or claim application tests for this documentation site.
 - When executable behavior changes, add or extend focused checks for the affected behavior. Do not introduce tests that merely repeat prose or implementation details.
 
 ## Documentation standards
 
-- Lead with the reader's task, action, or conclusion. Prefer active voice, one main idea per paragraph, and concise sentence-case headings with a clear H1/H2/H3 hierarchy; use one H1 per page and do not skip heading levels.
+- Lead with the reader's task, action, or conclusion. Use active voice and second person in procedures, put conditions before instructions, and keep one main idea per sentence or paragraph. Write concise sentence-case headings with searchable nouns and active verbs and a clear H1/H2/H3 hierarchy; use one H1 per page and do not skip heading levels.
 - Public pages in `docs/` require YAML front matter with a useful `title`, `description`, and suitable `icon`. Keep navigation labels concise and maintain the explicit `mkdocs.yml` hierarchy.
 - Keep ordinary prose paragraphs on one physical source line with editor wrapping. Preserve semantic blank lines and the indentation required by lists, tables, tabs, and admonitions. Surround block elements with blank lines.
-- Use numbered lists for ordered procedures, bullets for parallel points, and readable tables only for genuine comparisons. Keep callouts sparse and direct; never hide destructive-operation warnings in collapsible content.
+- Use numbered lists for ordered procedures, checklists for preflight validation, bullets for parallel points, and readable tables only for genuine comparisons. Keep callouts sparse and direct; never hide destructive-operation warnings in collapsible content.
 - Use descriptive relative links for local pages and assets, with valid case-sensitive paths and actual heading anchors. Check inbound links when headings change. Use precise authoritative evidence for product claims, verifying the relevant version and configuration rather than copying assumptions or entire READMEs.
 - Choose native syntax for the renderer. Repository-facing Markdown uses GitHub-flavored Markdown. The wiki uses the Material extensions configured in `mkdocs.yml`; preserve needed tabs, card grids, attributes, and nested-fence indentation rather than forcing GitHub-only syntax onto them.
-- For alerts shared by GitHub and the wiki, use native `> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, or `> [!CAUTION]` markers. The configured `pymdownx.quotes` extension converts them to Material admonitions. Keep the first quoted prose line directly below the marker; follow the contribution guide's restriction against custom alert titles and new MkDocs-only `!!!` alerts. Verify both renderers when changing alert syntax or rendering.
+- For alerts shared by GitHub and the wiki, use native `> [!NOTE]` for useful context, `> [!TIP]` for advice that makes a task easier, `> [!IMPORTANT]` for information required for success, `> [!WARNING]` for immediate attention needed to avoid a problem, and `> [!CAUTION]` for risks or destructive outcomes. The configured `pymdownx.quotes` extension converts them to Material admonitions. Do not use custom alert titles or new MkDocs-only `!!!` alerts. Verify both renderers when changing alert syntax or rendering.
+- Use one or two alerts per page where possible. Do not place alerts consecutively, nest them inside other elements, wrap routine commands in them, or hide risks in collapsible content. Keep the first quoted prose line directly below the marker; use blank quoted lines only between paragraphs or to delimit lists or fenced code. State the required action or risk literally and directly; keep nautical humor outside the alert.
 - Label fenced code with its actual language: `sh` for copyable commands, `console` for output/transcripts, and formats such as `yaml`, `ini`, or `text` for configuration. Omit shell prompt characters and prose comments from command blocks. Use safe, secret-free placeholders and make commands copyable from the stated working directory.
 - State prerequisites, required tools, platform/version assumptions, expected results, and validation steps before a procedure. Warn before destructive operations and explain their scope, backups, and recovery. Distinguish build/preview commands from runtime-changing commands.
 - Describe current stable behavior accurately and label unreleased behavior explicitly. Explain migration steps, compatibility breaks, architecture limits, persistent-data/permission effects, and backup/rollback caveats where applicable. Configuration generators produce settings; Gluetun runs the VPN tunnel. Present generated presets as presets rather than separately maintained documentation products.
@@ -68,6 +84,7 @@ This guide applies throughout the repository. Before editing, inspect any applic
 - `make clean` deletes the configured generated site directory. Inspect `SITE_OUTPUT_PATH` before using it; existing guards reject some unsafe paths, but they are not a reason to trust arbitrary overrides or shell input.
 - `make run`/`up` builds and starts/recreates the production stack; `start`, `stop`, and `down` change container state. These are operational actions, not ordinary lint checks. Avoid them during documentation-only validation.
 - For authorized Make changes, preserve `.PHONY` declarations, real prerequisites, quoted paths, failure propagation, safe cleanup checks, and separation of validation from runtime operations. Do not introduce implicit destructive or credentialed actions into default/check targets.
+- Preserve Make's framed target-purpose comments in the existing `$(TARGET): Purpose.` form. Where prerequisites exist, retain the `Dependencies:` block with an aligned entry explaining each real prerequisite, enclosed by blank `#` separator lines. Update those explanations when dependencies change; do not replace the blocks with bare target names or invent prerequisites for presentation.
 
 ## Dependencies and automation
 
