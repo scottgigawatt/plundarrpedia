@@ -17,12 +17,13 @@ Most deployment targets accept `PRESET=YOUR-PRESET`. Omit it for the default `pl
 | `make ship PRESET=YOUR-PRESET` | Generate one named preset under `dist/YOUR-PRESET/`. |
 | `make configure` | Open Maraudarr's interactive preset and service picker. |
 | `make pull-image` | Pull the configured published Maraudarr image. |
+| `make build` | Build Maraudarr from the checkout using the selected image reference. |
 | `make presets` | List presets and their default services. |
 | `make services` | List every selectable service. |
 | `make compose-services PRESET=YOUR-PRESET` | List services in an existing generated Compose project. |
 | `make config PRESET=YOUR-PRESET` | Render and validate the generated Compose model. |
 | `make env PRESET=YOUR-PRESET` | Print evaluated environment values. |
-| `make up PRESET=YOUR-PRESET` | Build, create, and start the selected project. |
+| `make up PRESET=YOUR-PRESET` | Pull selected runtime images, recreate services, and remove project orphans. |
 | `make down PRESET=YOUR-PRESET` | Stop the project while preserving volumes, images, environment, config, and backups. |
 | `make ps PRESET=YOUR-PRESET` | Print compact service status. |
 | `make logs PRESET=YOUR-PRESET` | Follow the selected project logs. |
@@ -42,12 +43,12 @@ Most deployment targets accept `PRESET=YOUR-PRESET`. Omit it for the default `pl
 | `make docs` | Build Plundarr's strict developer documentation. |
 | `make docs-serve` | Preview Plundarr's developer documentation. |
 
-Select `overlay-reset` or `recyclarr` before invoking its tool target. See [v2 command replacements](../projects/plundarr/upgrading.md#update-command-names) for older scripts and [Tracearr backup exports](../projects/plundarr/monitoring.md#back-up-and-update) before relying on a config archive.
+Choose the intended [generator image](../projects/plundarr/quick-start.md#choose-the-generator) before generation. Select `overlay-reset` or `recyclarr` before invoking its tool target. Review [deployment update checks](../projects/plundarr/upgrading.md) and [Tracearr backup exports](../projects/plundarr/monitoring.md#back-up-and-update) before relying on a config archive.
 
 The published [Plundarr developer documentation](https://scottgigawatt.github.io/plundarr/) covers Maraudarr architecture, extension contracts, testing, and the generated Python reference.
 
 > [!CAUTION]
-> `make nuke PRESET=YOUR-PRESET` removes attributable Docker resources but preserves deployment files and application state. `make delete-config PRESET=YOUR-PRESET` deletes the selected configuration tree. Back up the deployment before either destructive operation.
+> `make nuke PRESET=YOUR-PRESET` removes scoped Docker resources/cache, clears Gluetun runtime state, and overwrites the saved VPN pair with examples; other application volumes and deployment files remain. `make delete-config PRESET=YOUR-PRESET` deletes the selected configuration tree. Back up the deployment before either destructive operation.
 
 ## Privateerr standalone source
 
@@ -56,14 +57,16 @@ Use these only when you need the focused Privateerr repository outside Plundarr:
 | Command | Purpose |
 | --- | --- |
 | `make` / `make help` | Show the command menu. |
-| `make run-privateerr` | Generate fresh files once with recovery and keepalive disabled for that run. |
-| `make up` / `make down` | Start or stop Privateerr, Gluetun, qBittorrent, and the Buccaneerr test example. |
+| `make run-privateerr` | Build the checkout and generate fresh files once with recovery and keepalive disabled. |
+| `make up` / `make up-pull` | Pull published images and start only Privateerr, Gluetun, and qBittorrent detached. |
+| `make up-build` | Pull Gluetun/qBittorrent, build Privateerr from source, and start without pulling over the local build. |
+| `make down` | Stop the selected project, including test-profile containers; preserve volumes, images, and saved configuration. |
 | `make env` | Print evaluated environment values. |
 | `make config` | Render the resolved Compose model. |
 | `make ps` / `make logs` | Inspect service status or logs. |
 | `make backup` | Archive the complete Privateerr configuration directory. |
 | `make restore-test-config` | Restore checked-in safe example files. |
-| `make clean-test` | Stop test containers and restore example state. |
+| `make clean-test` | Stop the test-profile stack, then overwrite saved VPN files with examples only after successful shutdown. |
 | `make clean` | Remove disposable developer artifacts; leave the stack and generated VPN state alone. |
 | `make test` | Run Python tests, strict types, lint, policy, and helper checks in Buccaneerr. |
 | `make test-types` | Run strict Pyright checks in Buccaneerr. |
@@ -75,7 +78,7 @@ Use these only when you need the focused Privateerr repository outside Plundarr:
 | `make test-e2e` | Run live Buccaneerr validation with supplied credentials. |
 | `make build-platforms` | Validate both images on published architectures. |
 
-The [Privateerr developer site](https://scottgigawatt.github.io/privateerr/) covers the supervisor architecture, Python reference, and testing contracts. `make up` and `make test-e2e` include a deliberate VPN interruption by default; use the [standalone guide](../projects/privateerr/quick-start.md#run-the-standalone-example-stack) for a lasting three-service deployment. Stop any supervisor sharing the output directory before one-shot generation.
+The [Privateerr developer site](https://scottgigawatt.github.io/privateerr/) covers supervisor architecture, Python reference, and testing contracts. Application startup does not run Buccaneerr or inject VPN faults; `make test-e2e` explicitly enables the live test profile and deliberate interruption. Use the [standalone guide](../projects/privateerr/quick-start.md#run-the-standalone-example-stack) for setup. Stop any supervisor sharing the output directory before one-shot generation or example restoration.
 
 ## Preset examples
 

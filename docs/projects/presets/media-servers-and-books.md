@@ -7,7 +7,7 @@ status: updated
 
 # Media server and ebook presets
 
-Plundarr can generate focused deployments when you need one media server or ebook service without the complete automation fleet. These presets keep their own `.env`, Compose file, network identity, and configuration tree under `dist/<preset>/`.
+Plundarr can generate focused deployments when you need one media server or ebook service without the complete automation fleet. These presets keep their own `.env`, Compose file, network identity, and configuration tree under `dist/<preset>/`. Complete [generator setup](../plundarr/quick-start.md#choose-the-generator) before using the commands below.
 
 ## Jellyfin
 
@@ -20,6 +20,28 @@ make up PRESET=jellyfin
 ```
 
 Jellyfin mounts one writable high-level media root at `/data`. Add `/data/movies` and `/data/tv` as libraries in Jellyfin, and keep its persistent `/config` and `/cache` directories in your backup plan. The default generated bridge network is `172.22.0.0/16`, and the example host port is `28096`.
+
+## Customize Jellyfin Web and Vue
+
+Maraudarr seeds preserved Jellyfin Web JSON and local styles under `config/jellyfin/web/`. `JELLYFIN_WEB_CONFIG_PATH` selects the complete JSON file, and `JELLYFIN_WEB_CUSTOM_PATH` selects the CSS/assets directory, both mounted read-only. External override paths must already exist and be readable. Validate the JSON for the selected Web version before recreating Jellyfin.
+
+The `privacy-config.json` example omits Chromecast and YouTube players; it does not disable metadata providers or remote library images. The JSON mount does not activate CSS. To enable the bundled Boudoirr style, select **Dark** and add this to Jellyfin Web's **Dashboard → Branding → Custom CSS**:
+
+```css
+@import url("custom/boudoirr.css");
+```
+
+Local alternative styles and account-specific settings are covered in the [Jellyfin customization guide](https://scottgigawatt.github.io/plundarr/project-guides/jellyfin/). Web configuration/CSS do not customize Vue or all native clients. Check plugin compatibility against the selected server rather than installing every suggested extension.
+
+The experimental Vue frontend is optional and does not force a local server:
+
+```sh
+make ship PRESET=jellyfin ADD_SERVICES=jellyfin-vue
+```
+
+It uses the upstream `unstable` channel and supports amd64/arm64, not arm/v7. The standalone Jellyfin preset exposes Vue on `28082`; Boudoirr uses `18082`. Set `JELLYFIN_VUE_DEFAULT_SERVERS` to browser-reachable URLs, or leave it empty for manual selection. Keep server selection enabled until that URL works. An HTTPS frontend requires an HTTPS Jellyfin URL; Docker service names and loopback addresses do not identify the server from a remote browser.
+
+Keep Vue's seeded Nginx listener on internal port `8080`, its own image user, and writable startup configuration. It uses separate environment-generated frontend settings; its healthcheck proves static delivery, not server connectivity or playback. Read the [Vue chart](https://github.com/scottgigawatt/plundarr/blob/main/docker/services/jellyfin-vue/README.md) before changing those boundaries.
 
 ## Plex
 
@@ -58,7 +80,7 @@ Jellyfin, Plex, and Calibre-Web Automated are also selectable services. For exam
 
 ```sh
 make ship ADD_SERVICES=plex
-make ship PRESET=boudoirr ADD_SERVICES=jellyfin
+make ship PRESET=boudoirr REMOVE_SERVICES=velvarr
 make ship REMOVE_SERVICES=calibre-web-automated
 ```
 

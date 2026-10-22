@@ -10,12 +10,12 @@ The Compose model stays recognizable across platforms. What changes is how the
 host prepares paths, grants permissions, supplies the TUN device, and accepts
 the generated Compose project.
 
-| Harbor         | Deployment path            | Main adjustment                                          |
+| Harbor | Deployment path | Main adjustment |
 | -------------- | -------------------------- | -------------------------------------------------------- |
-| Linux server   | Docker Compose CLI         | `/srv` or `/mnt` paths, ownership, and firewall rules    |
-| Synology DSM   | Container Manager project  | `/volume*` paths, DSM permissions, and boot helpers      |
-| TrueNAS        | Apps custom YAML           | ZFS datasets, ACLs, rendered Compose, and `/dev/net/tun` |
-| Docker Desktop | Compose CLI for evaluation | Host-folder sharing and platform networking differences  |
+| Linux server | Docker Compose CLI | `/srv` or `/mnt` paths, ownership, and firewall rules |
+| Synology DSM | Container Manager project | `/volume*` paths, DSM permissions, and boot helpers |
+| TrueNAS | Dockge or Apps custom YAML | ZFS datasets, ACLs, rendered Compose, and `/dev/net/tun` |
+| Docker Desktop | Compose CLI for evaluation | Host-folder sharing and platform networking differences |
 
 === "Linux Docker"
 
@@ -33,8 +33,8 @@ the generated Compose project.
 
 === "TrueNAS"
 
-    Create datasets and ACL entries first. Render environment interpolation,
-    then install the resulting Compose YAML as a custom App.
+    Create datasets and ACL entries first. Keep the generated project together
+    for Dockge, or render interpolation for a custom App.
 
     [:material-server-network: TrueNAS guide](../guides/truenas.md)
 

@@ -92,7 +92,7 @@ Plundarrpedia connects Plundarr, Privateerr, generated presets, containers, path
 </div>
 
 > [!IMPORTANT]
-> **Privateerr draws the map; Gluetun sails the tunnel.** Privateerr generates `wg0.conf` and endpoint metadata, and its optional supervisor refreshes stale settings through Gluetun's API. Gluetun establishes and maintains the tunnel. See [automatic recovery](projects/privateerr/automatic-recovery.md) for setup and upgrade guidance.
+> **Privateerr draws the map; Gluetun sails the tunnel.** Privateerr generates `wg0.conf` and endpoint metadata, and its optional supervisor refreshes stale settings through Gluetun's API. Gluetun establishes and maintains the tunnel. See [automatic recovery](projects/privateerr/automatic-recovery.md) for setup and operating limits.
 
 ## What makes this wiki different
 

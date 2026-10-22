@@ -9,6 +9,6 @@ hide:
 
 # The Duplex guide has moved
 
-Duplex is now documented as a maintained Plundarr preset instead of a separate deployment product.
+Use the maintained Duplex preset guide for Plex curation, Plex/Jellyfin theme songs, and deliberate maintenance tools.
 
 [Open the current Duplex preset guide](../presets/duplex.md){ .md-button .md-button--primary }

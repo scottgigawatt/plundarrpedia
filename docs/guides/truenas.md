@@ -14,7 +14,7 @@ This guide covers deploying Plundarr on **TrueNAS SCALE** through its Docker-bas
 - a **TrueNAS custom application**, which accepts a rendered Compose model in
   the Apps interface.
 
-This guide focuses on Dockge because it is a comfortable fit for people already using Compose. The custom-application route remains useful when you do not want another stack manager. Both routes target the Docker Apps model introduced in TrueNAS 24.10, not the older Kubernetes Apps backend or TrueNAS CORE jails.
+This guide focuses on Dockge because it is a comfortable fit for people already using Compose. The custom-application route remains useful when you do not want another stack manager. Both routes require the Docker-based Apps system in TrueNAS SCALE.
 
 The TrueNAS Community catalog currently lists Dockge for TrueNAS 24.10.2.2 or newer. Screens and container identity behavior continue to evolve, so confirm the workflow against the documentation for your installed release.
 
@@ -99,6 +99,8 @@ Use a workstation or a shell on TrueNAS to generate and inspect the stack:
 ```sh
 git clone https://github.com/scottgigawatt/plundarr.git
 cd plundarr
+export MARAUDARR_IMAGE=maraudarr:dev
+make build
 make ship
 $EDITOR dist/plundarr/.env
 docker compose --project-directory dist/plundarr config --quiet
@@ -189,7 +191,7 @@ Treat the generated Plundarr project as the source of truth:
 1. Back up `config/`, `compose.yaml`, and `.env` through a secret-aware process.
 2. Copy the current Dockge `.env` back to `dist/plundarr/.env`, then run `make ship` in the Plundarr checkout with the complete `ADD_SERVICES` and `REMOVE_SERVICES` selection. Review the regenerated files.
 3. Validate them with `docker compose --project-directory dist/plundarr config --quiet`.
-4. Copy the reviewed Compose file and `.env` into the Dockge stack directory. Preserve application state; install seeds only for new services and review regenerated Homepage cards separately. When adopting VPN recovery, also transfer the verified updated Gluetun wrapper after reviewing custom changes; see [recovery upgrades](../projects/privateerr/automatic-recovery.md#upgrade-a-generated-deployment).
+4. Copy the reviewed Compose file and `.env` into the Dockge stack directory. Preserve application state; install seeds only for new services and review regenerated Homepage cards separately. When the wrapper changes, transfer its reviewed version without overwriting operator customizations; see [recovery requirements](../projects/privateerr/automatic-recovery.md#configure-a-generated-deployment).
 5. Use Dockge to pull the selected images and recreate the stack.
 6. Repeat the VPN-lane validation before updating application settings.
 

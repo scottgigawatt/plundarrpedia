@@ -7,16 +7,9 @@ status: updated
 
 # Plundarr 🏴‍☠️
 
-Plundarr is a complete Docker Compose media fleet generated from the services
-you actually want. The output is deliberately ordinary: one commented
-`docker-compose.yml`, one matching `.env`, and service configuration
-directories. That makes the same artifact usable from the command line or from
-Synology Container Manager.
+Plundarr is a complete Docker Compose media fleet generated from the services you actually want. The output is deliberately ordinary: one commented `docker-compose.yml`, one matching `.env`, and service configuration directories. That makes the same artifact usable from the command line or from Synology Container Manager.
 
-**Maraudarr** is the shipwright. It is a short-lived Docker image and Python
-application that selects a preset, resolves required companions, preserves
-handwritten comments, seeds configuration directories, and asks Docker Compose
-to validate the result.
+**Maraudarr** is the shipwright. It is a short-lived Docker image and Python application that selects a preset, resolves required companions, preserves handwritten comments, seeds configuration directories, and asks Docker Compose to validate the result.
 
 ## What Plundarr solves
 
@@ -51,14 +44,11 @@ dist/
 - [:material-tune: **Understand the important settings**](configuration.md)
 - [:material-view-grid-plus: **Browse available services**](services.md)
 - [:material-lifebuoy: **Recover from common failures**](troubleshooting.md)
-- [:material-update: **Upgrade an existing deployment**](upgrading.md)
+- [:material-update: **Update and back up a deployment**](upgrading.md)
 
 </div>
 
-[Plundarr's developer documentation](https://scottgigawatt.github.io/plundarr/)
-covers Maraudarr architecture, service-extension contracts, testing, and the
-source-generated Python reference. Plundarrpedia stays focused on deployment,
-configuration, and troubleshooting voyages.
+[Plundarr's developer documentation](https://scottgigawatt.github.io/plundarr/) covers Maraudarr architecture, service-extension contracts, testing, and the source-generated Python reference. Plundarrpedia stays focused on deployment, configuration, and troubleshooting voyages.
 
 [View Plundarr on GitHub](https://github.com/scottgigawatt/plundarr){ .md-button }
 [Open the developer documentation](https://scottgigawatt.github.io/plundarr/){ .md-button .md-button--primary }

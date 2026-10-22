@@ -9,6 +9,6 @@ hide:
 
 # The preset catalog has moved
 
-Plundarr presets now have one dedicated section with focused Boudoirr, Duplex, media-server, ebook, Watchtower, and Portainer guidance.
+Find focused Boudoirr, Duplex, media-server, ebook, Watchtower, and Portainer guidance in the maintained preset section.
 
 [Open the current preset catalog](presets/index.md){ .md-button .md-button--primary }

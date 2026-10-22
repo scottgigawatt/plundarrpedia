@@ -6,9 +6,7 @@ icon: material/information-slab-circle
 
 # About this wiki
 
-Plundarrpedia is the public knowledge layer above the project repositories. It
-connects the architecture and recurring workflows without turning every page
-into a stale copy of a README.
+Plundarrpedia is the public knowledge layer above the project repositories. It connects the architecture and recurring workflows without turning every page into a stale copy of a README.
 
 ## Sources of truth
 
@@ -16,17 +14,13 @@ into a stale copy of a README.
   catalog, setup notes, helper scripts, and tests.
 - Current Privateerr documentation, supervisor behavior, Compose handoff, image/release model, and validation workflow.
 - The [Privateerr developer site](https://scottgigawatt.github.io/privateerr/) and [Maraudarr developer site](https://scottgigawatt.github.io/plundarr/) for Python contracts, architecture, and contributor testing.
-- Current Plundarr preset catalog, service charts, generated output, and migration boundaries.
+- Current Plundarr preset catalog, service charts, generated output, and backup boundaries.
 - Current Docker, Material for MkDocs, Synology, and TrueNAS documentation for
   behavior owned by those platforms.
 
 ## Visual direction
 
-The earlier wiki used a cosmic photographic background. Plundarrpedia uses a
-new chart-room system: navy ink, sea-glass teal, brass, parchment, a custom
-compass rose, layered grids, and project accents. The styling is implemented as
-small Material overrides and CSS, so navigation, search, accessibility, and
-print behavior remain theme-native.
+Plundarrpedia uses a chart-room palette, local visual assets, and responsive architecture maps. Small Material overrides and CSS keep navigation, search, accessibility, and print behavior theme-native.
 
 ## Material features in use
 
@@ -39,28 +33,19 @@ print behavior remain theme-native.
 
 ## Publishing model
 
-GitHub Pages receives a static artifact built from `requirements.txt`.
-The Docker image uses the same pin in a multi-stage build and serves only the
-generated site from an unprivileged Nginx image. Architecture maps use native
-HTML and CSS, so they render under the same self-contained Content Security
-Policy on GitHub Pages and in the production container.
+GitHub Pages receives a static artifact built from `requirements.txt`. The Docker image uses the same pin in a multi-stage build and serves only the generated site from an unprivileged Nginx image. Architecture maps use native HTML and CSS, so they render under the same self-contained Content Security Policy on GitHub Pages and in the production container.
 
 The container workflow follows the sibling project conventions: multi-platform Buildx output, Open Container Initiative (OCI) metadata, Trivy scanning, software bills of materials (SBOMs), provenance, GitHub Container Registry (GHCR) publishing, and Renovate-managed dependency updates.
 
-## Container security review
+## Container security boundaries
 
-The September 2026 runtime cleanup removes unused Nginx modules for XML transformation, JavaScript, image filtering, and geolocation, including their transitive libraries. The site keeps its unprivileged user, read-only deployment, healthcheck, and Content Security Policy. Alpine 3.24 now provides fixed nghttp2 1.70.0 in its stable repositories for all three supported platforms, so the image uses stable package upgrades without an edge repository exception.
+The production runtime removes unused Nginx modules, curl, and their transitive libraries. It keeps the unprivileged user, read-only deployment, healthcheck using BusyBox `wget`, and Content Security Policy. Builds use Alpine's stable repositories and enforce the PCRE2/zlib minimums in the Dockerfile.
 
-The runtime requires PCRE2 10.49-r0 or newer and zlib 1.3.2-r1 or newer from Alpine's stable repositories. These minimum versions keep the resolved library fixes in place when the base image changes.
-
-The October 19, 2026 review found 24 Docker Scout findings in `libcurl 8.22.0-r0` on each published `latest` (`v2.1.4`) and `edge` platform, while Trivy reported none. The actual image package inventories confirmed the affected library; the earlier clean scan was a dated snapshot. The runtime now removes unused curl and its transitive libraries instead of adding a second Alpine repository. Nginx and its entrypoint scripts do not use curl, and the healthcheck uses BusyBox `wget`. Recheck the exact image digest, package inventory, and advisory databases when comparing scanner results.
-
-Privateerr's [container scan review](https://scottgigawatt.github.io/privateerr/container-scan-review/) covers the related Privateerr, Buccaneerr, and Maraudarr images. Scanner counts describe a dated artifact and database snapshot, not a guarantee of security.
+Compare security results against the exact image digest, installed package inventory, and scanner database. A passing gate is not a zero-vulnerability guarantee. Consult the source [Privateerr security policy](https://scottgigawatt.github.io/privateerr/SECURITY/) and [Plundarr security policy](https://scottgigawatt.github.io/plundarr/SECURITY/) for those applications' current findings and limitations; their [dated scan evidence](https://scottgigawatt.github.io/privateerr/container-scan-review/) is an artifact record rather than the wiki's runtime status.
 
 ## Contributing
 
-Edit Markdown under `docs/`, update `mkdocs.yml` when adding navigation, and
-follow the [writing guide](../CONTRIBUTING.md). Then validate:
+Edit Markdown under `docs/`, update `mkdocs.yml` when adding navigation, and follow the [writing guide](../CONTRIBUTING.md). Then validate:
 
 ```sh
 make site

@@ -15,6 +15,8 @@ Generate Plundarr on the NAS over SSH or on another Docker-capable system:
 ```sh
 git clone https://github.com/scottgigawatt/plundarr.git
 cd plundarr
+export MARAUDARR_IMAGE=maraudarr:dev
+make build
 make ship
 ```
 
@@ -58,7 +60,7 @@ Giving every container full control of every shared folder makes a permissions e
 
 ## 4. Confirm the VPN device
 
-Gluetun needs `/dev/net/tun` plus the `NET_ADMIN` capability declared in the generated Compose file. Privateerr v2.1.0 uses a separate unprivileged service with capabilities dropped; do not grant it Gluetun's network privileges. Review [recovery upgrades](../projects/privateerr/automatic-recovery.md#upgrade-a-generated-deployment) before rebuilding an older project.
+Gluetun needs `/dev/net/tun` plus the `NET_ADMIN` capability declared in the generated Compose file. Privateerr separately runs as UID 0 with all Linux capabilities dropped and `no-new-privileges`; do not grant it Gluetun's network privileges. Review [recovery requirements](../projects/privateerr/automatic-recovery.md#configure-a-generated-deployment) alongside the generated definition.
 
 ```sh
 ls -l /dev/net/tun

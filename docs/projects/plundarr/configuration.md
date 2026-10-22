@@ -6,14 +6,11 @@ icon: material/tune-variant
 
 # Configure the stack
 
-Treat `.env` as the control panel and `docker-compose.yml` as the generated
-wiring diagram. Routine local changes belong in `.env`; regenerate the Compose
-file when you want to change selected services.
+Treat `.env` as the control panel and `docker-compose.yml` as the generated wiring diagram. Routine local changes belong in `.env`; regenerate the Compose file when you want to change selected services.
 
 ## Identity and permissions
 
-Linux-based media containers commonly use a numeric user and group ID. On the
-host, identify the account that owns the media directories:
+Linux-based media containers commonly use a numeric user and group ID. On the host, identify the account that owns the media directories:
 
 ```sh
 id media
@@ -28,12 +25,11 @@ Plundarr applies these settings in two deliberate ways:
   their supported entrypoint environment rather than a blanket Compose
   `user:` override.
 
-Refresh Maraudarr and regenerate an older Compose file before troubleshooting runtime identity. Do not weaken host ownership or container hardening to compensate for a stale generated chart.
+Select the intended Maraudarr image and review the generated service identity before troubleshooting runtime access. Do not weaken host ownership or container hardening to compensate for a stale generated chart.
 
 ## Path strategy
 
-The most reliable strategy uses one shared host root and consistent container
-paths:
+The most reliable strategy uses one shared host root and consistent container paths:
 
 | Host example           | Container path | Used by                          |
 | ---------------------- | -------------- | -------------------------------- |
@@ -42,9 +38,7 @@ paths:
 | `/srv/media/tv`        | `/tv`          | Sonarr, Plex/Jellyfin            |
 | `./config/radarr`      | `/config`      | Radarr only                      |
 
-Do not map the same host download directory as `/data` in one container and
-`/downloads` in another unless you also configure remote-path mappings. A
-single vocabulary makes imports, hardlinks, and troubleshooting easier.
+Do not map the same host download directory as `/data` in one container and `/downloads` in another unless you also configure remote-path mappings. A single vocabulary makes imports, hardlinks, and troubleshooting easier.
 
 ## Network choices
 
@@ -70,15 +64,15 @@ make up PRESET=YOUR-PRESET
 make test-vpn PRESET=YOUR-PRESET
 ```
 
-Run this from the Plundarr checkout and replace `YOUR-PRESET`. Stopping the supervisor prevents concurrent writers. A plain restart does not reload environment changes, and recreation alone does not rotate a healthy saved connection. For Privateerr's standalone checkout, stop its application services, run `make run-privateerr`, then recreate them.
+Run this from the Plundarr checkout and replace `YOUR-PRESET`. Stopping the supervisor prevents concurrent writers. A plain restart does not reload environment changes, and recreation alone does not rotate a healthy saved connection. For Privateerr's standalone checkout, run `make down`, wait for success, then `make run-privateerr` and `make up-build` to retain the source-built image. These operations interrupt the application stack and replace the saved VPN pair.
 
 In Synology Container Manager, stop the project before generation and rebuild it afterward. For a UI-only change, temporarily set `PRIVATEERR_AUTO_RECOVER=false`, rebuild and verify fresh generation, then restore `true` and rebuild again.
 
 ## Automatic VPN recovery
 
-Plundarr v2.1.0 enables recovery when the resolved service selection includes Privateerr and Gluetun, including core services and downloader dependencies. Maraudarr generates the private shared API key and preserves existing keys, timing controls, image pins, and explicit opt-outs. See [automatic recovery](../privateerr/automatic-recovery.md) before upgrading existing deployments or customizing the wrapper.
+Plundarr enables recovery when the resolved service selection includes Privateerr and Gluetun, including core services and downloader dependencies. Maraudarr generates the private shared API key and preserves existing keys, timing controls, image pins, and explicit opt-outs. See [automatic recovery](../privateerr/automatic-recovery.md) when configuring the generated services or customizing the wrapper.
 
-Generated Privateerr no longer needs privileged mode. It runs as UID 0 with capabilities dropped, `no-new-privileges`, and Docker-applied namespace IPv6 settings. Gluetun retains its separate tunnel privileges. Keep image and generated-chart versions compatible; an image-only update does not rewrite container options.
+Generated Privateerr runs without privileged mode. It runs as UID 0 with capabilities dropped, `no-new-privileges`, and Docker-applied namespace IPv6 settings. Gluetun retains its separate tunnel privileges. Keep image and generated-chart versions compatible; an image-only update does not rewrite container options.
 
 ## Dashboard and monitoring
 
@@ -112,9 +106,7 @@ The selected client changes the VPN namespace and service dependencies:
 
 ## NZBGet first-run settings
 
-Add provider credentials under **Settings → News-Servers** in NZBGet. Those
-credentials belong to the application; `NZBGET_USER` and `NZBGET_PASS` in
-`.env` protect its Web UI and RPC control endpoint.
+Add provider credentials under **Settings → News-Servers** in NZBGet. Those credentials belong to the application; `NZBGET_USER` and `NZBGET_PASS` in `.env` protect its Web UI and RPC control endpoint.
 
 Keep the generated path vocabulary:
 
@@ -126,10 +118,7 @@ Keep the generated path vocabulary:
 | Radarr category | `radarr` → `${MainDir}/complete/movies`   |
 | Sonarr category | `sonarr` → `${MainDir}/complete/tv`       |
 
-When adding NZBGet to Radarr or Sonarr, use host `gluetun`, port `6789`, no
-SSL, and the generated `NZBGET_USER` / `NZBGET_PASS` values. A browser reaches
-the host-side `NZBGET_WEBUI_PORT`; connected containers use the fixed internal
-port.
+When adding NZBGet to Radarr or Sonarr, use host `gluetun`, port `6789`, no SSL, and the generated `NZBGET_USER` / `NZBGET_PASS` values. A browser reaches the host-side `NZBGET_WEBUI_PORT`; connected containers use the fixed internal port.
 
 ## Music and quality synchronization
 
@@ -164,5 +153,4 @@ Keep these out of Git:
 - Duplicati encryption material;
 - real service databases and logs.
 
-Use `example.env` to document variable names and safe examples. Use ignored
-`.env` files or an external secret-management workflow for real values.
+Use `example.env` to document variable names and safe examples. Use ignored `.env` files or an external secret-management workflow for real values.

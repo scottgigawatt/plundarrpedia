@@ -7,7 +7,7 @@ status: new
 
 # Sign in to Homepage
 
-Plundarr enables Homepage's native shared-password login whenever Homepage is selected. It requires Homepage v2 or later. Maraudarr generates a unique password and session secret in `dist/<preset>/.env`, including when those settings are first added to an older deployment. Your dashboard now has a doorbell. 🔐
+Plundarr enables Homepage's native shared-password login whenever Homepage is selected. Maraudarr generates a unique password and session secret in `dist/<preset>/.env`, preserving existing values on regeneration. Your dashboard has a doorbell. 🔐
 
 ## Configure the browser address
 
