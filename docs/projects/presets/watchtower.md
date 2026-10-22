@@ -11,6 +11,8 @@ The Watchtower preset generates one focused project for eligible container updat
 
 ## Run the persistent preset
 
+Complete [generator setup](../plundarr/quick-start.md#choose-the-generator) first. Review the update policy before launch:
+
 ```sh
 make ship PRESET=watchtower
 make config PRESET=watchtower

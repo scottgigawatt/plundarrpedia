@@ -48,7 +48,9 @@ Paths below are relative to the shared WireGuard directory unless shown as absol
 | `ready` inside either directory | The copied pair passed validation | Written last and removed with its directory. |
 | `/healthcheck/privateerr.ready` | Startup produced or validated a usable saved pair | Cleared and recreated at startup; does not report live tunnel health. |
 
-Privateerr's Compose healthcheck tests the startup marker. Gluetun's own healthcheck reports the tunnel. Do not delete retained recovery directories while the supervisor runs; the [developer architecture](https://scottgigawatt.github.io/privateerr/development/privateerr/architecture/#confirm-updates-before-saving) describes all temporary files and publication guarantees.
+Privateerr's Compose healthcheck tests the startup marker; it certifies neither live tunnel health nor future recovery write access. A failed disposable storage probe can warn and still allow readiness when a valid saved pair is reusable. Other startup operations can still fail. Gluetun's own healthcheck reports the tunnel.
+
+If an API update succeeds but saving fails, the running tunnel may use the candidate while the saved pair is older or partly replaced. Repair the reported storage problem and retain the pending/commit directories for reconciliation; do not delete them or run a concurrent generator. See [storage diagnostics](troubleshooting.md#recovery-reports-a-storage-error) and the [developer publication contract](https://scottgigawatt.github.io/privateerr/development/privateerr/architecture/#confirm-updates-before-saving).
 
 ## Important variables
 

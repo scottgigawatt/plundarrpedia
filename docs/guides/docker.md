@@ -37,6 +37,8 @@ Choose ownership for your host. The name `media` is only an example. Record the 
 ```sh
 git clone https://github.com/scottgigawatt/plundarr.git
 cd plundarr
+export MARAUDARR_IMAGE=maraudarr:dev
+make build
 make ship
 $EDITOR dist/plundarr/.env
 make config

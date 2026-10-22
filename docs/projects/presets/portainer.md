@@ -11,7 +11,7 @@ The `portainer` preset runs only Portainer Community Edition, using the official
 
 ## Generate and configure
 
-From the Plundarr repository:
+Complete [generator setup](../plundarr/quick-start.md#choose-the-generator), then run from the Plundarr checkout:
 
 ```sh
 make ship PRESET=portainer

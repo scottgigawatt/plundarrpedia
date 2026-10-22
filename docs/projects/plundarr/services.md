@@ -33,8 +33,10 @@ Privateerr and Gluetun are separate responsibilities: Privateerr writes the file
 | Lidarr | Music acquisition and organization. | You manage a music library on amd64 or arm64. |
 | Recyclarr | Profile-gated Radarr/Sonarr quality synchronization. | You explicitly preview and apply quality settings. |
 | Whisparr | Adult media acquisition and organization. | You use the Boudoirr preset or add its service deliberately. |
+| Whisparr Alt | Independent second Whisparr instance. | You need separate provider choices, settings, libraries, and download categories. |
 | Bazarr | Subtitle acquisition. | Movies or shows need automated subtitles. |
 | Seerr | Request portal. | Other people should request media without entering a manager. |
+| Velvarr | Adult-media discovery and requests with Jellyfin authentication. | You want Boudoirr's removable request service; the official image requires amd64. |
 | Cleanuparr | Rejected-download cleanup. | Stalled or blocked downloads need policy-driven removal. |
 
 qBittorrent is the only default downloader in Plundarr and Boudoirr. SABnzbd and NZBGet are independent opt-in lanes, and you may select either or both.
@@ -45,22 +47,26 @@ qBittorrent is the only default downloader in Plundarr and Boudoirr. SABnzbd and
 | --- | --- | --- |
 | Plex | Plex Media Server with host networking and read-only library mounts. | The generated deployment should own Plex. |
 | Jellyfin | Open media server with one writable `/data` root. | The generated deployment should own Jellyfin. |
+| Jellyfin Vue | Experimental separate browser client. | You want an opt-in frontend on amd64/arm64, connected to a browser-reachable Jellyfin server. |
 | Calibre-Web Automated | Ebook library, reader, and automatic ingest service. | You need ebooks in Plundarr or as a focused preset. |
+
+Jellyfin is a removable Boudoirr default. Velvarr and Vue recommend a Jellyfin server but do not force a local container. Complete [Boudoirr owner/provider setup](../presets/boudoirr.md) and [Jellyfin client configuration](../presets/media-servers-and-books.md#customize-jellyfin-web-and-vue) before relying on health status alone.
 
 Calibre-Web Automated is a removable default in Plundarr and the core of its focused preset. Its ingest directory is destructive, and its image updates remain excluded from Watchtower so database migrations stay operator-controlled.
 
-## Plex utilities
+## Media curation utilities
 
 | Service | Role | Select it when |
 | --- | --- | --- |
 | Kometa | Collections, metadata, and overlays from external configuration. | You want the core of the Duplex preset. |
 | ImageMaid | Plex artwork reporting and cleanup. | You can grant carefully scoped access to Plex application data. |
-| PATTRMM | Returning-soon metadata and overlays for Kometa. | You want the removable Duplex helper. |
+| Themerr | Theme songs for Plex and Jellyfin through one instance. | You want Duplex's required theme service on amd64/arm64, with deliberate connector and key setup. |
+| PATTRMM Neo | Collection YAML and paired Plex-GUID lists for Kometa. | You prepare the removable Duplex helper's external settings, writable output, and schedule. |
 | Tautulli | Plex activity, history, and analytics. | You deliberately select an optional Plex monitor. |
 | Notifiarr | Host and application notifications. | You want the removable Duplex notification route. |
 | Overlay Reset | One-shot Kometa overlay repair. | You explicitly invoke the dry-run-first `tools` profile. |
 
-Kometa and ImageMaid are Duplex core services. PATTRMM and Notifiarr are removable defaults. Tautulli, Overlay Reset, and Watchtower are optional; select Overlay Reset before invoking its one-shot command. See the [Duplex guide](../presets/duplex.md) for the shared Kometa configuration file.
+Kometa, ImageMaid, and Themerr are Duplex core services. PATTRMM Neo and Notifiarr are removable defaults. Tautulli, Overlay Reset, and Watchtower are optional; select Overlay Reset before invoking its one-shot command. See the [Duplex guide](../presets/duplex.md) for external configuration, Neo verification, connector setup, and encryption-key backups.
 
 ## Operations
 

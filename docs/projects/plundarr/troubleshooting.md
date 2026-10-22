@@ -6,9 +6,7 @@ icon: material/lifebuoy
 
 # Troubleshoot Plundarr
 
-Start at the lowest failing layer. A red Radarr health indicator cannot tell
-you whether Docker failed to mount a path, Gluetun never became healthy, or the
-download client simply lacks a category.
+Start at the lowest failing layer. A red Radarr health indicator cannot tell you whether Docker failed to mount a path, Gluetun never became healthy, or the download client simply lacks a category.
 
 ## Generator problems
 
@@ -18,16 +16,11 @@ make services
 make presets
 ```
 
-If generation fails, inspect the first error before the summary. Maraudarr may
-have failed to find a local image, pull the published one, or build a fallback.
-Do not confuse a registry/Docker-daemon failure with a bad generated Compose
-model.
+If generation fails, inspect the first error before the summary. Maraudarr may have failed to find a local image, pull the published one, or build a fallback. Do not confuse a registry/Docker-daemon failure with a bad generated Compose model.
 
-If generation succeeds but the resulting chart lacks behavior from a newer
-release, refresh the generator before rebuilding:
+If the generated catalog differs from the source you intended to use, check [the selected generator image](quick-start.md#choose-the-generator). Rebuild the source-selected image or pull the configured published image, then regenerate:
 
 ```sh
-make pull-image
 make ship PRESET=YOUR-PRESET
 make config PRESET=YOUR-PRESET
 ```
@@ -54,7 +47,7 @@ Common causes:
 
 Symptoms include `permission denied`, an app that cannot import downloads, or a database that repeatedly resets. Compare numeric ownership on the host with the generated user, group, and service-specific supplemental-group values, then test the exact mounted directory rather than its parent.
 
-Apprise or Seerr startup failures on Synology can also indicate an old generated chart. Run `make pull-image`, regenerate the affected preset, and inspect `make config PRESET=YOUR-PRESET` before changing host ownership or weakening a read-only filesystem.
+For Apprise or Seerr startup failures on Synology, inspect the selected image, generated identity, and mounted paths with `make config PRESET=YOUR-PRESET` before changing host ownership or weakening a read-only filesystem.
 
 ## VPN lane never becomes healthy
 
@@ -73,20 +66,17 @@ make test-vpn
 
 ## The Web UI is unreachable
 
-When a download client shares `service:gluetun`, publish its UI port on
-Gluetun. Connecting to the download-client container's nonexistent independent
-IP will fail by design.
+When a download client shares `service:gluetun`, publish its UI port on Gluetun. Connecting to the download-client container's nonexistent independent IP will fail by design.
 
-On Synology, also confirm the DSM firewall allows the host port and, when
-needed, traffic sourced from the Compose subnet.
+On Synology, also confirm the DSM firewall allows the host port and, when needed, traffic sourced from the Compose subnet.
 
 ## Homepage login fails
 
 Use the generated password from the deployment `.env`; no username is required. Check that `HOMEPAGE_EXTERNAL_URL` exactly matches the browser URL and `HOMEPAGE_ALLOWED_HOSTS` contains its hostname and nonstandard port without a scheme. Recreate Homepage after environment changes. Behind HTTPS, verify the proxy preserves the host and forwarded scheme. See [Homepage login](homepage.md) for password rotation and session invalidation.
 
-## Kometa or PATTRMM cannot mount the configuration
+## Kometa or PATTRMM Neo cannot read or write configuration
 
-Confirm `KOMETA_RUNTIME_CONFIG_PATH` points to an existing readable YAML file, not a directory. Both services receive the same `/config/config.yml`. Maraudarr does not clone or populate the external checkout; follow [Duplex configuration](../presets/duplex.md#keep-kometa-state-external) before startup.
+Confirm `KOMETA_RUNTIME_CONFIG_PATH` points to an existing readable YAML file, not a directory. Both services receive the same `/config/config.yml`. Maraudarr does not clone or populate the external checkout. Neo also needs existing settings, writable cache/output, and a completed settings run; follow [Duplex configuration](../presets/duplex.md#prepare-pattrmm-neo) before startup.
 
 ## NZBGet is healthy but managers cannot connect
 
@@ -108,4 +98,4 @@ Confirm `KOMETA_RUNTIME_CONFIG_PATH` points to an existing readable YAML file, n
 
 ## Safe reset
 
-Back up `dist/<preset>/config/`, the private `.env`, and external application state before changing it. Export [Tracearr backups](monitoring.md#back-up-and-update) first: a host config archive does not contain its named-volume database. `make down PRESET=YOUR-PRESET` preserves volumes, images, environment files, configuration, and backups. `make nuke PRESET=YOUR-PRESET` removes attributable Docker resources but preserves deployment files and application state. Only `make delete-config PRESET=YOUR-PRESET` deletes the generated configuration tree.
+Back up `dist/<preset>/config/`, the private `.env`, and external application state before changing it. Export [Tracearr backups](monitoring.md#back-up-and-update) first: a host config archive does not contain its named-volume database. `make down PRESET=YOUR-PRESET` preserves volumes, images, environment files, configuration, and backups. `make nuke PRESET=YOUR-PRESET` removes scoped Docker resources/cache, clears Gluetun runtime state, and overwrites the saved VPN pair with examples; other application volumes and deployment files remain. Only `make delete-config PRESET=YOUR-PRESET` deletes the generated configuration tree.

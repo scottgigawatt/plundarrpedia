@@ -53,7 +53,7 @@ nav:
       - Overview: projects/plundarr/index.md
       - Quick Start: projects/plundarr/quick-start.md
       - Configure the Stack: projects/plundarr/configuration.md
-      - Upgrade to v2: projects/plundarr/upgrading.md
+      - Update a Deployment: projects/plundarr/upgrading.md
       - Homepage Login: projects/plundarr/homepage.md
       - Media Monitoring: projects/plundarr/monitoring.md
       - Service Catalog: projects/plundarr/services.md
@@ -67,8 +67,7 @@ nav:
       - Automatic Recovery: projects/privateerr/automatic-recovery.md
       - Troubleshooting: projects/privateerr/troubleshooting.md
 
-  # Keep the deprecated standalone Boudoirr, Duplex, Jellyfin, and
-  # Calibre-Web-Automated deployment shapes under Plundarr presets.
+  # Keep focused deployment shapes together under the maintained preset guides.
   - Presets:
       - Choose a Preset: projects/presets/index.md
       - Boudoirr: projects/presets/boudoirr.md
