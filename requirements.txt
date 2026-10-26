@@ -6,4 +6,4 @@
 # requirements.txt: Exact Python dependency shared by local and Pages builds.
 #
 
-mkdocs-material==9.7.7
+mkdocs-material==9.8.0
