@@ -7,7 +7,7 @@ status: updated
 
 # Privateerr ⚓
 
-Privateerr packages the official, unmodified [`pia-foss/manual-connections`](https://github.com/pia-foss/manual-connections) scripts into an Alpine container. It generates matching WireGuard configuration and metadata, then can stay running to recover stale Gluetun connections through a standard-library Python supervisor. The shell adapter remains the boundary to PIA's scripts.
+Privateerr packages the official, unmodified [`pia-foss/manual-connections`](https://github.com/pia-foss/manual-connections) scripts into an Alpine container. Its standard-library Python program invokes those scripts, validates and publishes matching WireGuard configuration and metadata, and can stay running to recover stale Gluetun connections. Privateerr also installs its packaged Gluetun startup wrapper and qBittorrent forwarding hook before reporting readiness.
 
 **Privateerr remains actively maintained.** Privateerr is maintained both as a standalone project and as the `privateerr` service in every VPN-enabled Plundarr preset. Use Plundarr when you want the complete generated Privateerr-to-Gluetun lane, or use the standalone project when you want Privateerr to generate files for another WireGuard deployment.
 
@@ -43,11 +43,13 @@ Stable semantic-version tags are available when you need an exact release. Use `
 ## Trust boundary
 
 - PIA's scripts remain visibly upstream and unmodified in a Git submodule.
-- The Python supervisor owns validation, recovery timing, and safe publication; Privateerr-owned shell scripts invoke the upstream scripts and create metadata.
-- Test and lint tools stay in Buccaneerr. Production Python uses only the standard library.
+- Privateerr's Python program owns startup, PIA-script invocation, metadata, log formatting, recovery timing, and safe publication. The upstream PIA scripts remain unmodified.
+- Test and lint tools stay in Buccaneerr. Production Python uses only the standard library; the current images install the patched interpreter from Alpine 3.24 stable.
 - The build uses pinned inputs, scans images with Trivy, publishes
   multi-architecture manifests, and attaches SBOM/provenance information.
 - `wg0.conf` is secret material even though it is generated rather than typed.
+
+The published [Privateerr v2.3.1 release](https://github.com/scottgigawatt/privateerr/releases/tag/v2.3.1) describes the current image contract. Its [security review](https://scottgigawatt.github.io/privateerr/container-scan-review/) records retained upstream findings and the Python bootstrap-wheel boundary; a passing publication check does not mean zero vulnerabilities.
 
 [Read the developer documentation](https://scottgigawatt.github.io/privateerr/){ .md-button }
 [View Privateerr on GitHub](https://github.com/scottgigawatt/privateerr){ .md-button }

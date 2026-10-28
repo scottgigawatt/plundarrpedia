@@ -45,10 +45,10 @@ make config PRESET=YOUR-PRESET
 
 Replace `YOUR-PRESET` and repeat the full `ADD_SERVICES` / `REMOVE_SERVICES` selection, or review it with `make configure`. Regeneration generates the shared key when absent and preserves existing values and application data. `example.env` contains no generated credentials. Resolved Compose output can contain secrets; review it locally.
 
-Customized or symlinked Gluetun wrappers remain operator-owned; regeneration is not a guarantee that a preserved wrapper meets the recovery contract.
+Privateerr installs `gluetun-entrypoint-wrapper.sh` and `qbittorrent-port-forwarding.sh` into the shared `/gluetun/scripts/` directory on every startup before readiness, including saved-configuration reuse. These two filenames are image-owned and replaced from the selected image. Keep operator scripts under different names. Maraudarr preserves explicitly saved wrapper paths; `GLUETUN_ENTRYPOINT_WRAPPER` defaults to `/gluetun/scripts/gluetun-entrypoint-wrapper.sh`.
 
 > [!IMPORTANT]
-> Before recreating a deployment with a preserved custom wrapper, update it to the [current Gluetun wrapper](https://github.com/scottgigawatt/plundarr/blob/main/docker/services/gluetun/config/scripts/gluetun-entrypoint-wrapper.sh), or set `PRIVATEERR_AUTO_RECOVER=false`. If you own Gluetun's API authentication file, add the recovery role described in [Privateerr's authentication guide](https://scottgigawatt.github.io/privateerr/automatic-recovery/#configure-a-custom-deployment). The wrapper preserves custom authentication.
+> A custom wrapper must provide the current metadata, internal health-listener, and authenticated recovery-role behavior. Use the [wrapper packaged by Privateerr](https://github.com/scottgigawatt/privateerr/blob/v2.3.1/docker/gluetun/gluetun-entrypoint-wrapper.sh) as the contract, or set `PRIVATEERR_AUTO_RECOVER=false`. An operator-managed `/gluetun/auth/config.toml` must include the shared key and [recovery routes](https://scottgigawatt.github.io/privateerr/automatic-recovery/#configure-a-custom-deployment); the wrapper preserves that file.
 
 Check the image pin, shared key, wrapper, and writable config mounts, then recreate the full selected stack:
 
@@ -80,7 +80,7 @@ To deliberately refresh server selection or apply a region change, follow the [e
 
 ## Keep privileges and restart policies distinct
 
-Privateerr runs as UID 0 because PIA's unmodified scripts require it, but the supplied service drops all Linux capabilities and enables `no-new-privileges`. Docker applies `PRIVATEERR_IPV6_DISABLED=1` to Privateerr's own network namespace; `0` leaves IPv6 enabled. Keep the default alongside `PIA_DISABLE_IPV6=yes` so the adapter can skip redundant upstream writes without filtering warnings. Gluetun separately retains `/dev/net/tun` and `NET_ADMIN` for the tunnel.
+Privateerr runs as UID 0 because PIA's unmodified scripts require it, but the supplied service drops all Linux capabilities and enables `no-new-privileges`. Docker applies `PRIVATEERR_IPV6_DISABLED=1` to Privateerr's own network namespace; `0` leaves IPv6 enabled. Keep the default alongside `PIA_DISABLE_IPV6=yes` so Privateerr can skip redundant upstream writes without filtering warnings. Gluetun separately retains `/dev/net/tun` and `NET_ADMIN` for the tunnel.
 
 Image updates preserve container options. Apply the reviewed Compose definition and recreate affected services when changing capabilities, mounts, or environment. The bundled VPN services disable unattended Watchtower updates through labels.
 
@@ -98,7 +98,7 @@ To opt out, set `PRIVATEERR_AUTO_RECOVER=false` and recreate both services as pa
 
 ## Check recovery storage and readiness
 
-Startup probes temporary directory creation, file writes/replacement, and cleanup beside the saved pair without changing existing configuration or permissions. With a valid saved pair, a failed probe can warn and still allow startup readiness so Gluetun can connect. That does not certify future recovery writes. Without reusable files, the same storage failure stops startup; output-directory, persistent-log, readiness-marker, or interrupted-save failures can also stop startup.
+Startup first installs the image-owned integration scripts, then probes temporary directory creation, file writes/replacement, and cleanup beside the saved pair without changing its configuration or permissions. Script installation must succeed before readiness, even when a valid saved pair is reused. With a valid saved pair, a failed probe can warn and still allow startup readiness so Gluetun can connect. That does not certify future recovery writes. Without reusable files, the same storage failure stops startup; output-directory, persistent-log, readiness-marker, or interrupted-save failures can also stop startup.
 
 Logs identify the container path, operation, error category, UID/GID, and available ownership/mode. Map the reported path to its host bind mount and correct the specific permission, read-only, disk, or quota problem. Keep dropped capabilities and `no-new-privileges`; do not apply broad `chmod 777` or strip ACLs. See [storage diagnostics](troubleshooting.md#recovery-reports-a-storage-error) for retained-candidate and publication warnings.
 

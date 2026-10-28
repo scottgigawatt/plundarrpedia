@@ -35,14 +35,14 @@ The public submodule uses HTTPS and needs no SSH key. A leading `-` in submodule
 
 ## The files exist but Gluetun does not start
 
-Confirm all three boundaries:
+Confirm the startup boundaries:
 
-1. Privateerr and Gluetun mount the same host config directory.
-2. Compose waits for Privateerr's healthcheck rather than only container start.
-3. The Gluetun wrapper can read `privateerr.env` and execute the default Gluetun
-   entrypoint.
+1. Privateerr and Gluetun share the complete host config directory read/write.
+2. Privateerr installs both executable scripts into `/gluetun/scripts/` before becoming healthy.
+3. Compose waits for Privateerr's healthcheck rather than only container start.
+4. `GLUETUN_ENTRYPOINT_WRAPPER` names the installed wrapper or an existing custom wrapper that can read `privateerr.env` and execute Gluetun's default entrypoint.
 
-Privateerr's health signal means a saved pair was generated or validated; it proves neither a connected tunnel nor future recovery write access. See [readiness and retained files](config-handoff.md#understand-readiness-and-retained-files).
+Privateerr's health signal means the integration scripts were installed and a saved pair was generated or validated; it proves neither a connected tunnel nor future recovery write access. See [readiness and retained files](config-handoff.md#understand-readiness-and-retained-files).
 
 Run the image-owned readiness probe directly when the Compose health state is unclear:
 
@@ -50,7 +50,7 @@ Run the image-owned readiness probe directly when the Compose health state is un
 docker compose exec privateerr privateerr-healthcheck
 ```
 
-An exit status of zero means the configured `PRIVATEERR_HEALTHCHECK_MARKER` exists. Current Plundarr-generated deployments select a compatible Privateerr image. If the command is missing, refresh Maraudarr, regenerate the preset, and recreate the affected services before changing the healthcheck.
+An exit status of zero means the configured `PRIVATEERR_HEALTHCHECK_MARKER` exists. It is written only after this startup installs the integration scripts and validates the VPN files. Review the selected image, `GLUETUN_ENTRYPOINT_WRAPPER`, and shared mounts together when startup cannot reach that point.
 
 ## Port forwarding is unavailable
 
@@ -75,7 +75,7 @@ A deliberately stopped VPN pauses recovery. An unreachable or unauthorized contr
 
 ## IPv6 writes report permission errors
 
-Keep `PRIVATEERR_IPV6_DISABLED=1` alongside `PIA_DISABLE_IPV6=yes` so Docker applies the namespace setting before the adapter runs and avoids redundant upstream writes. Do not hide warnings; check the selected image and Compose settings, then recreate Privateerr. Gluetun's separate `NET_ADMIN` requirement remains unchanged.
+Keep `PRIVATEERR_IPV6_DISABLED=1` alongside `PIA_DISABLE_IPV6=yes` so Docker applies the namespace setting before generation and Privateerr avoids redundant upstream writes. Do not hide warnings; check the selected image and Compose settings, then recreate Privateerr. Gluetun's separate `NET_ADMIN` requirement remains unchanged.
 
 ## Recovery reports a storage error
 
@@ -83,7 +83,7 @@ Read the first failed operation and its container path in Privateerr's logs. Per
 
 Give the container's UID 0 write and traverse access to the intended output directory, accounting for host UID remapping. A `:rw` mount does not override host permissions. Keep capabilities dropped and `no-new-privileges`; correct the specific mount, space, quota, or permission condition instead of applying `chmod 777`.
 
-With a reusable pair, a failed disposable storage probe can warn while startup still becomes ready. Other startup operations can fail independently, and readiness does not guarantee recovery can save files later. A leftover `.privateerr-check.*` directory can indicate interrupted probe cleanup.
+With a reusable pair, a failed disposable storage probe can warn while startup still becomes ready. Installation of the two image-owned scripts remains required and can fail independently. Readiness does not guarantee recovery can save files later. A leftover `.privateerr-check.*` directory can indicate interrupted probe cleanup.
 
 If Gluetun accepted a candidate but local publication failed, the running tunnel may already use settings newer than the saved pair. Preserve `.privateerr-pending` and `.privateerr-commit`, repair the reported storage issue, and let the supervisor reconcile settings/health and retry publication. Do not delete retained state or run another writer to clear the warning. New registrations use a cooldown; retained-candidate reconciliation can retry on subsequent monitoring cycles. Restarting Privateerr resets timers but does not repair storage or force a new registration.
 
@@ -93,7 +93,7 @@ Region messages report the provider-advertised saved or candidate region. `unkno
 
 Confirm its listening port and bound VPN interface match Gluetun's current lease. The forwarding hook reports failed application updates and waits only for the configured number of seconds. If the application outlasted that wait, restore its API access and reapply the hook or restart forwarding. A forwarding-only failure does not trigger tunnel rotation.
 
-If Gluetun was replaced outside Compose, recreate the complete VPN namespace and dependent applications. `depends_on.restart: true` follows explicit Compose maintenance, not every Docker or Watchtower restart. Check that the Web UI port mapping and `WEBUI_PORT` agree before diagnosing login or CSRF errors.
+If Gluetun was replaced outside Compose, recreate the complete VPN namespace and dependent applications. `depends_on.restart: true` follows explicit Compose maintenance, not every Docker or Watchtower restart. `QBITTORRENT_WEBUI_PORT` controls the listener, host mapping, healthcheck, and default forwarding-hook API URL together. Review any explicit `QBITTORRENT_API_URL` override before diagnosing login or CSRF errors. The [networking guide](../../guides/networking-and-vpn.md#shared-network-namespaces) explains the local control traffic and separate VPN peer port.
 
 ## Testing the full path
 

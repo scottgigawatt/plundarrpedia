@@ -10,8 +10,9 @@ status: updated
 Privateerr coordinates with Gluetun through shared files at startup and an authenticated control API during recovery. Gluetun owns the tunnel throughout; the supervisor never treats a rewritten file as proof that a running tunnel has loaded it.
 
 <ol class="handoff-timeline">
+  <li><strong>Privateerr installs its integration scripts.</strong> It replaces the two image-owned scripts in the shared <code>/gluetun/scripts/</code> directory, including when saved VPN files will be reused.</li>
   <li><strong>Privateerr prepares a matching pair.</strong> It finishes any interrupted save, then reuses validated files when recovery is enabled or invokes PIA's scripts for fresh configuration.</li>
-  <li><strong>Privateerr reports startup readiness.</strong> Valid files allow Compose to start Gluetun without waiting for a tunnel that does not exist yet.</li>
+  <li><strong>Privateerr reports startup readiness.</strong> Installed scripts and valid files allow Compose to start Gluetun without waiting for a tunnel that does not exist yet.</li>
   <li><strong>The Gluetun wrapper reads metadata.</strong> It exports the matching PIA server name and configures the recovery API role when enabled.</li>
   <li><strong>Gluetun establishes the tunnel.</strong> Download clients start inside its network namespace once it is healthy.</li>
   <li><strong>The supervisor monitors sustained failure.</strong> It applies a validated replacement through Gluetun's API and saves the files after settings readback and tunnel health confirm success.</li>
@@ -46,9 +47,9 @@ Paths below are relative to the shared WireGuard directory unless shown as absol
 | `.privateerr-pending/` | Candidate awaiting API and health confirmation | Retained across uncertain responses and process restarts. |
 | `.privateerr-commit/` | Copies that let startup finish an interrupted save | Removed after both published files are replaced. |
 | `ready` inside either directory | The copied pair passed validation | Written last and removed with its directory. |
-| `/healthcheck/privateerr.ready` | Startup produced or validated a usable saved pair | Cleared and recreated at startup; does not report live tunnel health. |
+| `/healthcheck/privateerr.ready` | Startup installed scripts and produced or validated a usable saved pair | Cleared and recreated at startup; does not report live tunnel health. |
 
-Privateerr's Compose healthcheck tests the startup marker; it certifies neither live tunnel health nor future recovery write access. A failed disposable storage probe can warn and still allow readiness when a valid saved pair is reusable. Other startup operations can still fail. Gluetun's own healthcheck reports the tunnel.
+Privateerr's Compose healthcheck tests the startup marker, written after script installation and VPN-file validation; it certifies neither live tunnel health nor future recovery write access. A failed disposable storage probe can warn and still allow readiness when a valid saved pair is reusable. Other startup operations can still fail. Gluetun's own healthcheck reports the tunnel.
 
 If an API update succeeds but saving fails, the running tunnel may use the candidate while the saved pair is older or partly replaced. Repair the reported storage problem and retain the pending/commit directories for reconciliation; do not delete them or run a concurrent generator. See [storage diagnostics](troubleshooting.md#recovery-reports-a-storage-error) and the [developer publication contract](https://scottgigawatt.github.io/privateerr/development/privateerr/architecture/#confirm-updates-before-saving).
 
@@ -72,6 +73,8 @@ Follow [region selection](../plundarr/configuration.md#vpn-region-selection) for
 
 ## Mount the shared directory
 
-Mount the directory containing both outputs, not only `wg0.conf`. Publication replaces whole files, and pending/commit directories live beside them. Keep it writable by Privateerr's UID 0 and readable by Gluetun. Only one supervisor may own that pair.
+Share the complete Gluetun configuration directory read/write: Privateerr mounts it at `/gluetun`, while Gluetun mounts the same directory at `/gluetun` and `/tmp/gluetun`. It contains `scripts/`, `wireguard/`, and Gluetun's runtime state. Directory mounts allow atomic file replacement and preserve the pending/commit directories beside the saved pair. Privateerr's UID 0 needs write and traverse access; Gluetun needs to read and execute the installed scripts. Only one supervisor may own that pair.
+
+Privateerr replaces `scripts/gluetun-entrypoint-wrapper.sh` and `scripts/qbittorrent-port-forwarding.sh` from its image on every startup. Keep operator scripts under different names. Maraudarr preserves mounted runtime files during generation; Privateerr owns publication of these two scripts. `GLUETUN_ENTRYPOINT_WRAPPER` defaults to `/gluetun/scripts/gluetun-entrypoint-wrapper.sh`; a custom path must exist inside Gluetun and satisfy the [recovery contract](automatic-recovery.md#configure-a-generated-deployment).
 
 Keep Privateerr on the project network, outside Gluetun's VPN namespace, so it can contact PIA while the tunnel is down. The control and health endpoints remain internal to that Docker network; do not publish them for recovery.

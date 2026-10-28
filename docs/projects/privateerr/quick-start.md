@@ -19,7 +19,7 @@ make up
 make test-vpn
 ```
 
-Privateerr prepares `wg0.conf` and `privateerr.env`; Gluetun consumes the handoff and establishes the tunnel. Maraudarr enables recovery when both services are selected and preserves existing keys and explicit opt-outs.
+Privateerr installs its Gluetun integration scripts and prepares `wg0.conf` and `privateerr.env` before its healthcheck reports ready. Gluetun consumes that handoff and establishes the tunnel. Maraudarr enables recovery when both services are selected and preserves existing keys and explicit opt-outs.
 
 > [!WARNING]
 > The VPN path uses real PIA credentials. Keep `.env`, `wg0.conf`, `privateerr.env`, API keys, and unsanitized logs out of Git and public support reports.
@@ -54,7 +54,7 @@ The application stack contains Privateerr, Gluetun, and qBittorrent. From the ch
 - [ ] Set PIA credentials and generate a shared recovery key with `openssl rand -hex 24`; save it as `PRIVATEERR_GLUETUN_API_KEY` in `.env`.
 - [ ] Review qBittorrent user/group IDs, config/download paths, and `QBITTORRENT_WEBUI_PORT`.
 - [ ] Keep `PIA_PF=true` and `QBITTORRENT_PORT_SYNC=true` for the demonstrated forwarding path.
-- [ ] Keep the configured Gluetun wrapper readable and the forwarding script executable; the supplied Compose mounts both from `config/gluetun/scripts/`.
+- [ ] Share the complete `config/gluetun/` directory read/write with Privateerr and Gluetun. Privateerr installs both executable scripts into its `scripts/` directory; no separate script download or file mount is needed.
 - [ ] Check architecture support: the qBittorrent application example requires amd64 or arm64 even though Privateerr also supports arm/v7.
 
 Pull the published application images and start the three services detached:
@@ -78,7 +78,7 @@ docker compose --env-file .env pull privateerr gluetun qbittorrent
 docker compose --env-file .env up --detach --no-build --pull never privateerr gluetun qbittorrent
 ```
 
-qBittorrent's Web UI uses host port `8080` by default. Its listener, host mapping, healthcheck, and forwarding-hook URL follow `QBITTORRENT_WEBUI_PORT` together. Read its initial password locally from container logs, change it in the Web UI, and keep those logs private. The seeded API allows loopback access for Gluetun's hook; other applications in that shared namespace have the same loopback access. Existing application configuration must allow the hook explicitly.
+qBittorrent's Web UI uses host port `8080` by default. Its listener, host mapping, healthcheck, and forwarding-hook URL follow `QBITTORRENT_WEBUI_PORT` together. Read its initial password locally from container logs, change it in the Web UI, and keep those logs private. The seeded API allows loopback access for Gluetun's hook; other applications in that shared namespace have the same loopback access. Existing application configuration must allow the hook explicitly. The Web UI and API are local control traffic; the separate PIA-assigned peer port arrives through the VPN tunnel and needs no host port publication. See the [networking guide](../../guides/networking-and-vpn.md#shared-network-namespaces) for the port controls.
 
 Gluetun's control and health ports remain internal. `make down` stops the selected project, including any test-profile container, while preserving volumes, images, and saved configuration.
 
