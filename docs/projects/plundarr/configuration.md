@@ -84,7 +84,7 @@ The selected client changes the VPN namespace and service dependencies:
 
 === "qBittorrent"
 
-    Best when the automation lane retrieves torrents. Gluetun's hook sets its assigned PIA port and VPN interface. Keep the generated Web UI port mapping and `WEBUI_PORT` synchronized. Explicit Compose-managed Gluetun updates also restart qBittorrent; automatic API recovery preserves both containers.
+    Best when the automation lane retrieves torrents. Privateerr supplies the hook Gluetun calls to set the assigned PIA peer port and VPN interface. `QBITTORRENT_WEBUI_PORT` controls the application listener, host mapping, healthcheck, and default hook API URL together. `QBITTORRENT_PORT_SYNC=true` enables those peer-port updates; `false` skips them. `QBITTORRENT_API_WAIT_SECONDS=300` bounds the hook's API-readiness wait in seconds. See [local control and VPN traffic](../../guides/networking-and-vpn.md#shared-network-namespaces) for the API address and port boundaries. Explicit Compose-managed Gluetun updates also restart qBittorrent; automatic API recovery preserves both containers.
 
 === "SABnzbd"
 

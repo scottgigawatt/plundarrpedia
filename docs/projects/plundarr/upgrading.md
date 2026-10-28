@@ -32,7 +32,7 @@ make config PRESET=YOUR-PRESET
 
 Replace `YOUR-PRESET` and repeat your complete `ADD_SERVICES` / `REMOVE_SERVICES` selection, or review it through `make configure`. Preserved `.env` values do not restore a prior service selection. Review the generated diff and any still-running Compose orphans before removing them.
 
-Regeneration preserves existing environment assignments, image pins, application state, and operator-owned files. Review custom Gluetun wrappers and authentication against [the recovery requirements](../privateerr/automatic-recovery.md#configure-a-generated-deployment). Homepage service cards are regenerated; keep persistent card customization in the source fragments. The safe `example.env` does not contain generated passwords or keys.
+Regeneration preserves existing environment assignments, image pins, application state, and operator-owned files. At runtime, Privateerr replaces its two image-owned Gluetun integration scripts before readiness; keep custom scripts under separate names. Review custom wrapper paths and authentication against [the recovery requirements](../privateerr/automatic-recovery.md#configure-a-generated-deployment). Homepage service cards are regenerated; keep persistent card customization in the source fragments. The safe `example.env` does not contain generated passwords or keys.
 
 ## Apply runtime changes
 

@@ -33,7 +33,20 @@ namespace, the services can use `127.0.0.1` to reach each other.
 
 Privateerr stays outside that namespace so it can reach PIA during a tunnel outage. Its [automatic recovery](../projects/privateerr/automatic-recovery.md) uses Gluetun's internal API, preserving the container and namespace. Keep the control and health ports unpublished.
 
-For qBittorrent, the generated hook synchronizes the forwarded port and VPN interface. Keep the Web UI mapping and internal listener aligned. `depends_on.restart: true` follows planned Compose updates of Gluetun; an external replacement may still require recreating its dependent applications.
+qBittorrent's Web UI mapping belongs on Gluetun because qBittorrent shares its network namespace. Browser requests to that published Web UI and loopback API requests are local control traffic; they do not need to travel through the remote VPN tunnel. Torrent peer traffic uses the VPN tunnel.
+
+Privateerr installs the forwarding hook that Gluetun calls to synchronize qBittorrent's assigned peer port and VPN interface. These controls belong in the generated `.env`:
+
+| Setting | Default | Purpose |
+| --- | --- | --- |
+| `QBITTORRENT_WEBUI_PORT` | `8080` in Plundarr; presets may choose another port | Set the host mapping, application listener, healthcheck, and default API URL together. |
+| `QBITTORRENT_PORT_SYNC` | `true` | Apply the VPN peer port and interface through the hook; `false` skips updates. |
+| `QBITTORRENT_API_URL` | `http://127.0.0.1:${QBITTORRENT_WEBUI_PORT}` | Reach qBittorrent's Web API inside the shared namespace; change only for a deliberate API override. |
+| `QBITTORRENT_API_WAIT_SECONDS` | `300` | Maximum seconds the forwarding hook waits for the Web API. |
+
+The seeded API permits unauthenticated loopback access for that hook. Every container intentionally sharing Gluetun's namespace shares this loopback trust boundary; remote Web UI clients still authenticate. Existing application configuration remains operator-owned.
+
+`depends_on.restart: true` follows planned Compose updates of Gluetun; an external replacement may still require recreating its dependent applications.
 
 ## Host exposure
 
@@ -54,11 +67,10 @@ PIA port forwarding is a coordinated chain:
 
 1. Privateerr requests a compatible endpoint and writes its identity.
 2. Gluetun connects to that endpoint and obtains/maintains the forwarded port.
-3. The torrent client listens on the port reported by Gluetun.
+3. Gluetun calls the hook installed by Privateerr, and the torrent client listens on the reported VPN peer port and interface.
 4. Health or validation tooling confirms the values remain synchronized.
 
-A green VPN connection proves only step 2. Test the complete chain when inbound
-torrent connectivity matters.
+The VPN-assigned peer port is separate from the Web UI port and arrives through the VPN tunnel. It needs no host TCP/UDP publication. A green tunnel does not prove a working lease or synchronized client; test the complete chain when inbound torrent connectivity matters.
 
 ## Validation ladder
 

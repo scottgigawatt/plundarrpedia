@@ -147,7 +147,7 @@ Also preserve the shared-network relationship for any download client using:
 network_mode: service:gluetun
 ```
 
-Dockge controls the host Docker engine, so **Gluetun** needs `/dev/net/tun` and `NET_ADMIN`; the Dockge application itself does not. Publish a network-sharing download client's Web UI and listening ports on Gluetun. That download-client container does not have a separate network identity.
+Dockge controls the host Docker engine, so **Gluetun** needs `/dev/net/tun` and `NET_ADMIN`; the Dockge application itself does not. Publish a network-sharing download client's Web UI port on Gluetun because the client has no separate network identity. VPN-assigned torrent peer ports arrive through the tunnel and need no host publication; see [local control and VPN traffic](networking-and-vpn.md#shared-network-namespaces).
 
 Avoid switching the entire stack to host networking just to make one port reachable. It removes useful isolation and creates port collisions with TrueNAS and other Apps.
 
@@ -176,7 +176,7 @@ Rendered Compose can contain credentials, tokens, and private paths that came fr
 
 Use Dockge's container logs, or the TrueNAS Apps logs for a custom application, to confirm this order:
 
-1. Privateerr generates or validates the saved `wg0.conf` and `privateerr.env` pair.
+1. Privateerr installs its Gluetun integration scripts, then generates or validates the saved `wg0.conf` and `privateerr.env` pair before readiness.
 2. Gluetun reads those files and establishes the WireGuard tunnel.
 3. The selected download client starts in Gluetun's network namespace.
 4. The download client can write to the TrueNAS download dataset.
@@ -191,7 +191,7 @@ Treat the generated Plundarr project as the source of truth:
 1. Back up `config/`, `compose.yaml`, and `.env` through a secret-aware process.
 2. Copy the current Dockge `.env` back to `dist/plundarr/.env`, then run `make ship` in the Plundarr checkout with the complete `ADD_SERVICES` and `REMOVE_SERVICES` selection. Review the regenerated files.
 3. Validate them with `docker compose --project-directory dist/plundarr config --quiet`.
-4. Copy the reviewed Compose file and `.env` into the Dockge stack directory. Preserve application state; install seeds only for new services and review regenerated Homepage cards separately. When the wrapper changes, transfer its reviewed version without overwriting operator customizations; see [recovery requirements](../projects/privateerr/automatic-recovery.md#configure-a-generated-deployment).
+4. Copy the reviewed Compose file and `.env` into the Dockge stack directory. Preserve application state; install seeds only for new services and review regenerated Homepage cards separately. Privateerr installs its two image-owned integration scripts on startup; keep custom scripts under separate names and review the [recovery requirements](../projects/privateerr/automatic-recovery.md#configure-a-generated-deployment).
 5. Use Dockge to pull the selected images and recreate the stack.
 6. Repeat the VPN-lane validation before updating application settings.
 
