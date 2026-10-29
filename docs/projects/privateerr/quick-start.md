@@ -13,16 +13,21 @@ Choose a VPN-enabled Plundarr preset for a generated media stack, or the standal
 
 Complete [Plundarr's generator setup](../plundarr/quick-start.md#choose-the-generator), then generate the preset. Set `PIA_USER` and `PIA_PASS` in `dist/plundarr/.env`; keep `PIA_PF=true` for forwarding. Review paths, permissions, ports, and the generated shared API key:
 
+> [!WARNING]
+> Keep credentials, keys, VPN files, resolved Compose output, and unsanitized logs out of Git and public support reports.
+
 ```sh
 make config
+```
+
+After reviewing the resolved settings, start and verify the VPN lane:
+
+```sh
 make up
 make test-vpn
 ```
 
 Privateerr installs its integration scripts and prepares the saved pair before readiness. Gluetun then starts the tunnel. Recovery is enabled when both are selected, preserving existing keys and explicit opt-outs.
-
-> [!WARNING]
-> Keep credentials, keys, VPN files, resolved Compose output, and unsanitized logs out of Git and public support reports.
 
 ## Generate files for another WireGuard deployment
 
@@ -51,10 +56,15 @@ From the checkout above, prepare the three-service Privateerr/Gluetun/qBittorren
 3. Share the complete `config/gluetun/` directory read/write with both VPN services. Privateerr installs the scripts; no separate download or file mount is needed.
 4. Confirm amd64 or arm64 support for this qBittorrent example; Privateerr alone also supports arm/v7.
 
-Pull the published images and start the application:
+Review the resolved settings privately; `make config` output can contain credentials:
 
 ```sh
 make config
+```
+
+After checking the settings and resolving configuration errors, pull the published images and start the application:
+
+```sh
 make up
 make ps
 ```

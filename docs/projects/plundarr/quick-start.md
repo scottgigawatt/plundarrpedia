@@ -30,7 +30,7 @@ make ship
 For this checkout's catalog instead, explicitly build and select the source image:
 
 ```sh
-export MARAUDARR_IMAGE=maraudarr:dev
+export MARAUDARR_IMAGE=maraudarr:latest
 make build
 make ship
 ```
@@ -56,11 +56,13 @@ Edit `dist/plundarr/.env` before launch:
 
 ## Validate before launch
 
+`make config` prints resolved configuration that can contain secrets. Keep its output private:
+
 ```sh
 make config
 ```
 
-Fix syntax/interpolation errors and review mounts, network choices, and host ports. This prints resolved configuration, which can contain secrets; it does not prove paths, permissions, or runtime health.
+Fix syntax/interpolation errors and review mounts, network choices, and host ports. This does not prove paths, permissions, or runtime health.
 
 ## Launch and test the VPN lane
 
