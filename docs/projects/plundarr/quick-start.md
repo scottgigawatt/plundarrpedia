@@ -30,7 +30,7 @@ make ship
 For this checkout's catalog instead, explicitly build and select the source image:
 
 ```sh
-export MARAUDARR_IMAGE=maraudarr:latest
+export MARAUDARR_IMAGE=maraudarr:local
 make build
 make ship
 ```
