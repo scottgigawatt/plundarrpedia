@@ -32,10 +32,7 @@ Plundarrpedia is the public field guide for [Plundarr](https://github.com/scottg
 <p align="center">─── ⛧ ───</p>
 
 <p align="center">
-  <em>💀 Questions or cursed media-stack tips? Step forward… <strong>enter 🔥HADES🔥</strong>.</em>
-</p>
-
-<p align="center">
+  <em>🗺️ Lost on the Styx? Ask the damned cartographers in</em>
   <a href="https://discord.gg/BpEGzWwGYf"><img src="https://img.shields.io/discord/1403601106315116626?label=%F0%9F%94%A5HADES%F0%9F%94%A5&amp;logo=discord&amp;logoColor=white&amp;color=5865F2" alt="HADES Discord community" /></a>
 </p>
 <!-- markdownlint-enable MD033 -->
