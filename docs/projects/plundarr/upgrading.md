@@ -56,5 +56,4 @@ If an update fails, stop the affected stack without deleting volumes. Restore th
 
 `make down` preserves application state. `make clean` removes disposable developer artifacts. `make nuke` removes scoped Docker resources and build cache, clears Gluetun runtime state, and overwrites the saved VPN pair with checked-in examples. It preserves other application volumes, deployment files, and backups; preserve needed VPN files separately before using it. `make delete-config` deletes the selected host configuration tree. Neither destructive reset is an ordinary update step.
 
-[Review backup boundaries](monitoring.md#back-up-and-update){ .md-button }
-[Inspect current commands](../../reference/commands.md){ .md-button .md-button--primary }
+[Review backup boundaries](monitoring.md#back-up-and-update){ .md-button } [Inspect current commands](../../reference/commands.md){ .md-button .md-button--primary }

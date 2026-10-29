@@ -6,8 +6,7 @@ icon: material/book-open-variant
 
 # Reference 📚
 
-Use this section when you need a command, a project policy, or background about
-the wiki rather than a step-by-step deployment route.
+Use this section when you need a command, a project policy, or background about the wiki rather than a step-by-step deployment route.
 
 <div class="grid cards" markdown>
 

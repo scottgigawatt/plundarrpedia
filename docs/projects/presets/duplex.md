@@ -98,5 +98,4 @@ Watchtower is not a Duplex default. Add it only if one Watchtower instance does 
 make ship PRESET=duplex ADD_SERVICES=watchtower
 ```
 
-[Compare every preset](index.md){ .md-button }
-[Open the Plundarr repository](https://github.com/scottgigawatt/plundarr){ .md-button .md-button--primary }
+[Compare every preset](index.md){ .md-button } [Open the Plundarr repository](https://github.com/scottgigawatt/plundarr){ .md-button .md-button--primary }

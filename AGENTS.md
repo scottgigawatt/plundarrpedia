@@ -61,6 +61,13 @@ This guide applies throughout the repository. Before editing, inspect any applic
 
 ## Documentation standards
 
+Apply [GitHub's documentation style guide](https://docs.github.com/en/contributing/style-guide-and-content-model/style-guide), [writing best practices](https://docs.github.com/en/contributing/writing-for-github-docs/best-practices-for-github-docs), and [Markdown guidance](https://docs.github.com/en/get-started/writing-on-github), together with [ISO 24495-1:2023](https://www.iso.org/standard/78907.html), as mandatory writing requirements for project-owned documentation and related Markdown. Preserve this repository's renderer and operational constraints when applying them.
+
+- Make content relevant, findable, understandable, and usable for its intended readers. State the task and audience, include required decisions and prerequisites, and show how to verify the result.
+- Keep one canonical explanation for each topic. This wiki owns integrated operator walkthroughs; sibling projects own exact source, configuration, and developer contracts. Keep essential local steps together and link to detailed references. Remove obsolete, repeated, speculative, or non-actionable material; preserve warnings, backup/restore limits, support policy, licensing, and attribution.
+- Review changed reader journeys from entry point through expected result, including links, assumptions, failure recovery, and narrow-screen rendering. Record the journeys and evidence checked; automated lint/build checks alone do not establish usability or ISO conformity. Obtain reader feedback when available and address it before claiming a successful reader evaluation.
+- Preserve existing badge and community blocks intact. Put the project H1 and a short purpose statement before the block; keep useful technical prose ahead of decorative commentary.
+
 - Lead with the reader's task, action, or conclusion. Use active voice and second person in procedures, put conditions before instructions, and keep one main idea per sentence or paragraph. Write concise sentence-case headings with searchable nouns and active verbs and a clear H1/H2/H3 hierarchy; use one H1 per page and do not skip heading levels.
 - Public pages in `docs/` require YAML front matter with a useful `title`, `description`, and suitable `icon`. Keep navigation labels concise and maintain the explicit `mkdocs.yml` hierarchy.
 - Keep ordinary prose paragraphs on one physical source line with editor wrapping. Preserve semantic blank lines and the indentation required by lists, tables, tabs, and admonitions. Surround block elements with blank lines.
@@ -120,4 +127,4 @@ This validates the configured source site, not the production Nginx image or all
 
 ## Handoff
 
-Review the complete diff for scope, accuracy, secrets, and generated files before committing. Summarize what changed and why, exact files, checks passed/failed/not run with reasons, any existing failures or conflicting guidance, and remaining limitations. Include branch/head SHA and PR URL when created. Keep manual review checkpoints explicit and leave requested draft PRs unmerged; do not imply that a local check, pending CI, or unrun live test passed.
+Review the complete diff for scope, accuracy, secrets, and generated files before committing. Summarize what changed and why, exact files, checks passed/failed/not run with reasons, any existing failures or conflicting guidance, and remaining limitations. Include branch/head SHA and PR URL when created. Keep manual review checkpoints explicit and leave requested draft PRs unmerged; do not report pending CI or checks that were not run as passing.

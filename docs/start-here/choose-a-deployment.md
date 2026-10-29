@@ -6,50 +6,8 @@ icon: material/source-branch
 
 # Choose a deployment
 
-The Compose model stays recognizable across platforms. What changes is how the
-host prepares paths, grants permissions, supplies the TUN device, and accepts
-the generated Compose project.
-
-| Harbor | Deployment path | Main adjustment |
-| -------------- | -------------------------- | -------------------------------------------------------- |
-| Linux server | Docker Compose CLI | `/srv` or `/mnt` paths, ownership, and firewall rules |
-| Synology DSM | Container Manager project | `/volume*` paths, DSM permissions, and boot helpers |
-| TrueNAS | Dockge or Apps custom YAML | ZFS datasets, ACLs, rendered Compose, and `/dev/net/tun` |
-| Docker Desktop | Compose CLI for evaluation | Host-folder sharing and platform networking differences |
-
-=== "Linux Docker"
-
-    Install Docker Engine with the Compose plugin, prepare durable mounts, and
-    use the repository Makefile or normal `docker compose` commands.
-
-    [:material-linux: Linux Docker guide](../guides/docker.md)
-
-=== "Synology"
-
-    Keep `.env`, the complete generated Compose file, and relative `config/`
-    paths together in a shared folder, then create a Container Manager project.
-
-    [:material-nas: Synology guide](../guides/synology.md)
-
-=== "TrueNAS"
-
-    Create datasets and ACL entries first. Keep the generated project together
-    for Dockge, or render interpolation for a custom App.
-
-    [:material-server-network: TrueNAS guide](../guides/truenas.md)
+Use the [platform comparison](../guides/index.md) to choose Linux Docker, Synology Container Manager, or TrueNAS. Each route uses the same generated Compose project and explains the platform's storage, permissions, and deployment differences.
 
 ## Running this wiki itself
 
-Plundarrpedia is a static site. It needs no database and stores no runtime
-state. The production image exposes port `8080`:
-
-```sh
-docker run --rm -p 8000:8080 \
-  --read-only \
-  --tmpfs /tmp \
-  ghcr.io/scottgigawatt/plundarrpedia:edge
-```
-
-For a durable deployment, use this repository's `docker-compose.yml`. It adds a
-healthcheck, bounded logs, a read-only filesystem, dropped capabilities, and a
-restart policy.
+You can read the published wiki without installing anything. To host a copy, follow the [repository quick start](https://github.com/scottgigawatt/plundarrpedia#readme) or [image guide](../GHCR_README.md). Its static Nginx runtime requires no database.

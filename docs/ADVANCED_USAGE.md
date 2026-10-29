@@ -6,150 +6,57 @@ icon: material/map-marker-path
 
 # Advanced usage
 
-The main README covers the shortest route to a local Plundarrpedia container.
-This page keeps the deeper authoring, image, release, and maintenance details.
+Use this page to build or host Plundarrpedia and review its publication model. For Markdown authoring, follow [contributing](CONTRIBUTING.md). Work from the repository root with Git, Make, Docker, and Compose available.
 
 ## Authoring routes
 
-Use the live-reload server while writing Markdown or adjusting the Material
-theme:
+`make serve` starts the Docker-based live preview at <http://localhost:8000>, using `example.env` if no local `.env` exists. Use `make serve MKDOCS_AUTHOR_PORT=8001` for a port conflict.
 
-```sh
-make serve
-```
-
-Open <http://localhost:8000>. This route mounts the repository into the pinned
-MkDocs Material authoring image and does not require a local `.env` file.
-
-Use a strict build before submitting changes:
-
-```sh
-cp example.env .env
-make site
-```
-
-The strict build rejects broken navigation, invalid configuration, missing
-pages, and MkDocs warnings. It writes the generated static site to `site/`.
-Remove that generated output when it is no longer needed:
-
-```sh
-make clean
-```
-
-> [!NOTE]
-> The generated `site/` directory is build output. Edit the Markdown, overrides, or stylesheets that produced it instead of committing rendered HTML.
+For other build/runtime targets, create `.env` from `example.env` only if absent and review host-specific values. Keep existing assignments. `make site` exports a strict build to `site/`; `make clean` deletes that generated directory, so inspect any `SITE_OUTPUT_PATH` override first. Edit sources, not generated HTML.
 
 ## Material features
 
-Plundarrpedia enables several Material for MkDocs features that can make a guide
-easier to follow:
-
-- admonitions for notes, tips, warnings, and dangerous operations;
-- content tabs for platform-specific commands;
-- Mermaid diagrams for relationships and workflows;
-- syntax highlighting and copy buttons for commands and configuration;
-- footnotes, tooltips, task lists, and automatic search indexing;
-- light and dark palettes with project-specific theme overrides.
-
-Keep diagrams narrow enough for mobile readers. Prefer top-to-bottom Mermaid
-flows when a left-to-right chart would require horizontal scrolling.
+Use tabs for real alternatives and cards for route choices. Keep required steps and warnings visible. Confirm custom syntax renders under `mkdocs.yml`; shared GitHub Markdown has fewer supported features. Diagrams need an equivalent explanation and must fit narrow screens.
 
 ## Production image builds
 
-Build the same unprivileged Nginx image used by the publishing workflow:
+Build the checkout after preparing `.env`:
 
 ```sh
-cp example.env .env
 make build
 ```
 
-Published images target these platforms:
-
-| Platform       | Typical use                                                   |
-| -------------- | ------------------------------------------------------------- |
-| `linux/amd64`  | Intel and AMD x86-64 Docker hosts.                            |
-| `linux/arm64`  | Modern ARM64 NAS systems and Linux hosts.                     |
-| `linux/arm/v7` | Older 32-bit ARM boards and compatible embedded Docker hosts. |
-
-Verify every published architecture with Buildx:
+The image serves static files on port `8080` through unprivileged Nginx. It supports amd64, arm64, and arm/v7. Validate all published platforms when image inputs change:
 
 ```sh
 make build-multiarch
 ```
 
-Override the platform list for a one-off test:
-
-```sh
-make build-multiarch \
-  BUILDX_PLATFORM_OPTIONS="--platform linux/amd64,linux/arm64"
-```
+This Buildx target is cache-only by default, not publication. The [README](https://github.com/scottgigawatt/plundarrpedia#readme) explains running a published image without rebuilding source.
 
 ## Publishing routes
 
-Plundarrpedia has two independent publication lanes:
+| Destination | Workflow | Output |
+| --- | --- | --- |
+| GitHub Pages | `pages.yml` | Static website |
+| GHCR | `build-and-push.yml` | Multi-platform Nginx image |
 
-| Destination  | Source workflow       | Result                                       |
-| ------------ | --------------------- | -------------------------------------------- |
-| GitHub Pages | `pages.yml`           | Public Material for MkDocs website.          |
-| GHCR         | `build-and-push.yml`  | Multi-platform unprivileged Nginx container. |
+Applicable `main` changes publish `edge` and `sha-<commit>`. Stable annotated semantic-version tags publish the exact version, `latest`, and a SHA tag; prereleases omit `latest`. Tags must reference a commit already on `main` and must never be moved or reused. Manual image publication is restricted to `main`.
 
-The image workflow scans a native image before publishing, creates an SBOM,
-attaches BuildKit provenance, and adds a GitHub build attestation to the
-published manifest digest.
-
-Image tags follow these channels:
-
-| Source                               | Published tags                    | Purpose                         |
-| ------------------------------------ | --------------------------------- | ------------------------------- |
-| Successful `main` build              | `edge`, `sha-<commit>`            | Preview reviewed documentation. |
-| Stable tag such as `v1.2.3`          | `1.2.3`, `latest`, `sha-<commit>` | Publish a stable edition.       |
-| Prerelease tag such as `v1.2.3-rc.1` | `1.2.3-rc.1`, `sha-<commit>`      | Test without replacing stable.  |
-
-Release tags must use semantic versioning, be annotated, and point to a commit
-already on `main`. Manual image publication is allowed only from `main`.
+Workflows have source-path filters. A merge alone does not prove both publication lanes ran. Check the relevant workflow results before announcing an update. Image publication includes Trivy scanning, SBOM/provenance, and a manifest-bound build attestation.
 
 ## Build notifications
 
-The image workflow can announce its start and final state to two independent
-Discord destinations. Each webhook is optional and skips cleanly when its
-secret is unavailable.
-
-| GitHub Actions secret      | Purpose                                  |
-| -------------------------- | ---------------------------------------- |
-| `DISCORD_WEBHOOK_URL`      | Primary image-build notifications.       |
-| `DISCORD_HADES_HOOK_URL`   | HADES image-build notifications.         |
-
-Completion messages include the job status, ref, published tags, shortened
-manifest digest, and GHCR package link. Never place webhook URLs directly in a
-workflow, Markdown file, issue, or log.
+Optional Discord build notifications use repository secrets `DISCORD_WEBHOOK_URL` and `DISCORD_HADES_HOOK_URL`. Missing secrets skip their destination. Never put actual webhook URLs in source, issues, or logs.
 
 ## Pinned build inputs
 
-GitHub Actions use full commit SHAs, and both Dockerfile stages use pinned image
-digests. Renovate proposes controlled updates for those inputs and the Python
-documentation toolchain.
+Actions use immutable SHAs and container bases use version/digest pairs. Renovate proposes updates. `requirements.txt` pins the top-level Material version; transitive Python dependencies are not fully locked or hash-verified.
 
-When reviewing a dependency pull request, confirm that:
-
-- the human-readable version comment still matches the pinned SHA or digest;
-- strict MkDocs and Markdown validation pass;
-- the production image still runs unprivileged and read-only;
-- all three target architectures can still be assembled when image inputs move.
+For dependency changes, verify matching version comments, strict site/lint checks, read-only/unprivileged runtime behavior, and the affected published architectures.
 
 ## Useful maintenance commands
 
-| Command             | Purpose                                             |
-| ------------------- | --------------------------------------------------- |
-| `make config`       | Render the complete Docker Compose model.           |
-| `make env`          | Print evaluated Compose interpolation values.       |
-| `make print-config` | Print uncommented source Compose YAML.              |
-| `make print-env`    | Print uncommented example environment values.       |
-| `make markdown`     | Lint every Markdown document.                       |
-| `make lint`         | Run all configured repository hooks.                |
-| `make clean`        | Delete the generated static-site directory.         |
-| `make run`          | Build and start the complete local Compose stack.   |
-| `make logs`         | Follow the production documentation container logs. |
-| `make down`         | Stop and remove the complete local Compose stack.   |
+Use `make help` for the complete list. `make config` prints resolved Compose and `make env` prints interpolation values; keep output private. `make logs` follows the production container.
 
-See the [Command Deck](reference/commands.md) for the complete command map and
-the [contribution guide](CONTRIBUTING.md) before changing public pages.
+`make run` builds and recreates the local production stack; `make down` stops/removes it. These change container state and are separate from documentation validation.

@@ -10,15 +10,7 @@ This guide covers deploying Plundarr on a Synology NAS through DSM's **Container
 
 ## 1. Generate the deployment artifact
 
-Generate Plundarr on the NAS over SSH or on another Docker-capable system:
-
-```sh
-git clone https://github.com/scottgigawatt/plundarr.git
-cd plundarr
-export MARAUDARR_IMAGE=maraudarr:dev
-make build
-make ship
-```
+Follow the [Plundarr quick start](../projects/plundarr/quick-start.md) on this host or another Docker-capable computer through **Validate before launch**, then return here. Deployment continues below; do not start a second copy on the generation host.
 
 Keep the generated `dist/plundarr/docker-compose.yml`, `.env`, and `config/` tree together. Copy that complete directory to a durable location such as:
 
@@ -70,7 +62,7 @@ If the device is absent after a reboot, review Plundarr's `scripts/synology/tun.
 
 ## 5. Restore trusted Docker CLI access after boot
 
-Container Manager can recreate `/var/run/docker.sock` with root-only group ownership after a DSM reboot or package update. This affects trusted users who run Docker commands over SSH; it does not require making the socket writable by every local account.
+This optional step is only for trusted administrators using Docker over SSH. Container Manager can recreate `/var/run/docker.sock` with root-only group ownership after a DSM reboot or package update. This affects trusted users who run Docker commands over SSH; it does not require making the socket writable by every local account.
 
 If the socket loses the intended group access:
 
@@ -83,10 +75,10 @@ If the socket loses the intended group access:
    as the task user, and run:
 
 ```sh
-sh /volume1/docker/plundarr/scripts/synology/docker-socket.sh
+sh /volume1/docker/plundarr-source/scripts/synology/docker-socket.sh
 ```
 
-The helper waits up to 120 seconds for the socket, verifies the Synology `docker` group, then restores ownership to `root:docker` with mode `0660`.
+Replace the example source-checkout path with your actual Plundarr checkout. The generated deployment directory does not include host helpers. The helper waits up to 120 seconds for the socket, verifies the Synology `docker` group, then restores ownership to `root:docker` with mode `0660`.
 
 > [!CAUTION]
 > Docker-group membership grants root-equivalent control of the NAS through the Docker daemon. Add only trusted administrators; do not replace the helper's `0660` mode with world-writable permissions.

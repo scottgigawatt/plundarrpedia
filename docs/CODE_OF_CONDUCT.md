@@ -6,9 +6,7 @@ icon: material/clipboard-check
 
 # Keep to the code 📜🏴‍☠️
 
-Plundarrpedia welcomes questions, corrections, examples, and contributions from
-people with wildly different levels of Docker and media-automation experience.
-Keep the harbor useful, patient, and safe for everyone.
+Plundarrpedia welcomes questions, corrections, examples, and contributions from people with wildly different levels of Docker and media-automation experience. Keep the harbor useful, patient, and safe for everyone.
 
 ## The articles
 
@@ -36,8 +34,7 @@ The following behavior is not welcome:
 
 ## Keep private cargo below deck
 
-Documentation reports and screenshots can expose more than expected. Remove or
-replace real:
+Documentation reports and screenshots can expose more than expected. Remove or replace real:
 
 - API keys, passwords, tokens, and webhook URLs;
 - WireGuard keys and generated `wg0.conf` files;
@@ -49,16 +46,10 @@ replace real:
 
 ## Enforcement
 
-The maintainer may edit or remove content, close or lock discussions, reject
-contributions, or block participants whose behavior violates these rules.
-Enforcement decisions should protect the community and the project, not settle
-personal disagreements.
+The maintainer may edit or remove content, close or lock discussions, reject contributions, or block participants whose behavior violates these rules. Enforcement decisions should protect the community and the project, not settle personal disagreements.
 
-This is a small open source project, not a tribunal of pirate law. Be decent,
-be specific, and help leave the charts clearer than you found them.
+This is a small open source project, not a tribunal of pirate law. Be decent, be specific, and help leave the charts clearer than you found them.
 
 ## Attribution
 
-This code of conduct is custom for Plundarrpedia and inspired by the shared
-principles of healthy open source communities: respect people, protect private
-information, and keep technical collaboration constructive.
+This code of conduct is custom for Plundarrpedia and inspired by the shared principles of healthy open source communities: respect people, protect private information, and keep technical collaboration constructive.

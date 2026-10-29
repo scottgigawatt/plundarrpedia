@@ -83,5 +83,4 @@ See [Jellyfin clients and customization](media-servers-and-books.md#customize-je
 
 Keep recovery copies off-host and outside the config tree. Export each Whisparr instance's backup separately; stop it before raw file copies. Regeneration preserves state and secrets but does not stop omitted containers. Review [update and backup checks](../plundarr/upgrading.md) before pulling images or deleting host configuration.
 
-[Open the shared configuration guide](../plundarr/configuration.md){ .md-button }
-[Troubleshoot the generated stack](../plundarr/troubleshooting.md){ .md-button .md-button--primary }
+[Open the shared configuration guide](../plundarr/configuration.md){ .md-button } [Troubleshoot the generated stack](../plundarr/troubleshooting.md){ .md-button .md-button--primary }

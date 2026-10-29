@@ -10,52 +10,28 @@ Treat `.env` as the control panel and `docker-compose.yml` as the generated wiri
 
 ## Identity and permissions
 
-Linux-based media containers commonly use a numeric user and group ID. On the host, identify the account that owns the media directories:
+Run `id media` for the host account that owns your media, then set `DEFAULT_PUID`, `DEFAULT_PGID`, and service-specific supplemental groups. Confirm access to the actual mounted directories.
 
-```sh
-id media
-```
-
-Use its numeric values for `DEFAULT_PUID` and `DEFAULT_PGID`. Review each generated supplemental-group setting, then confirm that downloads, final libraries, and `dist/<preset>/config/` are writable where appropriate.
-
-Plundarr applies these settings in two deliberate ways:
-
-- Rootless services such as Apprise and Seerr run directly with the generated user, group, and supplemental-group settings.
-- LinuxServer-style services continue receiving `PUID` and `PGID` through
-  their supported entrypoint environment rather than a blanket Compose
-  `user:` override.
-
-Select the intended Maraudarr image and review the generated service identity before troubleshooting runtime access. Do not weaken host ownership or container hardening to compensate for a stale generated chart.
+Rootless services use generated identity settings directly; LinuxServer-style images use their supported `PUID`/`PGID` entrypoints. Inspect the selected image and generated chart before changing permissions or hardening.
 
 ## Path strategy
 
-The most reliable strategy uses one shared host root and consistent container paths:
-
-| Host example           | Container path | Used by                          |
-| ---------------------- | -------------- | -------------------------------- |
-| `/srv/media/downloads` | `/downloads`   | Download clients, Radarr, Sonarr |
-| `/srv/media/movies`    | `/movies`      | Radarr, Plex/Jellyfin            |
-| `/srv/media/tv`        | `/tv`          | Sonarr, Plex/Jellyfin            |
-| `./config/radarr`      | `/config`      | Radarr only                      |
-
-Do not map the same host download directory as `/data` in one container and `/downloads` in another unless you also configure remote-path mappings. A single vocabulary makes imports, hardlinks, and troubleshooting easier.
+Use matching container paths for shared files: if the client reports `/downloads/movies/example.mkv`, the manager must see that same path. Keep host media, persistent service config, and temporary files separate. Hardlinks also need compatible mount/filesystem boundaries; follow [paths and permissions](../../guides/storage-and-permissions.md).
 
 ## Network choices
 
-Choose a private subnet that does not overlap:
-
-- your home LAN;
-- an employer or travel VPN;
-- another Docker network;
-- a remote site you route to.
-
-The default Plundarr preset uses `172.20.0.0/16` with a smaller container allocation range. Other presets use separate allocations through `172.28.0.0/16`; Watchtower uses `172.26.0.0/16`, Portainer uses `172.27.0.0/16`, and Custom uses `172.28.0.0/16`. These are collision-avoiding defaults, not universal requirements.
+Use a private subnet that does not overlap your LAN, another Docker network, or a local/remote VPN route. Generated subnet/port offsets reduce collisions between presets but do not prove availability on your host. Review the actual `.env` before launch.
 
 ## VPN region selection
 
 In a generated Plundarr deployment, `PIA_AUTOCONNECT=true` selects a low-latency eligible region automatically and ignores `PIA_PREFERRED_REGION`. To choose a specific region, set `PIA_AUTOCONNECT=false` and `PIA_PREFERRED_REGION` to its PIA region ID in `dist/<preset>/.env`. The generated fallback ID is `ca`; verify that your chosen region supports port forwarding when `PIA_PF=true`.
 
-Recovery-enabled Privateerr reuses a valid saved pair on startup. Restarting the stack does not repeat automatic latency selection or replace a healthy connection. To deliberately refresh server selection or apply a region or forwarding-selection change immediately, stop the selected stack, generate fresh files in a disposable one-shot run, then recreate the full stack:
+Recovery-enabled startup reuses a healthy saved pair; recreation alone does not select a new endpoint.
+
+> [!CAUTION]
+> The following procedure interrupts the stack and replaces its saved VPN pair. Back up needed files first and stop the supervisor so only one writer owns the directory.
+
+From the Plundarr checkout, replace `YOUR-PRESET`, then stop the stack, generate fresh settings, and recreate:
 
 ```sh
 docker compose --project-directory dist/YOUR-PRESET stop
@@ -64,7 +40,7 @@ make up PRESET=YOUR-PRESET
 make test-vpn PRESET=YOUR-PRESET
 ```
 
-Run this from the Plundarr checkout and replace `YOUR-PRESET`. Stopping the supervisor prevents concurrent writers. A plain restart does not reload environment changes, and recreation alone does not rotate a healthy saved connection. For Privateerr's standalone checkout, run `make down`, wait for success, then `make run-privateerr` and `make up-build` to retain the source-built image. These operations interrupt the application stack and replace the saved VPN pair.
+A plain restart does not reload environment changes, and recreation alone does not rotate a healthy saved connection. For standalone Privateerr, follow its [one-shot generation route](../privateerr/quick-start.md#generate-files-for-another-wireguard-deployment).
 
 In Synology Container Manager, stop the project before generation and rebuild it afterward. For a UI-only change, temporarily set `PRIVATEERR_AUTO_RECOVER=false`, rebuild and verify fresh generation, then restore `true` and rebuild again.
 
@@ -84,7 +60,7 @@ The selected client changes the VPN namespace and service dependencies:
 
 === "qBittorrent"
 
-    Best when the automation lane retrieves torrents. Privateerr supplies the hook Gluetun calls to set the assigned PIA peer port and VPN interface. `QBITTORRENT_WEBUI_PORT` controls the application listener, host mapping, healthcheck, and default hook API URL together. `QBITTORRENT_PORT_SYNC=true` enables those peer-port updates; `false` skips them. `QBITTORRENT_API_WAIT_SECONDS=300` bounds the hook's API-readiness wait in seconds. See [local control and VPN traffic](../../guides/networking-and-vpn.md#shared-network-namespaces) for the API address and port boundaries. Explicit Compose-managed Gluetun updates also restart qBittorrent; automatic API recovery preserves both containers.
+    Use for torrents. Gluetun calls Privateerr's hook to synchronize the PIA peer port and VPN interface. See [local control and VPN traffic](../../guides/networking-and-vpn.md#shared-network-namespaces) for listener/API controls, loopback trust, and restart boundaries.
 
 === "SABnzbd"
 
@@ -144,13 +120,4 @@ make recyclarr-sync PRESET=plundarr
 
 ## Secrets
 
-Keep these out of Git:
-
-- PIA username and password;
-- application API keys;
-- generated WireGuard files and endpoint metadata;
-- notification credentials and webhook URLs;
-- Duplicati encryption material;
-- real service databases and logs.
-
-Use `example.env` to document variable names and safe examples. Use ignored `.env` files or an external secret-management workflow for real values.
+Keep PIA credentials, API keys, VPN files, webhook URLs, encryption keys, databases, and private logs out of Git. Use `example.env` for reference values and ignored `.env` files or a secret manager for real ones.

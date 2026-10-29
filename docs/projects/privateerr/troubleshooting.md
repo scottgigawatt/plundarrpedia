@@ -83,11 +83,9 @@ Read the first failed operation and its container path in Privateerr's logs. Per
 
 Give the container's UID 0 write and traverse access to the intended output directory, accounting for host UID remapping. A `:rw` mount does not override host permissions. Keep capabilities dropped and `no-new-privileges`; correct the specific mount, space, quota, or permission condition instead of applying `chmod 777`.
 
-With a reusable pair, a failed disposable storage probe can warn while startup still becomes ready. Installation of the two image-owned scripts remains required and can fail independently. Readiness does not guarantee recovery can save files later. A leftover `.privateerr-check.*` directory can indicate interrupted probe cleanup.
+Readiness can succeed with a reusable pair despite a failed storage probe; it does not guarantee future recovery writes. Script installation must still succeed. If publication fails after Gluetun accepted a candidate, preserve `.privateerr-pending` and `.privateerr-commit`, repair storage, and let reconciliation finish. Do not delete state or start a concurrent generator. Restarting resets timers but does not repair storage.
 
-If Gluetun accepted a candidate but local publication failed, the running tunnel may already use settings newer than the saved pair. Preserve `.privateerr-pending` and `.privateerr-commit`, repair the reported storage issue, and let the supervisor reconcile settings/health and retry publication. Do not delete retained state or run another writer to clear the warning. New registrations use a cooldown; retained-candidate reconciliation can retry on subsequent monitoring cycles. Restarting Privateerr resets timers but does not repair storage or force a new registration.
-
-Region messages report the provider-advertised saved or candidate region. `unknown` can mean an optional label is missing; it is not proof of invalid keys. Region names are not measured latency or proof of physical server location. Review even sanitized diagnostics before sharing operational paths or region information.
+Region labels are provider metadata, not measured latency or physical-location proof. Review diagnostics before sharing them.
 
 ## qBittorrent does not follow the tunnel
 
@@ -97,16 +95,6 @@ If Gluetun was replaced outside Compose, recreate the complete VPN namespace and
 
 ## Testing the full path
 
-Ordinary `make up` starts the application services only. `make test` runs credential-free repository checks inside Buccaneerr with runtime networking disabled; the initial build may fetch dependencies. For opt-in live fault validation, use a disposable checkout and accept a deliberate VPN interruption before running:
+Check ordinary startup with Privateerr readiness, Gluetun's tunnel health, and qBittorrent's synchronized peer port/interface. A healthy tunnel alone does not prove incoming connectivity.
 
-```sh
-make test-e2e
-make clean-test
-```
-
-The e2e path requires real PIA credentials and enables the `test` profile for Privateerr, Gluetun, qBittorrent, and Buccaneerr. It checks recovery and the restored application port/interface. `make clean-test` restores checked-in examples only after successful shutdown; restoration overwrites the saved pair. These tests do not download torrents or prove UDP reachability or torrent throughput.
-
-For isolated API/hook validation without PIA credentials, run `make test-recovery-api`. Use `make test-recovery-live` for isolated live PIA recovery and incoming-TCP checks. All Privateerr test drivers and lint tools run in Buccaneerr; see the [developer testing guide](https://scottgigawatt.github.io/privateerr/development/privateerr/testing/).
-
-> [!CAUTION]
-> Always run `make clean-test` after live validation and inspect the worktree for generated VPN material before committing.
+`make test-recovery-api` validates the API/hook in isolation without PIA credentials. Live recovery and e2e suites use credentials, interrupt the VPN, and can replace saved files during cleanup; follow the [Privateerr developer testing guide](https://scottgigawatt.github.io/privateerr/development/privateerr/testing/) in a disposable checkout. They do not prove UDP reachability or torrent throughput.

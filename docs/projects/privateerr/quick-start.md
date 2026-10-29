@@ -7,11 +7,11 @@ status: updated
 
 # Privateerr quick start
 
-Use a VPN-enabled Plundarr preset for a generated media deployment, or the standalone Privateerr checkout for one-shot configuration and the focused three-service application stack. You need Docker, an active PIA subscription, and private storage for the generated files. Source-build routes also need Git, Make, Compose, Buildx, and the initialized PIA submodule.
+Choose a VPN-enabled Plundarr preset for a generated media stack, or the standalone Privateerr project for one-shot generation and a focused three-service stack. You need Docker, a PIA subscription, and private storage. Source builds also require Git, Make, Compose, Buildx, and the initialized PIA submodule.
 
 ## Generate the complete Plundarr route
 
-Follow [Plundarr's generator setup](../plundarr/quick-start.md#choose-the-generator), then run `make ship`. Set `PIA_USER` and `PIA_PASS` in `dist/plundarr/.env`; use `PIA_PF=true` for a forwarding-capable endpoint. Review paths, permissions, ports, and the generated shared API key before starting:
+Complete [Plundarr's generator setup](../plundarr/quick-start.md#choose-the-generator), then generate the preset. Set `PIA_USER` and `PIA_PASS` in `dist/plundarr/.env`; keep `PIA_PF=true` for forwarding. Review paths, permissions, ports, and the generated shared API key:
 
 ```sh
 make config
@@ -19,14 +19,14 @@ make up
 make test-vpn
 ```
 
-Privateerr installs its Gluetun integration scripts and prepares `wg0.conf` and `privateerr.env` before its healthcheck reports ready. Gluetun consumes that handoff and establishes the tunnel. Maraudarr enables recovery when both services are selected and preserves existing keys and explicit opt-outs.
+Privateerr installs its integration scripts and prepares the saved pair before readiness. Gluetun then starts the tunnel. Recovery is enabled when both are selected, preserving existing keys and explicit opt-outs.
 
 > [!WARNING]
-> The VPN path uses real PIA credentials. Keep `.env`, `wg0.conf`, `privateerr.env`, API keys, and unsanitized logs out of Git and public support reports.
+> Keep credentials, keys, VPN files, resolved Compose output, and unsanitized logs out of Git and public support reports.
 
 ## Generate files for another WireGuard deployment
 
-For the standalone source workflow:
+Clone the source with its public submodule:
 
 ```sh
 git clone --recurse-submodules https://github.com/scottgigawatt/privateerr.git
@@ -34,30 +34,24 @@ cd privateerr
 cp example.env .env
 ```
 
-Set `PIA_USER` and `PIA_PASS` in the ignored `.env`. Keep `PIA_VPN_PROTOCOL=wireguard` and `PIA_CONNECT=false`. Preserve any saved files you need and stop every supervisor writing the same directory before generation:
+Edit the private `.env`: set PIA credentials, keep `PIA_VPN_PROTOCOL=wireguard` and `PIA_CONNECT=false`, and review output paths. Preserve needed VPN files and stop every supervisor writing the same directory before running:
 
 ```sh
 make run-privateerr
 ```
 
-This builds the checked-out source, disables recovery and keepalive for the disposable run, and exits after replacing the saved pair without changing `.env`. Custom one-shot containers should also use `restart: "no"`. For generation without Git or Make, use the [published-image Docker command](https://github.com/scottgigawatt/privateerr#using-docker-directly).
-
-| Output | Purpose |
-| --- | --- |
-| `config/gluetun/wireguard/wg0.conf` | WireGuard interface, peer, keys, and endpoint for a compatible VPN client. |
-| `config/gluetun/wireguard/privateerr.env` | PIA server identity, region, endpoint, and port-forwarding support. |
+This builds the checkout, disables recovery/keepalive for the disposable run, and replaces `config/gluetun/wireguard/wg0.conf` and `privateerr.env`. It does not change `.env`. Custom one-shot containers should use `restart: "no"`; the [direct Docker route](https://github.com/scottgigawatt/privateerr#using-docker-directly) needs neither Git nor Make.
 
 ## Run the standalone example stack
 
-The application stack contains Privateerr, Gluetun, and qBittorrent. From the checkout above, complete this preflight:
+From the checkout above, prepare the three-service Privateerr/Gluetun/qBittorrent application:
 
-- [ ] Set PIA credentials and generate a shared recovery key with `openssl rand -hex 24`; save it as `PRIVATEERR_GLUETUN_API_KEY` in `.env`.
-- [ ] Review qBittorrent user/group IDs, config/download paths, and `QBITTORRENT_WEBUI_PORT`.
-- [ ] Keep `PIA_PF=true` and `QBITTORRENT_PORT_SYNC=true` for the demonstrated forwarding path.
-- [ ] Share the complete `config/gluetun/` directory read/write with Privateerr and Gluetun. Privateerr installs both executable scripts into its `scripts/` directory; no separate script download or file mount is needed.
-- [ ] Check architecture support: the qBittorrent application example requires amd64 or arm64 even though Privateerr also supports arm/v7.
+1. Generate a key with `openssl rand -hex 24` and save it as `PRIVATEERR_GLUETUN_API_KEY` in `.env`.
+2. Review qBittorrent's user/group IDs, config/download paths, and `QBITTORRENT_WEBUI_PORT`. Keep `PIA_PF=true` and `QBITTORRENT_PORT_SYNC=true` for forwarding.
+3. Share the complete `config/gluetun/` directory read/write with both VPN services. Privateerr installs the scripts; no separate download or file mount is needed.
+4. Confirm amd64 or arm64 support for this qBittorrent example; Privateerr alone also supports arm/v7.
 
-Pull the published application images and start the three services detached:
+Pull the published images and start the application:
 
 ```sh
 make config
@@ -65,37 +59,17 @@ make up
 make ps
 ```
 
-`make up-pull` is an explicit alias. These targets do not build images or start Buccaneerr. To pull Gluetun/qBittorrent, build Privateerr from the checkout, and retain that local build at startup, use:
+`make up` does not build images or start Buccaneerr. Use `make up-build` to build Privateerr from this checkout while pulling its companions. Check Privateerr's readiness, Gluetun's healthy tunnel, and qBittorrent's Web UI in that order.
 
-```sh
-make up-build
-```
+Open the configured host port, default `8080`. Read qBittorrent's initial password locally from logs and change it. The seeded hook uses unauthenticated loopback API access; every application sharing the namespace has that access. Existing qBittorrent configuration must permit the hook. See [local control and VPN ports](../../guides/networking-and-vpn.md#shared-network-namespaces).
 
-Without Make, the equivalent published-image startup is:
-
-```sh
-docker compose --env-file .env pull privateerr gluetun qbittorrent
-docker compose --env-file .env up --detach --no-build --pull never privateerr gluetun qbittorrent
-```
-
-qBittorrent's Web UI uses host port `8080` by default. Its listener, host mapping, healthcheck, and forwarding-hook URL follow `QBITTORRENT_WEBUI_PORT` together. Read its initial password locally from container logs, change it in the Web UI, and keep those logs private. The seeded API allows loopback access for Gluetun's hook; other applications in that shared namespace have the same loopback access. Existing application configuration must allow the hook explicitly. The Web UI and API are local control traffic; the separate PIA-assigned peer port arrives through the VPN tunnel and needs no host port publication. See the [networking guide](../../guides/networking-and-vpn.md#shared-network-namespaces) for the port controls.
-
-Gluetun's control and health ports remain internal. `make down` stops the selected project, including any test-profile container, while preserving volumes, images, and saved configuration.
+`make down` stops the project while preserving volumes, images, and the saved pair. Keep Gluetun's control/health ports internal.
 
 ## Run tests deliberately
 
-`make test` runs credential-free repository checks in Buccaneerr with runtime networking disabled; the initial test-image build may need network access. Buccaneerr's live service is in the `test` profile and starts only through an explicit test route.
+Ordinary startup does not run fault tests. `make test` runs credential-free checks in Buccaneerr with runtime networking disabled; building the test image can need network access.
 
 > [!CAUTION]
-> `make test-e2e` uses real PIA credentials and deliberately interrupts its VPN endpoint. Use a disposable checkout, preserve needed configuration, and accept the outage before running it.
+> Live tests deliberately interrupt the VPN and can overwrite saved configuration during cleanup. Use the [Privateerr testing guide](https://scottgigawatt.github.io/privateerr/development/privateerr/testing/) from an isolated disposable checkout, with needed files backed up.
 
-```sh
-make test-e2e
-make clean-test
-git status --short
-```
-
-Run each command after the preceding command finishes. `make clean-test` stops the test-profile stack and restores safe examples only after shutdown succeeds. Restoration overwrites the saved VPN pair; do not use it against an active supervisor or a lasting deployment. `BUCCANEERR_TEST_RECOVERY=false` selects connectivity-only live validation. See [test boundaries](troubleshooting.md#testing-the-full-path) for API-only and isolated live suites.
-
-[Understand the file handoff](config-handoff.md){ .md-button .md-button--primary }
-[Troubleshoot Privateerr](troubleshooting.md){ .md-button }
+[Understand the file handoff](config-handoff.md){ .md-button } [Troubleshoot Privateerr](troubleshooting.md){ .md-button }
