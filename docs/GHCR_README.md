@@ -1,8 +1,6 @@
 # ⚓ Plundarrpedia 🏴‍☠️📚
 
-Plundarrpedia is a task-oriented field guide for Plundarr, Privateerr, Plex
-utilities, and practical self-hosted media automation. The container serves the
-complete Material for MkDocs site from an unprivileged Nginx runtime.
+Plundarrpedia is a task-oriented field guide for Plundarr, Privateerr, Plex utilities, and practical self-hosted media automation. The container serves the complete Material for MkDocs site from an unprivileged Nginx runtime.
 
 > [!IMPORTANT]
 > Privateerr generates PIA WireGuard settings and can supervise stale-connection recovery. Gluetun establishes and runs the VPN tunnel.
@@ -15,8 +13,7 @@ The canonical image is published to GitHub Container Registry (GHCR):
 docker pull ghcr.io/scottgigawatt/plundarrpedia:latest
 ```
 
-Use `edge` only when intentionally testing the newest successful build from
-`main`:
+Use `edge` only when intentionally testing the newest successful build from `main`:
 
 ```sh
 docker pull ghcr.io/scottgigawatt/plundarrpedia:edge
@@ -29,8 +26,7 @@ docker pull ghcr.io/scottgigawatt/plundarrpedia:edge
 | `edge`         | Newest successful `main` build.                            |
 | `sha-cfa2fb5`  | Image produced from one source commit.                     |
 
-Published tags are multi-platform manifests for `linux/amd64`, `linux/arm64`,
-and `linux/arm/v7`. Docker selects the correct platform automatically.
+Published tags are multi-platform manifests for `linux/amd64`, `linux/arm64`, and `linux/arm/v7`. Docker selects the correct platform automatically.
 
 ## ⚡ Run it
 
@@ -47,8 +43,7 @@ docker run --rm \
 
 Open <http://localhost:8000>.
 
-For resource limits, health checks, log rotation, and NAS-friendly environment
-overrides, use the complete Compose deployment in the GitHub repository.
+For resource limits, health checks, log rotation, and NAS-friendly environment overrides, use the complete Compose deployment in the GitHub repository.
 
 ## 🛡️ Supply-chain details
 

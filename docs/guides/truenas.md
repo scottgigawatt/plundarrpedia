@@ -94,17 +94,7 @@ The [TrueNAS Dockge catalog entry](https://apps.truenas.com/catalog/dockge/) doc
 
 ## 4. Generate the Plundarr stack
 
-Use a workstation or a shell on TrueNAS to generate and inspect the stack:
-
-```sh
-git clone https://github.com/scottgigawatt/plundarr.git
-cd plundarr
-export MARAUDARR_IMAGE=maraudarr:dev
-make build
-make ship
-$EDITOR dist/plundarr/.env
-docker compose --project-directory dist/plundarr config --quiet
-```
+Follow the [Plundarr quick start](../projects/plundarr/quick-start.md) on this host or another Docker-capable computer through **Validate before launch**, then return here. Deployment continues below; do not start a second copy on the generation host.
 
 Replace Synology-shaped `/volume1/...` defaults with the actual `/mnt/tank/...` host paths. Use absolute host paths for media and operator-managed external state. Keep the generated `config/` seed tree with the project; relative `./config` mounts resolve from its deployment directory. If you move service config mounts to a separate dataset, move their generated seed files there before launch. Keep the container paths consistent across download clients and media managers.
 
@@ -186,7 +176,7 @@ Do not configure every indexer and manager while the VPN lane is still unhealthy
 
 ## 9. Update without creating configuration drift
 
-Treat the generated Plundarr project as the source of truth:
+Treat the generated project as the deployment definition. Export application databases/named-volume backups separately before updating; the config tree alone does not contain them. Follow [update and backup checks](../projects/plundarr/upgrading.md), then:
 
 1. Back up `config/`, `compose.yaml`, and `.env` through a secret-aware process.
 2. Copy the current Dockge `.env` back to `dist/plundarr/.env`, then run `make ship` in the Plundarr checkout with the complete `ADD_SERVICES` and `REMOVE_SERVICES` selection. Review the regenerated files.
@@ -210,16 +200,8 @@ Avoid maintaining different hand-edited copies in the Plundarr checkout and Dock
 
 ## TrueNAS launch checklist
 
-- [ ] The installed TrueNAS release supports the Docker-based Apps system and
-      the current Dockge catalog application.
-- [ ] Dockge's data and stacks datasets exist before installation.
-- [ ] Dockge's host, container, and configured stacks paths match exactly.
-- [ ] Dockge is reachable only from a trusted network.
-- [ ] Downloads and libraries that need hardlinks share one ZFS dataset.
-- [ ] ACL entries match the services' numeric identities.
-- [ ] Every host path begins with the correct `/mnt/POOL/...` path.
-- [ ] `.env` is private and sits beside the Dockge `compose.yaml`.
-- [ ] `/dev/net/tun` and `NET_ADMIN` remain configured for Gluetun.
-- [ ] The custom subnet does not overlap another network.
-- [ ] Published ports belong to Gluetun for network-sharing download clients.
-- [ ] Only one Dockge, Custom App, or CLI copy of the stack is running.
+- [ ] Your release supports Docker-based Apps and the selected Dockge application.
+- [ ] Datasets/ACLs and numeric identities match each service; hardlink candidates share one filesystem.
+- [ ] Dockge's host, container, and configured stack paths match; `.env` is private beside the Compose file.
+- [ ] Gluetun retains TUN, `NET_ADMIN`, and the shared-network port mappings.
+- [ ] Ports/subnets do not conflict, management access is restricted, and only one copy runs.

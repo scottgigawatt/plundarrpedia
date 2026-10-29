@@ -1,4 +1,4 @@
-# Pull Request Boarding Pass 🏴‍☠️
+# Pull request 🏴‍☠️
 
 ## What changed? ⚓
 
@@ -8,7 +8,7 @@
 
 -
 
-## Test voyage 🧪
+## Validation 🧪
 
 - [ ] `make markdown` for Markdown changes
 - [ ] `make site` for pages, navigation, theme, or MkDocs configuration
@@ -19,13 +19,9 @@
 - [ ] Synology, TrueNAS, or ordinary Docker instructions checked when affected
 - [ ] `pre-commit run --all-files`
 
-## Secrets check 🛡️
-
-- [ ] No credentials, API keys, access tokens, or webhook URLs
-- [ ] No live `wg0.conf`, WireGuard private keys, or generated VPN material
-- [ ] No private hostnames, public IP addresses, or identifiable local paths
-- [ ] No unsanitized logs or screenshots
-- [ ] No generated `site/` output or local `.env` file
+- [ ] Changed reader journeys checked from entry point through expected result, with results/limits described above
+- [ ] Commands, prerequisites, links, backups, and recovery remain usable after shortening
+- [ ] No secrets, identifying logs/paths, generated site output, or local `.env`
 
 ## Captain's notes 📜
 

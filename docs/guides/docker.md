@@ -34,15 +34,7 @@ Choose ownership for your host. The name `media` is only an example. Record the 
 
 ## Generate and validate
 
-```sh
-git clone https://github.com/scottgigawatt/plundarr.git
-cd plundarr
-export MARAUDARR_IMAGE=maraudarr:dev
-make build
-make ship
-$EDITOR dist/plundarr/.env
-make config
-```
+Follow the [Plundarr quick start](../projects/plundarr/quick-start.md) on this host or another Docker-capable computer through **Validate before launch**, then return here. Deployment continues below; do not start a second copy on the generation host.
 
 Replace all `/volume1/...` examples with your `/srv`, `/mnt`, or other absolute host paths. Relative `./config/...` paths are resolved from the Compose project directory and can remain portable.
 

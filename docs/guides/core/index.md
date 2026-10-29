@@ -6,8 +6,7 @@ icon: material/tools
 
 # Core guides 🧭
 
-These guides cover the parts of a media stack that remain important whether
-Docker runs on Linux, Synology, or TrueNAS. Choose the problem you are solving:
+These guides cover the parts of a media stack that remain important whether Docker runs on Linux, Synology, or TrueNAS. Choose the problem you are solving:
 
 <div class="grid cards" markdown>
 

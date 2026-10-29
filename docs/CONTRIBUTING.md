@@ -6,212 +6,108 @@ icon: material/text-box-edit
 
 # Contributing to Plundarrpedia 🏴‍☠️
 
-Plundarrpedia is maintained as Markdown, but valid Markdown alone is not enough.
-Pages also need stable navigation, accurate examples, safe public data, and a
-clean Material for MkDocs render.
+Help readers complete a deployment or solve a problem. Accurate commands, a usable structure, and a clear rendered page matter as much as valid Markdown.
 
 ## Before you start
 
-- Read the [repository README](https://github.com/scottgigawatt/plundarrpedia#readme)
-  for the repository and image overview.
-- Read the [security policy](SECURITY.md) before sharing logs, screenshots, or
-  infrastructure details.
-- Keep to the [code of conduct](CODE_OF_CONDUCT.md).
-- Check existing issues and pull requests before opening a duplicate chart.
-- Confirm the sibling project that owns the behavior you want to document.
+Check existing issues/PRs and identify the repository that owns the behavior. Read the [security policy](SECURITY.md) and [code of conduct](CODE_OF_CONDUCT.md). Use public example values throughout.
 
 ## What belongs here
 
-Good contributions include:
-
-- task-oriented guides for Plundarr, Privateerr, and generated Plundarr presets;
-- Linux Docker, Synology, TrueNAS, and other platform-specific deployment help;
-- corrected commands, links, screenshots, diagrams, and troubleshooting steps;
-- accessibility, navigation, search, or theme improvements;
-- container, workflow, linting, and supply-chain hardening for the wiki itself.
-
-Questionable cargo includes:
-
-- copying a sibling project's entire README into the wiki;
-- undocumented platform assumptions presented as universal requirements;
-- generated HTML from `site/` instead of its Markdown or theme source;
-- speculative instructions that have not been checked against the owning
-  project;
-- credentials, private logs, live VPN configuration, or identifiable paths.
+Keep integrated operator guides, platform-specific deployment steps, troubleshooting, and site improvements here. Link to sibling projects for exact configuration and developer contracts. Do not copy complete READMEs, publish speculative instructions, or commit generated `site/` output.
 
 ## Local setup
+
+You need Git, Make, Docker with Compose, and pre-commit for lint. From a new checkout:
 
 ```sh
 git clone https://github.com/scottgigawatt/plundarrpedia.git
 cd plundarrpedia
 cp example.env .env
-```
-
-Useful authoring and validation commands:
-
-```sh
 make serve
-make markdown
-make site
-make clean
-make config
-pre-commit run --all-files
 ```
 
-Open <http://localhost:8000> while `make serve` is running.
+Keep an existing `.env`; never overwrite it for validation. The preview opens at <http://localhost:8000>; change the authoring port with `make serve MKDOCS_AUTHOR_PORT=8001`. Initial tool builds/hooks can need network access.
 
 ## Page structure
 
-Start every public page with YAML front matter:
+Public site pages start with front matter:
 
 ```yaml
 ---
-title: Short Navigation Title
-description: One sentence that explains the task and helps search results.
+title: Short navigation title
+description: The reader task this page helps complete.
 icon: material/compass
 ---
 ```
 
-Then use exactly one H1 heading. Keep headings in sentence case and organize the
-page around a reader's task rather than the source repository's file layout.
+Use one H1, sentence-case headings, and a logical hierarchy. Registry copy is written for its destination rather than site front matter. Keep existing routes and anchors, or update inbound links and provide a compatibility route.
 
 ## Markdown conventions
 
-- Use relative links for pages and assets inside Plundarrpedia.
-- Use descriptive link text instead of “click here.”
-- Give copyable commands the `sh` language without prompt characters or prose comments. Use `console` only for command output or a terminal transcript, and use the correct format such as `yaml`, `text`, or `ini` for configuration.
-- Keep each ordinary prose paragraph on one physical source line and use visual editor wrapping. Preserve semantic blank lines, lists, tables, and code blocks. The linter does not enforce a fixed line length.
-- Put one blank line around headings, lists, tables, code fences, and
-  admonitions.
-- Explain acronyms the first time they appear on a route intended for new
-  users.
-- Prefer ordered steps for a procedure and checklists for preflight validation.
-- Do not reproduce an entire project README. Link to the source when internal
-  implementation detail becomes the subject.
+Use descriptive relative links, language-labeled fences, and blank lines around blocks. Copyable commands use `sh` without prompts or prose comments; output uses `console`. Keep ordinary paragraphs on one physical source line with editor wrapping.
+
+Number ordered procedures; use bullets for parallel choices and tables for genuine comparisons. Material tabs/cards belong only where `mkdocs.yml` supports them. Shared repository Markdown must render on GitHub. Give images meaningful alt text and diagrams an equivalent explanation.
 
 ## Writing standard
 
-Write for the reader and the outcome rather than mirroring the source tree. Lead with the required action or conclusion, use active voice and second person in procedures, put conditions before instructions, and keep one main idea in each sentence or paragraph.
+Project-owned documentation and related Markdown must follow [GitHub's style guide](https://docs.github.com/en/contributing/style-guide-and-content-model/style-guide), [writing best practices](https://docs.github.com/en/contributing/writing-for-github-docs/best-practices-for-github-docs), [Markdown guidance](https://docs.github.com/en/get-started/writing-on-github), and [ISO 24495-1:2023](https://www.iso.org/standard/78907.html).
 
-Use sentence-case headings with searchable nouns and active verbs. Keep short navigation labels concise, use numbered lists for procedures, use tables only for genuine comparisons, and link to the most specific useful source.
+Make information relevant, findable, understandable, and usable for the intended reader. State the task, prerequisites, and required decisions; lead with actions/results; use familiar words and active voice. Include expected results and recovery where needed. Keep short nautical touches outside commands and warnings.
 
-Reserve callouts for information that justifies interrupting the reading flow. Most pages need no more than one or two, and the warning itself must state the required action or risk without relying on nautical humor.
+Maintain one canonical explanation per topic. Remove obsolete, duplicate, speculative, and non-actionable content; preserve safety, compatibility, backup/restore limits, support policy, licensing, and attribution. Essential local steps should remain together.
 
-These choices follow the practical parts of [GitHub's documentation style guide](https://docs.github.com/en/contributing/style-guide-and-content-model/style-guide), [GitHub's content design principles](https://docs.github.com/en/contributing/writing-for-github-docs/content-design-principles), and the [Google developer documentation style highlights](https://developers.google.com/style/highlights). Plundarrpedia keeps its existing light nautical voice, Material components, and task-oriented structure rather than copying another site's editorial system wholesale.
+Review the changed reader journey from its entry point through verification, including assumptions, links, failure recovery, and narrow-screen use. Record which journeys you checked and distinguish author review from actual reader feedback/testing. Lint and a strict build do not prove usability or ISO conformity. Preserve existing badge/community blocks; place H1 and purpose before them.
 
 ## GitHub alerts
 
-Use native GitHub alerts for information readers must notice while scanning. The same source renders on GitHub and as Material admonitions through `pymdownx.quotes` on the published wiki. Do not use MkDocs-only `!!!` syntax or custom alert titles.
+Use native GitHub alerts; `pymdownx.quotes` renders them on the site. Most pages need at most one or two. Avoid consecutive alerts, routine commands inside callouts, custom titles, or MkDocs-only `!!!` syntax.
 
-```markdown
-> [!IMPORTANT]
-> Back up the deployment before replacing its configuration.
-```
+| Alert | Use |
+| --- | --- |
+| `[!NOTE]` | Useful context |
+| `[!TIP]` | Easier way to complete a task |
+| `[!IMPORTANT]` | Information required for success |
+| `[!WARNING]` | A problem needing immediate attention |
+| `[!CAUTION]` | Risk or destructive outcome |
 
-Choose the type that matches the message:
-
-- `[!NOTE]`: useful context.
-- `[!TIP]`: advice that makes a task easier.
-- `[!IMPORTANT]`: information required for success.
-- `[!WARNING]`: immediate attention needed to avoid a problem.
-- `[!CAUTION]`: risks or destructive outcomes.
-
-Use one or two alerts per page when possible. Do not place them consecutively, nest them inside other elements, hide risks in collapsible content, or wrap routine commands in alerts. Keep the first quoted prose line directly below the marker. Use a blank quoted line only to separate paragraphs or delimit a list or code block.
-
-Keep the alert itself literal and direct. Nautical humor belongs in the surrounding prose, not in the instruction that prevents data loss. Check both GitHub's rendered Markdown and the strict-built wiki before merging changes to alert syntax or rendering.
+Put quoted prose directly below the marker; use blank quoted lines only between paragraphs or around lists/code. State risks, affected data, backups, and recovery before disruptive commands. Keep risks visible outside collapsible content.
 
 ## Public-data boundary
 
-Never commit:
-
-- `.env` files or credentials;
-- API keys, tokens, or webhook URLs;
-- live WireGuard keys or generated `wg0.conf` files;
-- private hostnames, public IP addresses, or identifiable local paths;
-- raw logs that have not been reviewed and sanitized.
-
-Use obvious placeholders such as `replace-me`, `/mnt/tank/media`, and
-`192.0.2.10` when an example requires a value.
+Never publish credentials, webhook URLs, live VPN configuration, private hostnames/paths, identifying addresses, or unsanitized logs/screenshots. Use obvious placeholders and reserved examples such as `192.0.2.10`. Resolved Compose output can contain secrets.
 
 ## Lint and preview
 
-The repository uses markdownlint-cli2 through pre-commit. The shared rules in
-`.markdownlint-cli2.yaml` understand the project's Markdown scope and permit the
-inline HTML required for Material card grids and README badges. It also permits
-Material's three-space card-list markers and mixed fenced/indented code inside
-tabs and admonitions; MkDocs owns the rendering rules for those constructs.
-
-```sh
-make markdown
-make serve
-```
-
-`make markdown` checks document structure. `make serve` provides the live
-Material render at <http://localhost:8000>.
+`make markdown` runs markdownlint; `make serve` provides the live Material preview. Make checks Docker/Compose availability while parsing even these targets. Check GitHub rendering separately for repository-only files.
 
 ## Full validation
 
-Before submitting a documentation change:
+From the repository root:
 
 ```sh
 make markdown
 make site
-make clean
-make config
-make lint
+pre-commit run --all-files
+git diff --check
 ```
 
-Run `make build` when the Docker context, theme, requirements, or production
-server can be affected. Run `make build-multiarch` when Dockerfile or workflow
-changes can affect the published platform set.
+Site export needs a working Docker daemon and local `.env`; use isolated public defaults for validation. Pre-commit's hadolint hook also needs Docker. Check spelling, relative links/anchors, navigation, alerts, code, and affected light/dark/narrow-screen renders. Report unavailable checks.
 
-> [!IMPORTANT]
-> A clean Markdown lint does not prove that navigation links resolve or that Material extensions render. A strict MkDocs build is required as well.
+Run `make config` with public defaults for Compose changes, `make build` for image/theme/requirements changes, and `make build-multiarch` when published platforms can be affected. Neither strict MkDocs nor lint proves all external links work or live instructions succeed.
 
 ## Repository style
 
-- Use an editor that honors the repository's root `.editorconfig` so source
-  files keep consistent encoding, line endings, whitespace, and indentation.
-- Public documentation may be lightly nautical, but the task comes first.
-- Code, Dockerfile, Compose, Makefile, and workflow comments use plain English.
-- Preserve the repository's copyright and file-purpose header style.
-- Use separator-block comments to explain workflow and configuration sections.
-- Keep GitHub Actions pinned to full commit SHAs.
-- Keep container base images pinned by version and digest.
-- Preserve `linux/amd64`, `linux/arm64`, and `linux/arm/v7` support unless a
-  reviewed base-image constraint makes that impossible.
-- Prefer `.env` variables over hardcoded deployment values where users may need
-  a safe override.
+Honor `.editorconfig` and existing copyright/license headers. Code/configuration comments stay plain English. Preserve pinned inputs, supported architectures, hardening, and operator overrides; do not turn prose cleanup into unrelated tooling changes.
 
 ## Release tags
 
-- Create annotated semantic-version tags from commits already on `main`.
-- Never move or reuse a published version tag.
-- Successful `main` builds publish `edge` and a commit-SHA tag.
-- Stable version tags publish the exact version and replace `latest`.
-- Prerelease tags publish the prerelease and commit-SHA tags without replacing
-  `latest`.
-- Wait for Pages, image, scan, provenance, and attestation checks before
-  announcing a release.
+Publication is separate from editing/validation. Follow the [publishing rules](ADVANCED_USAGE.md#publishing-routes): annotated immutable semantic-version tags on `main`, verified workflows, and no stable alias for prereleases.
 
 ## Pull requests
 
-Before opening a pull request:
-
-- run the smallest relevant `make` targets;
-- run `pre-commit run --all-files`;
-- inspect the rendered light and dark themes for visual changes;
-- confirm navigation and relative links resolve in a strict build;
-- remove `.env`, `site/`, logs, and other generated or private files;
-- explain what changed, why it changed, and how it was validated.
-
-Smaller, focused pull requests are easier to review than a kraken-sized rewrite
-with six unrelated tentacles.
+Explain the reader problem, resulting changes, and actual validation. Keep changes focused; review the complete diff for secrets/generated files. Use the PR checklist to record results and reader-journey coverage.
 
 ## Security reports
 
-Do not report vulnerabilities in public issues or pull requests. Use the
-[security policy](SECURITY.md), or ask for a private route in the
-[🔥HADES🔥 Discord](https://discord.gg/BpEGzWwGYf).
-
-Fair winds, clean diffs, and may your YAML indent on the first try. ☠️
+Report vulnerabilities privately under the [security policy](SECURITY.md). Ask for a private contact route if needed; do not post exploit details in public issues or Discord.

@@ -13,6 +13,7 @@
     "ruff.importStrategy": "useBundled",
 
     "cSpell.words": [
+        "absmiddle",
         "accDescr",
         "argjson",
         "Avenir",
@@ -23,6 +24,7 @@
         "BUILDX",
         "cacheonly",
         "centurylinklabs",
+        "Chromecast",
         "cleanuparr",
         "Cloudant",
         "configurator",
@@ -101,6 +103,9 @@
         "superfences",
         "tasklist",
         "Tautulli",
+        "Themerr",
+        "TMDB",
+        "TPDB",
         "tmpfs",
         "todate",
         "Tracearr",
@@ -110,6 +115,7 @@
         "unpriv",
         "unsanitized",
         "unsynchronized",
+        "Velvarr",
         "venv",
         "WEBUI",
         "Whisparr",

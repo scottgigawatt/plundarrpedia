@@ -50,5 +50,4 @@ dist/
 
 [Plundarr's developer documentation](https://scottgigawatt.github.io/plundarr/) covers Maraudarr architecture, service-extension contracts, testing, and the source-generated Python reference. Plundarrpedia stays focused on deployment, configuration, and troubleshooting voyages.
 
-[View Plundarr on GitHub](https://github.com/scottgigawatt/plundarr){ .md-button }
-[Open the developer documentation](https://scottgigawatt.github.io/plundarr/){ .md-button .md-button--primary }
+[View Plundarr on GitHub](https://github.com/scottgigawatt/plundarr){ .md-button } [Open the developer documentation](https://scottgigawatt.github.io/plundarr/){ .md-button .md-button--primary }

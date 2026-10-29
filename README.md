@@ -1,3 +1,7 @@
+# Plundarrpedia 🏴‍☠️
+
+Plundarrpedia is the public field guide for [Plundarr](https://github.com/scottgigawatt/plundarr), [Privateerr](https://github.com/scottgigawatt/privateerr), and the self-hosted media presets they power. It brings setup, architecture, storage, networking, and troubleshooting into one searchable wiki for Docker and NAS operators.
+
 <!-- markdownlint-disable-next-line MD033 MD041 -->
 <hr />
 
@@ -28,39 +32,28 @@
 <p align="center">─── ⛧ ───</p>
 
 <p align="center">
-  <em>💀 Questions or cursed media-stack tips? Step forward… <strong>enter 🔥HADES🔥</strong>.</em>
-</p>
-
-<p align="center">
-  <a href="https://discord.gg/BpEGzWwGYf"><img src="https://img.shields.io/discord/1403601106315116626?label=%F0%9F%94%A5HADES%F0%9F%94%A5&amp;logo=discord&amp;logoColor=white&amp;color=5865F2" alt="HADES Discord community" /></a>
+  <em>🗺️ Lost on the Styx? Ask the damned cartographers in</em>
+  <a href="https://discord.gg/BpEGzWwGYf"><img src="https://img.shields.io/discord/1403601106315116626?label=%F0%9F%94%A5HADES%F0%9F%94%A5&amp;logo=discord&amp;logoColor=white&amp;color=5865F2" alt="HADES Discord community" align="absmiddle" /></a>
 </p>
 <!-- markdownlint-enable MD033 -->
 
 <!-- markdownlint-disable-next-line MD033 -->
 <hr />
 
-# Plundarrpedia 🏴‍☠️
-
-Plundarrpedia is the public field guide for [Plundarr](https://github.com/scottgigawatt/plundarr), [Privateerr](https://github.com/scottgigawatt/privateerr), and the self-hosted media presets they power. It brings setup, architecture, storage, networking, and troubleshooting into one searchable wiki for Docker and NAS operators.
-
-**[Read the wiki](https://scottgigawatt.github.io/plundarrpedia/)** or [start here](https://scottgigawatt.github.io/plundarrpedia/start-here/) to choose the smallest project that solves your job. No installation is needed to read the published guides.
-
-The project repositories remain the source of truth for code and exact configuration. Plundarrpedia connects those pieces with task-oriented guides and examples. Privateerr generates PIA WireGuard configuration; Gluetun runs the VPN tunnel.
+**[Read the wiki](https://scottgigawatt.github.io/plundarrpedia/)** or [choose a route](https://scottgigawatt.github.io/plundarrpedia/start-here/). No installation is needed to read it. Project repositories own code and exact configuration; this wiki connects them with operator walkthroughs.
 
 ## Pick a reading route 🧭
 
-| Guide | What you'll find |
+| Task | Guide |
 | --- | --- |
-| [Plundarr](https://scottgigawatt.github.io/plundarrpedia/projects/plundarr/) | Generate and operate a media automation stack. |
-| [Privateerr](https://scottgigawatt.github.io/plundarrpedia/projects/privateerr/) | Generate PIA settings and recover stale Gluetun connections. |
-| [Presets](https://scottgigawatt.github.io/plundarrpedia/projects/presets/) | Choose Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, Watchtower, Portainer, or a custom stack. |
-| [Platform guides](https://scottgigawatt.github.io/plundarrpedia/guides/) | Deploy on Linux Docker, Synology, or TrueNAS. |
+| Generate and operate a media stack | [Plundarr](https://scottgigawatt.github.io/plundarrpedia/projects/plundarr/quick-start/) |
+| Generate PIA settings or recover a stale tunnel | [Privateerr](https://scottgigawatt.github.io/plundarrpedia/projects/privateerr/) |
+| Choose a focused deployment | [Presets](https://scottgigawatt.github.io/plundarrpedia/projects/presets/) |
+| Deploy on Linux, Synology, or TrueNAS | [Platform guides](https://scottgigawatt.github.io/plundarrpedia/guides/) |
 
 ## Run the wiki locally ⚡
 
-You need Git, Make, and Docker with Docker Compose. The repository includes one Compose file for serving the production site and running the authoring tools.
-
-Clone the repository and create your local environment file:
+You need Git, Make, Docker, and Compose. Clone a new checkout:
 
 ```sh
 git clone https://github.com/scottgigawatt/plundarrpedia.git
@@ -68,69 +61,42 @@ cd plundarrpedia
 cp example.env .env
 ```
 
-Review `.env` for your host, especially `PLUNDARRPEDIA_HOST_PORT` if port `8000` is already in use. Then build and start the production site from your checkout:
+For an existing checkout, keep its `.env`. Review the host port, then build and start the checked-out source:
 
 ```sh
 make run
 ```
 
-Open <http://localhost:8000>, using your chosen port if you changed it. This command builds the checked-out source; changing `PLUNDARRPEDIA_TAG` changes its image tag, not the source revision it builds.
-
-Use `make logs` to follow the container logs and `make down` to stop and remove the local Compose containers. See [advanced usage](docs/ADVANCED_USAGE.md) for build, deployment, and maintenance details.
+Open <http://localhost:8000>, or your chosen port. Use `make logs` for output and `make down` to stop/remove the local containers. Changing `PLUNDARRPEDIA_TAG` names the built image; it does not select a source revision.
 
 ## Write and preview the wiki ✍️
 
-Pages live in `docs/`, navigation lives in `mkdocs.yml`, and theme customizations live in `overrides/` and `docs/assets/`. Follow the [contribution guide](docs/CONTRIBUTING.md) for front matter, sentence-case headings, relative links, and accessible Markdown.
-
-From the cloned repository, start the live-reload preview:
+Pages live in `docs/` and navigation in `mkdocs.yml`. Follow [contributing](docs/CONTRIBUTING.md) for the required GitHub/ISO writing standard, source layout, validation, and reader-journey review.
 
 ```sh
 make serve
 ```
 
-Open <http://localhost:8000>. The preview uses the pinned Material for MkDocs toolchain in Docker, so you do not need to install Python or MkDocs locally. If the production site is already using port `8000`, stop it with `make down` first or use `make serve MKDOCS_AUTHOR_PORT=8001` and open <http://localhost:8001>.
-
-Before opening a pull request, run the strict site build, Compose validation, and repository checks. These commands assume you created `.env` above; `make lint` also needs [pre-commit](https://pre-commit.com/#install) installed:
-
-```sh
-make site
-make config
-make lint
-```
-
-The strict build catches navigation and configuration warnings, while the lint checks validate source formatting and other repository rules. Review the rendered result as well: successful checks cannot tell you whether a guide makes sense to its reader.
-
-When adding new behavior, add or extend automated checks for it. New documentation is covered by the full-site build and lint checks. Keep examples public-safe: replace credentials, tunnel keys, private hostnames, and other deployment details before committing.
-
-Use `make help` for the complete command list. Generated HTML goes in `site/`; edit its sources and use `make clean` when you want to remove that generated output.
+Open <http://localhost:8000>. If occupied, use `make serve MKDOCS_AUTHOR_PORT=8001`. The Docker toolchain needs no host Python installation. Before submitting pages, run `make site` and `make lint`, then inspect the render; lint also requires pre-commit.
 
 ## Published images and releases 🐳
 
-The [GHCR package](https://github.com/scottgigawatt/plundarrpedia/pkgs/container/plundarrpedia) supports `linux/amd64`, `linux/arm64`, and `linux/arm/v7`. A pinned Material for MkDocs build renders the site, and an unprivileged Nginx image serves the static files. The supplied Compose configuration uses a read-only runtime and drops all Linux capabilities.
+The [GHCR image](https://github.com/scottgigawatt/plundarrpedia/pkgs/container/plundarrpedia) supports amd64, arm64, and arm/v7. It serves static files with unprivileged Nginx; Compose uses a read-only runtime and dropped capabilities.
 
-| Image tag | Use |
-| --- | --- |
-| `ghcr.io/scottgigawatt/plundarrpedia:latest` | Latest stable release. |
-| `ghcr.io/scottgigawatt/plundarrpedia:edge` | Preview from a successful build of `main`. |
-| `ghcr.io/scottgigawatt/plundarrpedia:<version>` | A specific published version; choose its tag from the [releases](https://github.com/scottgigawatt/plundarrpedia/releases). |
-
-To run a published image instead of building your checkout, set `PLUNDARRPEDIA_TAG` in `.env`, then pull and start the service without building:
+Choose `latest` for stable, `edge` for a successful `main` build, or an exact [release tag](https://github.com/scottgigawatt/plundarrpedia/releases). For immutable selection, use a digest. Set the desired tag in `.env` and run the published image without rebuilding:
 
 ```sh
 docker compose pull plundarrpedia
 docker compose up --detach --no-build plundarrpedia
 ```
 
-`latest` and `edge` move as new builds are published. Choose a release tag for a specific version, or an image digest when you need immutable image selection.
+See [advanced usage](docs/ADVANCED_USAGE.md) for build/publication boundaries and [the registry guide](docs/GHCR_README.md) for direct Docker usage.
 
-Changes merged to `main` publish the wiki to GitHub Pages and trigger the container workflow. The image workflow scans with Trivy and publishes multi-platform images with a software bill of materials (SBOM) and provenance. See the [publishing guide](docs/ADVANCED_USAGE.md#publishing-routes) for release details.
+## Read more and get help 📚
 
-## Help, security, and contributions 🤝
+- [Published wiki](https://scottgigawatt.github.io/plundarrpedia/): deployment, platform, and troubleshooting guides.
+- [Report a broken guide](https://github.com/scottgigawatt/plundarrpedia/issues/new/choose): include reproducible details and sanitized logs.
+- [HADES Discord](https://discord.gg/BpEGzWwGYf): setup questions and community help; sanitize logs before sharing.
+- [Contributing](docs/CONTRIBUTING.md), [security policy](docs/SECURITY.md), and [Code of Conduct](docs/CODE_OF_CONDUCT.md). Report vulnerabilities privately.
 
-For a broken guide or a feature request, [open an issue](https://github.com/scottgigawatt/plundarrpedia/issues/new/choose). For setup questions, join the [HADES Discord community](https://discord.gg/BpEGzWwGYf) with any secrets removed from your logs.
-
-Report vulnerabilities privately using the [security policy](docs/SECURITY.md). It also explains supported releases and the boundary between this documentation project and the tools it describes.
-
-Corrections, clearer examples, and new guides are welcome. Read the [contribution guide](docs/CONTRIBUTING.md) and [code of conduct](docs/CODE_OF_CONDUCT.md) before sending a pull request. Plundarrpedia is maintained by [Scott Gigawatt](https://github.com/scottgigawatt) and released under the [Apache 2.0 license](LICENSE).
-
-Every fleet needs good charts. Help keep these ones seaworthy. 🏴‍☠️
+Maintained by [Scott Gigawatt](https://github.com/scottgigawatt); licensed under [Apache 2.0](LICENSE).

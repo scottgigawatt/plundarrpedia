@@ -7,112 +7,65 @@ status: updated
 
 # Command deck
 
+Run Make targets from the repository that owns the deployment. For copied Synology or TrueNAS projects, use Compose in the directory containing the matching definition and private `.env`. Resolved configuration, environment output, and logs can contain secrets.
+
 ## Plundarr and Maraudarr
 
-Most deployment targets accept `PRESET=YOUR-PRESET`. Omit it for the default `plundarr` project.
+Most deployment targets accept `PRESET=YOUR-PRESET`; omit it for `plundarr`.
 
-| Command | Purpose |
+| Task | Command |
 | --- | --- |
-| `make ship` | Generate the default Plundarr project under `dist/plundarr/`. |
-| `make ship PRESET=YOUR-PRESET` | Generate one named preset under `dist/YOUR-PRESET/`. |
-| `make configure` | Open Maraudarr's interactive preset and service picker. |
-| `make pull-image` | Pull the configured published Maraudarr image. |
-| `make build` | Build Maraudarr from the checkout using the selected image reference. |
-| `make presets` | List presets and their default services. |
-| `make services` | List every selectable service. |
-| `make compose-services PRESET=YOUR-PRESET` | List services in an existing generated Compose project. |
-| `make config PRESET=YOUR-PRESET` | Render and validate the generated Compose model. |
-| `make env PRESET=YOUR-PRESET` | Print evaluated environment values. |
-| `make up PRESET=YOUR-PRESET` | Pull selected runtime images, recreate services, and remove project orphans. |
-| `make down PRESET=YOUR-PRESET` | Stop the project while preserving volumes, images, environment, config, and backups. |
-| `make ps PRESET=YOUR-PRESET` | Print compact service status. |
-| `make logs PRESET=YOUR-PRESET` | Follow the selected project logs. |
-| `make backup PRESET=YOUR-PRESET` | Archive the host config tree; export databases and named-volume backups first. |
-| `make watchtower-run-once PRESET=watchtower` | Run one host-wide Watchtower update pass. |
-| `make kometa-overlay-reset PRESET=duplex` | Run the profile-gated overlay repair tool. |
-| `make recyclarr-preview PRESET=plundarr` | Preview the selected Recyclarr configuration without applying it. |
-| `make recyclarr-sync PRESET=plundarr` | Apply the reviewed configuration to Radarr and Sonarr. |
-| `make clean` | Remove disposable developer artifacts without touching deployments or Docker resources. |
-| `make test-unit` | Run Maraudarr unit tests. |
-| `make test` | Run the generator, strict Python types, policy, workflow, and preset matrix checks. |
-| `make test-types` | Run the pinned strict Python checker in a disposable test image. |
-| `make test-vpn` | Validate an already-running VPN and downloader lane. |
-| `make test-e2e` | Launch and validate the focused live VPN path. |
-| `make test-image` | Test the hardened Maraudarr image. |
-| `make build-platforms` | Validate Maraudarr on every published architecture. |
-| `make docs` | Build Plundarr's strict developer documentation. |
-| `make docs-serve` | Preview Plundarr's developer documentation. |
+| Choose services | `make configure`, `make presets`, `make services` |
+| Generate a project | `make ship PRESET=YOUR-PRESET` |
+| Validate before launch | `make config PRESET=YOUR-PRESET` |
+| Pull and recreate selected services | `make up PRESET=YOUR-PRESET` |
+| Check status or logs | `make ps PRESET=YOUR-PRESET`, `make logs PRESET=YOUR-PRESET` |
+| Validate the running VPN lane | `make test-vpn PRESET=YOUR-PRESET` |
+| Stop while preserving application state | `make down PRESET=YOUR-PRESET` |
+| Archive host configuration | `make backup PRESET=YOUR-PRESET` |
 
-Choose the intended [generator image](../projects/plundarr/quick-start.md#choose-the-generator) before generation. Select `overlay-reset` or `recyclarr` before invoking its tool target. Review [deployment update checks](../projects/plundarr/upgrading.md) and [Tracearr backup exports](../projects/plundarr/monitoring.md#back-up-and-update) before relying on a config archive.
-
-The published [Plundarr developer documentation](https://scottgigawatt.github.io/plundarr/) covers Maraudarr architecture, extension contracts, testing, and the generated Python reference.
+Choose the [generator image](../projects/plundarr/quick-start.md#choose-the-generator) first. Backup archives exclude `.env`, external state, and named-volume databases; follow [update and backup checks](../projects/plundarr/upgrading.md). Select maintenance tools before invoking their targets: [Watchtower](../projects/presets/watchtower.md), [Overlay Reset](../projects/presets/duplex.md#reset-overlays-safely), and [Recyclarr](../projects/plundarr/configuration.md#music-and-quality-synchronization).
 
 > [!CAUTION]
-> `make nuke PRESET=YOUR-PRESET` removes scoped Docker resources/cache, clears Gluetun runtime state, and overwrites the saved VPN pair with examples; other application volumes and deployment files remain. `make delete-config PRESET=YOUR-PRESET` deletes the selected configuration tree. Back up the deployment before either destructive operation.
+> `make nuke` removes scoped Docker resources/cache, clears Gluetun runtime state, and overwrites the saved VPN pair with examples. `make delete-config` deletes the selected config tree. Preserve needed VPN files and independent application backups first. Neither is an ordinary update step.
+
+Use `make help` and the [developer documentation](https://scottgigawatt.github.io/plundarr/) for the complete target list. `make clean` removes disposable developer artifacts, preserving deployments and Docker resources.
 
 ## Privateerr standalone source
 
-Use these only when you need the focused Privateerr repository outside Plundarr:
-
-| Command | Purpose |
+| Task | Command |
 | --- | --- |
-| `make` / `make help` | Show the command menu. |
-| `make run-privateerr` | Build the checkout and generate fresh files once with recovery and keepalive disabled. |
-| `make up` / `make up-pull` | Pull published images and start only Privateerr, Gluetun, and qBittorrent detached. |
-| `make up-build` | Pull Gluetun/qBittorrent, build Privateerr from source, and start without pulling over the local build. |
-| `make down` | Stop the selected project, including test-profile containers; preserve volumes, images, and saved configuration. |
-| `make env` | Print evaluated environment values. |
-| `make config` | Render the resolved Compose model. |
-| `make ps` / `make logs` | Inspect service status or logs. |
-| `make backup` | Archive the complete Privateerr configuration directory. |
-| `make restore-test-config` | Restore checked-in safe example files. |
-| `make clean-test` | Stop the test-profile stack, then overwrite saved VPN files with examples only after successful shutdown. |
-| `make clean` | Remove disposable developer artifacts; leave the stack and generated VPN state alone. |
-| `make test` | Run Python tests, strict types, lint, policy, and helper checks in Buccaneerr. |
-| `make test-types` | Run strict Pyright checks in Buccaneerr. |
-| `make test-precommit` | Run all repository hooks through Buccaneerr. |
-| `make spellcheck` | Check project spelling using the VS Code vocabulary. |
-| `make docs` / `make docs-serve` | Build or preview the developer site and Python reference. |
-| `make test-recovery-api` | Test real Gluetun/qBittorrent API behavior without PIA credentials. |
-| `make test-recovery-live` | Test isolated live PIA recovery and incoming TCP with local credentials. |
-| `make test-e2e` | Run live Buccaneerr validation with supplied credentials. |
-| `make build-platforms` | Validate both images on published architectures. |
+| Generate a fresh saved pair once | `make run-privateerr` |
+| Pull and start the application stack | `make up` |
+| Build Privateerr from the checkout and start | `make up-build` |
+| Inspect services | `make ps`, `make logs` |
+| Stop while preserving saved configuration | `make down` |
 
-The [Privateerr developer site](https://scottgigawatt.github.io/privateerr/) covers supervisor architecture, Python reference, and testing contracts. Application startup does not run Buccaneerr or inject VPN faults; `make test-e2e` explicitly enables the live test profile and deliberate interruption. Use the [standalone guide](../projects/privateerr/quick-start.md#run-the-standalone-example-stack) for setup. Stop any supervisor sharing the output directory before one-shot generation or example restoration.
+Follow the [standalone setup](../projects/privateerr/quick-start.md#run-the-standalone-example-stack) before startup. Stop every supervisor sharing the output directory before one-shot generation. Developer and live-test targets belong to the [Privateerr testing guide](https://scottgigawatt.github.io/privateerr/development/privateerr/testing/).
 
 ## Preset examples
 
-```sh
-make ship PRESET=boudoirr ADD_SERVICES=sabnzbd
-make ship PRESET=jellyfin
-make ship PRESET=plex
-make ship PRESET=calibre-web-automated
-make ship PRESET=duplex ADD_SERVICES=watchtower
-make ship PRESET=watchtower
-make ship PRESET=portainer
-```
+Use the [preset comparison](../projects/presets/index.md) for focused deployments and service selection. Repeat the complete additions/removals on regeneration.
 
 ## Plundarrpedia
 
-| Command | Purpose |
+| Task | Command |
 | --- | --- |
-| `make serve` | Run the Compose live-reload authoring service. |
-| `make site` | Export the strict static site into `site/`. |
-| `make clean` | Delete the generated static site. |
-| `make build` | Build the unprivileged Nginx image. |
-| `make build-multiarch` | Validate every published platform. |
-| `make config` | Validate the one-file Compose deployment. |
-| `make run` / `make down` | Start or stop the production wiki stack. |
+| Preview authoring with live reload | `make serve` |
+| Export the strict site | `make site` |
+| Check Markdown and repository rules | `make markdown`, `make lint` |
+| Build and start a local production copy | `make run` |
+| Stop the local copy | `make down` |
+
+See [contributing](../CONTRIBUTING.md) for prerequisites and [advanced usage](../ADVANCED_USAGE.md) for image/maintenance details. `make clean` deletes only generated site output.
 
 ## Universal diagnostics
 
-Run these from the directory containing the relevant Compose file and `.env`:
+Inspect status first, then the failing service's logs:
 
 ```sh
-docker compose config
 docker compose ps
 docker compose logs --tail=100 SERVICE
-docker inspect CONTAINER
-docker network ls
-git status --short
 ```
+
+Replace `SERVICE` with its Compose name. Validate syntax with `docker compose config --quiet`; inspect resolved output locally only when needed.

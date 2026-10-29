@@ -60,5 +60,4 @@ Change a subnet when it overlaps your local-area network, another Docker network
 
 Regeneration preserves known environment assignments and application state, but it does not stop containers omitted from the selection or move external data. Back up databases, private keys, and external settings separately; inspect image pins, mounts, service choices, and Compose orphans before recreating the project. Follow [update and backup checks](../plundarr/upgrading.md).
 
-[Generate the default Plundarr stack](../plundarr/quick-start.md){ .md-button .md-button--primary }
-[Read the configuration guide](../plundarr/configuration.md){ .md-button }
+[Generate the default Plundarr stack](../plundarr/quick-start.md){ .md-button .md-button--primary } [Read the configuration guide](../plundarr/configuration.md){ .md-button }
