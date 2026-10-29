@@ -13,6 +13,7 @@
     "ruff.importStrategy": "useBundled",
 
     "cSpell.words": [
+        "absmiddle",
         "accDescr",
         "argjson",
         "Avenir",
