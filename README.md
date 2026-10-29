@@ -92,8 +92,11 @@ docker compose up --detach --no-build plundarrpedia
 
 See [advanced usage](docs/ADVANCED_USAGE.md) for build/publication boundaries and [the registry guide](docs/GHCR_README.md) for direct Docker usage.
 
-## Help, security, and contributions 🤝
+## Read more and get help 📚
 
-[Open an issue](https://github.com/scottgigawatt/plundarrpedia/issues/new/choose) for a broken guide; ask setup questions in [HADES Discord](https://discord.gg/BpEGzWwGYf) with sanitized logs. Report vulnerabilities privately under the [security policy](docs/SECURITY.md).
+- [Published wiki](https://scottgigawatt.github.io/plundarrpedia/): deployment, platform, and troubleshooting guides.
+- [Report a broken guide](https://github.com/scottgigawatt/plundarrpedia/issues/new/choose): include reproducible details and sanitized logs.
+- [HADES Discord](https://discord.gg/BpEGzWwGYf): setup questions and community help; sanitize logs before sharing.
+- [Contributing](docs/CONTRIBUTING.md), [security policy](docs/SECURITY.md), and [Code of Conduct](docs/CODE_OF_CONDUCT.md). Report vulnerabilities privately.
 
-Read [contributing](docs/CONTRIBUTING.md) and the [code of conduct](docs/CODE_OF_CONDUCT.md) before sending changes. Maintained by [Scott Gigawatt](https://github.com/scottgigawatt); licensed under [Apache 2.0](LICENSE).
+Maintained by [Scott Gigawatt](https://github.com/scottgigawatt); licensed under [Apache 2.0](LICENSE).
