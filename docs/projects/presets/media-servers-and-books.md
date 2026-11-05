@@ -80,7 +80,7 @@ Jellyfin, Plex, and Calibre-Web Automated are also selectable services. For exam
 
 ```sh
 make ship ADD_SERVICES=plex
-make ship PRESET=boudoirr REMOVE_SERVICES=velvarr
+make ship PRESET=boudoirr REMOVE_SERVICES=cruisarr
 make ship REMOVE_SERVICES=calibre-web-automated
 ```
 

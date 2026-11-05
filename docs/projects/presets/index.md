@@ -14,7 +14,7 @@ Maraudarr generates every normal deployment under `dist/<preset>/` with one comm
 | Preset | Primary purpose | Required core | Removable defaults |
 | --- | --- | --- | --- |
 | `plundarr` | Movies, television, subtitles, ebooks, requests, monitoring, and VPN-protected downloads | Privateerr, Gluetun, FlareSolverr, Prowlarr, Radarr, Sonarr, Bazarr, Seerr, Homepage, Duplicati, Speedtest Tracker, Apprise | qBittorrent, Calibre-Web Automated, Cleanuparr, Watchtower, Tracearr |
-| `boudoirr` | Whisparr automation with adult requests, playback, and VPN downloads | Privateerr, Gluetun, FlareSolverr, Prowlarr, Whisparr | qBittorrent, Velvarr, Jellyfin, Cleanuparr, Watchtower |
+| `boudoirr` | Whisparr automation with adult requests, playback, and VPN downloads | Privateerr, Gluetun, FlareSolverr, Prowlarr, Whisparr | qBittorrent, Cruisarr, Jellyfin, Cleanuparr, Watchtower |
 | `jellyfin` | One focused Jellyfin media server | Jellyfin | None |
 | `plex` | One focused Plex Media Server | Plex | None |
 | `calibre-web-automated` | Ebook library and automatic ingest | Calibre-Web Automated | None |
@@ -48,7 +48,7 @@ make ship PRESET=plundarr REMOVE_SERVICES=calibre-web-automated
 
 Keep your complete `ADD_SERVICES` and `REMOVE_SERVICES` selection when regenerating; preserving environment values does not preserve a previous service selection. Tracearr is the default Plundarr monitor; Tautulli and Overlay Reset are optional. See [media monitoring](../plundarr/monitoring.md) and the [Duplex guide](duplex.md).
 
-Generator architecture support is not service support. Boudoirr's default official Velvarr image requires amd64; remove it or independently verify another image for arm64. Duplex's required Themerr supports amd64/arm64, not arm/v7. Review the [service catalog](../plundarr/services.md) and each selected image before launch.
+Generator architecture support is not service support. Boudoirr's Cruisarr image requires amd64/arm64 and authenticated access to its private registry package; see [Boudoirr prerequisites](boudoirr.md#before-you-start). Duplex's required Themerr supports amd64/arm64, not arm/v7. Review the [service catalog](../plundarr/services.md) and each selected image before launch.
 
 ## Run presets side by side
 

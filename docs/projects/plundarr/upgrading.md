@@ -14,7 +14,7 @@ The generator image, generated Compose definition, runtime image pins, and appli
 - [ ] Record the selected preset, complete service additions/removals, Compose project name, image references, ports, mounts, and named volumes.
 - [ ] Save the Compose definition and private `.env` through a secret-aware backup process.
 - [ ] Export databases and named volumes with their application tools. `make backup PRESET=YOUR-PRESET` archives the host config tree, not `.env`, external state, or Docker volumes.
-- [ ] Preserve external Kometa settings, Velvarr's encryption key, and Themerr's state plus separate token key when selected.
+- [ ] Preserve external Kometa settings, Cruisarr's or Velvarr's encryption key, and Themerr's state plus separate token key when selected.
 - [ ] Keep a verified off-host recovery copy and check each selected application's architecture and release requirements.
 
 Stop affected containers before making raw database copies or changing state ownership. Keep downloads and libraries separate from disposable build output. Never run two database instances against the same persistent files.

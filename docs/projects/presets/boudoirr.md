@@ -1,40 +1,49 @@
 ---
 title: Boudoirr
-description: Configure Whisparr, Velvarr requests, Jellyfin playback, and optional independent automation instances.
+description: Configure Whisparr, Cruisarr requests, Jellyfin playback, and optional independent automation instances.
 icon: material/heart
 status: updated
 ---
 
 # Boudoirr preset 💋
 
-Boudoirr combines required Privateerr, Gluetun, FlareSolverr, Prowlarr, and Whisparr services. qBittorrent, Velvarr, Jellyfin, Cleanuparr, and Watchtower are removable defaults. Maraudarr writes the project under `dist/boudoirr/`.
+Boudoirr combines required Privateerr, Gluetun, FlareSolverr, Prowlarr, and Whisparr services. qBittorrent, Cruisarr, Jellyfin, Cleanuparr, and Watchtower are removable defaults. Maraudarr writes the project under `dist/boudoirr/`.
+
+## Before you start
+
+Complete [generator setup](../plundarr/quick-start.md#choose-the-generator). For the default Cruisarr selection, you also need:
+
+- An amd64 or arm64 host. Cruisarr does not support arm/v7.
+- Access to Cruisarr's private GitHub Container Registry (GHCR) package and a personal access token (classic) with `read:packages`.
+- A Jellyfin server, API key, and account with access to the intended libraries.
+- Whisparr v3 and its API key. Prepare credentials for your selected metadata providers; TMDB discovery requires a TMDB API read access token, and scenes use StashDB.
+
+Cruisarr connects to Jellyfin and Whisparr over the network. They can run in this project or on another reachable host. Plex alone cannot provide Cruisarr's Jellyfin login.
 
 ## Generate and review the preset
 
-Complete [generator setup](../plundarr/quick-start.md#choose-the-generator) first, then generate the default selection:
+From the Plundarr checkout, generate the default selection:
 
 ```sh
 make ship PRESET=boudoirr
 ```
 
-The official Velvarr image supports amd64 only. On arm64, omit Velvarr or select an independently verified compatible image; check every selected service before using arm/v7. To use an external Jellyfin server, omit only the local playback service:
+To use an external Jellyfin server, omit only the local playback service:
 
 ```sh
 make ship PRESET=boudoirr REMOVE_SERVICES=jellyfin
 ```
 
-Use `REMOVE_SERVICES=velvarr,jellyfin` to omit both companions. For a Usenet-only downloader lane:
+Use `REMOVE_SERVICES=cruisarr,jellyfin` to omit both companions. For a Usenet-only downloader lane:
 
 ```sh
 make ship PRESET=boudoirr REMOVE_SERVICES=qbittorrent,cleanuparr ADD_SERVICES=sabnzbd
 ```
 
-Repeat the complete service selection on regeneration. Review PIA credentials, host paths, user/group IDs, ports, generated secrets, and [recovery settings](../privateerr/automatic-recovery.md) in `dist/boudoirr/.env`, then validate and launch:
+Repeat the complete service selection on regeneration. Review PIA credentials, host paths, user/group IDs, ports, generated secrets, and [recovery settings](../privateerr/automatic-recovery.md) in `dist/boudoirr/.env`, then validate:
 
 ```sh
 make config PRESET=boudoirr
-make up PRESET=boudoirr
-make test-vpn PRESET=boudoirr
 ```
 
 ## Configure Whisparr libraries
@@ -51,20 +60,62 @@ make ship PRESET=boudoirr ADD_SERVICES=whisparr-alt
 
 Whisparr Alt uses its own config, API key, libraries, recycle directory, download category, and host port (`16970` by default). Add it separately in Prowlarr at `http://whisparr-alt:6969`; the primary instance uses `http://whisparr:6969`. Process shared import staging through one instance at a time. Follow the [Whisparr Alt setup](https://github.com/scottgigawatt/plundarr/blob/main/docker/services/whisparr-alt/README.md) for provider and mount details.
 
-## Complete Velvarr owner setup
+## Prepare Cruisarr storage and image access
 
-Velvarr needs Jellyfin for owner setup and user authentication; Plex alone cannot provide that login. It connects over the network and does not force local Whisparr or Jellyfin containers.
+Maraudarr generates `CRUISARR_SETUP_SECRET` and `CRUISARR_SECRET_KEY` in the private `.env` and preserves them on regeneration. Keep both private. `CRUISARR_CONFIG_PATH` defaults to `./config/cruisarr`, mounted at `/data` for SQLite state and encrypted settings. Cruisarr needs no media or download mounts.
 
-1. Open the configured Velvarr browser address; Boudoirr defaults to host port `16699`. Read `VELVARR_SETUP_SECRET` locally from the private `.env` for first-run setup.
-2. Connect Jellyfin with its account, API key, and intended libraries. Use `http://jellyfin:8096` inside this project or an address reachable from Velvarr for an external server.
-3. Set Jellyfin's external playback URL to the address users open in their browsers, not its Docker service name.
-4. Connect Whisparr with that instance's API key and review root folders, quality profiles, provider credentials, and path mappings.
+The container runs as `DEFAULT_PUID:DEFAULT_PGID` with `DEFAULT_GROUP`. Give that host identity write access to the configured data directory before launch. Startup does not change existing ownership. Runtime `CRUISARR_UID` or `CRUISARR_GID` variables do not change the process identity.
 
-The official default Velvarr image targets one Whisparr endpoint for TPDB movies and StashDB scenes, without TMDB movie discovery. Its movie target must therefore use TPDB, even though a fresh Whisparr defaults to TMDB. Do not assume a fork's multi-instance/provider features exist in the default image. See [Velvarr setup and image selection](https://scottgigawatt.github.io/plundarr/project-guides/velvarr/) before changing providers or image channels.
+On the deployment host, authenticate before pulling the private image:
+
+```sh
+docker login ghcr.io
+```
+
+Enter your GitHub username and use the token as the password. Confirm `Login Succeeded`. Keep the token out of `.env`, Compose files, commands, and logs. Synology Container Manager also needs authenticated registry access on the NAS; a workstation login does not authenticate it.
+
+Keep `CRUISARR_IMAGE` as the repository and `CRUISARR_TAG` as the separate image tag. The defaults select `ghcr.io/scottgigawatt/cruisarr:latest`. See [private-image access](https://github.com/scottgigawatt/cruisarr/blob/main/docs/operations/private-images.md) for package permissions.
+
+For an HTTPS reverse proxy, set `CRUISARR_ORIGIN` to the exact browser origin, without a path or trailing slash, and forward the HTTPS scheme. For example:
+
+```sh
+CRUISARR_ORIGIN="https://cruisarr.example.com"
+```
+
+Keep `CRUISARR_ALLOW_HTTP=1` when Whisparr or Jellyfin uses private HTTP. Cruisarr's saved **Allow private HTTP** setting overrides this fallback. Recreate the container after changing environment values; a restart does not reload them.
+
+## Complete Cruisarr owner setup
+
+1. Launch the reviewed project and check status:
+
+    ```sh
+    make up PRESET=boudoirr
+    make ps PRESET=boudoirr
+    make test-vpn PRESET=boudoirr
+    ```
+
+2. Open Cruisarr at the configured browser address. Boudoirr defaults to host port `16699`; the internal port is `6699`. Read `CRUISARR_SETUP_SECRET` locally from `.env` for first-run setup.
+3. Connect Jellyfin with your account, API key, and intended libraries. Use `http://jellyfin:8096` inside this project or an address reachable from Cruisarr for an external server.
+4. Set Jellyfin's external playback URL to the address users open in their browsers.
+5. Connect Whisparr at `http://whisparr:6969` with its API key. Add an optional Alt instance at `http://whisparr-alt:6969` with its own key.
+6. Match each connection's movie provider to that Whisparr instance. Cruisarr supports TPDB and TMDB movies, StashDB scenes, and multiple Whisparr connections. Choose the default scene instance and configure provider credentials, root folders, quality profiles, and path mappings.
+7. Admit the intended Jellyfin users and test sign-in. Submit representative movie and scene requests, confirm the intended Whisparr receives them, and verify playback after fulfillment.
 
 With default mounts, primary Whisparr's `/data/movies` corresponds to Jellyfin's `/data/movies/main`; Alt's corresponds to `/data/movies/alt`. Scene paths follow `/data/scenes/main` and `/data/scenes/alt`. Adjust mappings when host paths change; do not expose staging or recycle folders as playback libraries.
 
-For an HTTPS reverse proxy, set `VELVARR_ORIGIN` to its exact browser origin, without a path or trailing slash. Preserve forwarded HTTPS scheme information. Keep `VELVARR_ALLOW_HTTP=1` when the internal Whisparr/Jellyfin addresses use private HTTP. Recreate Velvarr after environment changes. A healthy container proves an HTTP response, not completed owner setup or successful fulfillment.
+A healthy Cruisarr container confirms application storage access. It does not verify owner setup, sign-in, provider connections, or fulfillment. If it stays unhealthy, check data-directory permissions and inspect logs locally. For `unauthorized` or `denied` pulls, check package access and registry authentication on the deployment host. A missing matching manifest requires checking the architecture and selected tag. Redact secrets before sharing diagnostics.
+
+When Homepage is selected, Maraudarr adds a Cruisarr link card. Set `HOMEPAGE_VAR_CRUISARR_HREF` to the browser address; the internal service address is not a browser URL.
+
+## Complete Velvarr owner setup
+
+Velvarr is an optional alternative with an amd64-only official image. To select it instead of Cruisarr, regenerate with your complete service selection, including:
+
+```sh
+make ship PRESET=boudoirr REMOVE_SERVICES=cruisarr ADD_SERVICES=velvarr
+```
+
+Velvarr also needs Jellyfin for owner setup and authentication. Read `VELVARR_SETUP_SECRET` locally for first-run setup. The official image targets one Whisparr endpoint for TPDB movies and StashDB scenes, without TMDB movie discovery. Its movie target must use TPDB. Follow [Velvarr setup and image selection](https://scottgigawatt.github.io/plundarr/project-guides/velvarr/) for connections, browser origin, and provider requirements. Keep Velvarr's complete stopped SQLite directory with its matching `VELVARR_SECRET_KEY` in your backups.
 
 ## Choose the Jellyfin client
 
@@ -74,12 +125,21 @@ Jellyfin playback is selected by default. Its Web client supports preserved host
 make ship PRESET=boudoirr ADD_SERVICES=jellyfin-vue
 ```
 
-See [Jellyfin clients and customization](media-servers-and-books.md#customize-jellyfin-web-and-vue) for browser URLs, theme activation, privacy configuration, and client-specific limits. Plex is an optional additional service with host networking; it does not replace Jellyfin's role in Velvarr authentication.
+See [Jellyfin clients and customization](media-servers-and-books.md#customize-jellyfin-web-and-vue) for browser URLs, theme activation, privacy configuration, and client-specific limits. Plex is an optional additional service with host networking; Cruisarr still requires Jellyfin for sign-in.
 
 ## Back up requests and libraries
 
 > [!IMPORTANT]
-> Back up Velvarr's complete stopped SQLite directory, including journal/WAL files, with its matching `VELVARR_SECRET_KEY` from `.env`. The database backup does not contain that encryption key, and `make backup` does not include `.env`.
+> Back up Cruisarr's complete stopped data directory, including SQLite journal or write-ahead log files, with its matching `CRUISARR_SECRET_KEY` from `.env`. Losing the matching key prevents recovery of encrypted credentials. `make backup` does not include `.env` or data outside the selected config tree.
+
+Cruisarr is excluded from Watchtower because the watcher has no private-registry credentials. Before an intentional update, stop Cruisarr, copy its complete data directory and matching key, then start it again. With an authenticated deployment account, pull and recreate Cruisarr:
+
+```sh
+docker compose --project-directory dist/boudoirr pull cruisarr
+docker compose --project-directory dist/boudoirr up -d cruisarr
+```
+
+Repeat the sign-in, connection, and request checks after updating. To recover, stop Cruisarr, restore into fresh storage, point `CRUISARR_CONFIG_PATH` at it, restore the matching key and permissions, then recreate and verify the service. Keep the original data until recovery is verified. See [Cruisarr backup and recovery](https://github.com/scottgigawatt/cruisarr/blob/main/docs/operations/setup-and-configuration.md#backup-and-recovery) for application details.
 
 Keep recovery copies off-host and outside the config tree. Export each Whisparr instance's backup separately; stop it before raw file copies. Regeneration preserves state and secrets but does not stop omitted containers. Review [update and backup checks](../plundarr/upgrading.md) before pulling images or deleting host configuration.
 

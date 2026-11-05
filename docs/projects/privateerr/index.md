@@ -32,6 +32,6 @@ Stable `latest` and exact release tags are available from [GHCR](https://github.
 
 ## Trust boundary
 
-Privateerr invokes PIA's unmodified scripts, publishes the saved pair, and installs its two image-owned integration scripts before readiness. Test tools run separately in Buccaneerr. See the [source and developer contracts](https://scottgigawatt.github.io/privateerr/) and [security policy](https://scottgigawatt.github.io/privateerr/SECURITY/) for implementation and retained vulnerability findings.
+Privateerr invokes PIA's unmodified scripts and publishes the saved pair. Long-running startup installs its two image-owned integration scripts before readiness. One-shot generation with both `PRIVATEERR_KEEPALIVE=false` and `PRIVATEERR_AUTO_RECOVER=false` leaves those scripts untouched. Test tools run separately in Buccaneerr. See the [source and developer contracts](https://scottgigawatt.github.io/privateerr/) and [security policy](https://scottgigawatt.github.io/privateerr/SECURITY/) for implementation and retained vulnerability findings.
 
 [Start with Privateerr](quick-start.md){ .md-button .md-button--primary } [View the source](https://github.com/scottgigawatt/privateerr){ .md-button }

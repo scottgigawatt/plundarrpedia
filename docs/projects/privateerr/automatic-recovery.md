@@ -38,7 +38,7 @@ Replace `YOUR-PRESET` and repeat your complete `ADD_SERVICES` / `REMOVE_SERVICES
 Privateerr installs `gluetun-entrypoint-wrapper.sh` and `qbittorrent-port-forwarding.sh` in the shared `/gluetun/scripts/` before readiness. These two filenames are replaced from the selected image on startup. Keep custom scripts under different names. The default wrapper path is `/gluetun/scripts/gluetun-entrypoint-wrapper.sh`.
 
 > [!IMPORTANT]
-> A custom wrapper must supply the current metadata, internal health-listener, and authenticated recovery-role behavior. Check the [packaged wrapper contract](https://github.com/scottgigawatt/privateerr/blob/v2.3.1/docker/gluetun/gluetun-entrypoint-wrapper.sh), or disable recovery. An operator-managed `/gluetun/auth/config.toml` must include the shared key and [required routes](https://scottgigawatt.github.io/privateerr/automatic-recovery/#configure-a-custom-deployment); the wrapper preserves that file.
+> A custom wrapper must supply the current metadata, internal health-listener, and authenticated recovery-role behavior. Check the [packaged wrapper contract](https://github.com/scottgigawatt/privateerr/blob/main/docker/gluetun/gluetun-entrypoint-wrapper.sh), or disable recovery. An operator-managed `/gluetun/auth/config.toml` must include the shared key and [required routes](https://scottgigawatt.github.io/privateerr/automatic-recovery/#configure-a-custom-deployment); the wrapper preserves that file.
 
 Check the image, shared key, wrapper, and writable mounts together before recreating the complete stack:
 
