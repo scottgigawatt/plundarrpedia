@@ -26,11 +26,11 @@ Choose services for the tasks you need. `make services` and `make presets` repor
 | Radarr, Sonarr, Sonarr Anime, Lidarr | Movie, television, separate anime, or music management |
 | Whisparr and Whisparr Alt | Independent adult-media instances with separate providers, state, and categories |
 | Bazarr | Subtitles |
-| Seerr or Velvarr | Media requests; Velvarr uses Jellyfin authentication |
+| Seerr, Cruisarr, or Velvarr | Media requests; Cruisarr and Velvarr use Jellyfin authentication |
 | Cleanuparr | Policy-driven rejected/stalled download cleanup |
 | Recyclarr | Explicit preview/apply of Radarr/Sonarr quality settings |
 
-Lidarr supports amd64/arm64, not arm/v7. The default official Velvarr image requires amd64 and has provider-specific limits; complete [Boudoirr owner/provider setup](../presets/boudoirr.md) before use. See [NZBGet settings](configuration.md#nzbget-first-run-settings) and [Recyclarr commands](configuration.md#music-and-quality-synchronization) for application setup.
+Lidarr supports amd64/arm64, not arm/v7. Cruisarr requires amd64/arm64 and private-registry access; complete [Boudoirr setup](../presets/boudoirr.md) before use. The optional official Velvarr image requires amd64 and has provider-specific limits. See [NZBGet settings](configuration.md#nzbget-first-run-settings) and [Recyclarr commands](configuration.md#music-and-quality-synchronization) for application setup.
 
 ## Playback and ebooks
 
@@ -41,7 +41,7 @@ Lidarr supports amd64/arm64, not arm/v7. The default official Velvarr image requ
 | Jellyfin Vue | Optional experimental browser client; requires a browser-reachable Jellyfin server |
 | Calibre-Web Automated | Ebook library and automatic ingest |
 
-Jellyfin and Velvarr/Vue can connect across projects; selecting a client does not force a local Jellyfin server. Vue and Calibre-Web Automated require amd64/arm64. Calibre's ingest directory removes processed files, and its image is excluded from Watchtower because updates can migrate databases. Follow [media-server and ebook setup](../presets/media-servers-and-books.md).
+Jellyfin and Cruisarr/Velvarr/Vue can connect across projects; selecting a client does not force a local Jellyfin server. Vue and Calibre-Web Automated require amd64/arm64. Calibre's ingest directory removes processed files, and its image is excluded from Watchtower because updates can migrate databases. Follow [media-server and ebook setup](../presets/media-servers-and-books.md).
 
 ## Media curation utilities
 

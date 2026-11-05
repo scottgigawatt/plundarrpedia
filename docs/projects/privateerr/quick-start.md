@@ -39,13 +39,21 @@ cd privateerr
 cp example.env .env
 ```
 
-Edit the private `.env`: set PIA credentials, keep `PIA_VPN_PROTOCOL=wireguard` and `PIA_CONNECT=false`, and review output paths. Preserve needed VPN files and stop every supervisor writing the same directory before running:
+Edit the private `.env`: set your PIA VPN username (`p` or `P` followed by seven digits, not your email address) and password, keep `PIA_VPN_PROTOCOL=wireguard` and `PIA_CONNECT=false`, and review output paths. Preserve needed VPN files and stop every supervisor writing the same directory before running:
 
 ```sh
 make run-privateerr
 ```
 
-This builds the checkout, disables recovery/keepalive for the disposable run, and replaces `config/gluetun/wireguard/wg0.conf` and `privateerr.env`. It does not change `.env`. Custom one-shot containers should use `restart: "no"`; the [direct Docker route](https://github.com/scottgigawatt/privateerr#using-docker-directly) needs neither Git nor Make.
+This builds the checkout, disables recovery/keepalive for the disposable run, and replaces `config/gluetun/wireguard/wg0.conf` and `privateerr.env`. It does not change `.env` or install or modify Gluetun integration scripts. Confirm `Generation complete.` and both output files exist; generation alone does not establish a tunnel. Custom one-shot containers should use `restart: "no"`; the [direct Docker route](https://github.com/scottgigawatt/privateerr#using-docker-directly) needs neither Git nor Make.
+
+With host `curl` and `jq` installed, list public PIA region IDs and port-forwarding support from the Privateerr checkout:
+
+```sh
+make list-pia-regions
+```
+
+This lookup needs no PIA credentials. To choose a region, set `PIA_AUTOCONNECT=false` and `PIA_PREFERRED_REGION` to its ID before generation. See [region selection](../plundarr/configuration.md#vpn-region-selection) before replacing an existing connection.
 
 ## Run the standalone example stack
 

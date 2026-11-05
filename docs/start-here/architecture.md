@@ -10,7 +10,7 @@ The easiest way to understand a media stack is to separate it into lanes. A cont
 
 | Lane | Typical services | Responsibility |
 | ---------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Requests | Seerr, Velvarr | Turns human requests into manager activity. |
+| Requests | Seerr, Cruisarr, Velvarr | Turns human requests into manager activity. |
 | Discovery | Prowlarr, FlareSolverr | Supplies indexers and supported challenge handling. |
 | Management | Radarr, Sonarr, Whisparr, Bazarr, Lidarr, Recyclarr | Chooses releases and manages final library files. |
 | Download | qBittorrent, SABnzbd, NZBGet | Retrieves payloads into a shared download root. |
