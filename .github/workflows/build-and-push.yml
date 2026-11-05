@@ -1,7 +1,7 @@
 #
 # Copyright 2026 Scott Gigawatt
 #
-# Licensed under the Apache License, Version 2.0.
+# SPDX-License-Identifier: Apache-2.0
 #
 # build-and-push.yml: Scan, build, attest, and publish multi-platform
 #                     Plundarrpedia images to GitHub Container Registry.

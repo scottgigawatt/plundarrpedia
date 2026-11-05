@@ -1,7 +1,7 @@
 #
 # Copyright 2026 Scott Gigawatt
 #
-# Licensed under the Apache License, Version 2.0.
+# SPDX-License-Identifier: Apache-2.0
 #
 # Dockerfile: Build the Plundarrpedia static site and serve it from an
 #             unprivileged Nginx runtime image.

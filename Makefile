@@ -1,7 +1,7 @@
 #
 # Copyright 2026 Scott Gigawatt
 #
-# Licensed under the Apache License, Version 2.0.
+# SPDX-License-Identifier: Apache-2.0
 #
 # Makefile: Automation for building, previewing, validating, and running
 #           Plundarrpedia through its Docker Compose application.

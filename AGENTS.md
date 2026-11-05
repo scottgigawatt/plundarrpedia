@@ -39,14 +39,14 @@ This guide applies throughout the repository. Before editing, inspect any applic
 
 - Honor `.editorconfig`: UTF-8, LF, final newline, and no trailing whitespace. Use two spaces for the configured Markdown, YAML, JSON/JSON5, CSS, HTML, and SVG groups; exceptions use four spaces for all `.github/` YAML, `.github/renovate.json5`, `.vscode/` JSON, `*.conf`, and Dockerfile content, and tabs for Make recipes. Preserve these numeric exceptions rather than reformatting unrelated files.
 - Keep public prose useful first and lightly nautical second. Explain acronyms and platform assumptions; preserve named Synology, TrueNAS, and ordinary Docker coverage when affected. Code, Dockerfile, Compose, Makefile, and workflow operational comments stay plain English. Preserve themed workflow names and status text without carrying that voice into operational comments, commands, or warnings.
-- Preserve the local top-of-file header order: copyright, blank comment separator, license, blank comment separator, then `filename: purpose`, with aligned continuation lines when needed. The current owned-source wording is `Copyright 2026 Scott Gigawatt` and `Licensed under the Apache License, Version 2.0.`; retain existing years, owners, upstream attribution, and required notices rather than blanket-rewriting them. New source files should follow the nearest applicable local header, not add headers ahead of required page front matter.
+- Preserve the local top-of-file header order: copyright, blank comment separator, license, blank comment separator, then `filename: purpose`, with aligned continuation lines when needed. The current owned-source wording is `Copyright 2026 Scott Gigawatt` and `SPDX-License-Identifier: Apache-2.0`; retain existing years, owners, upstream attribution, and required notices rather than blanket-rewriting them. New source files should follow the nearest applicable local header, not add headers ahead of required page front matter.
 - Use language-appropriate comment delimiters and blank comment separators: `#` for YAML, Make, Dockerfile, environment, and Nginx source; `//` for JSON5; `/* ... */` with aligned asterisk-only separator lines for CSS; `<!-- ... -->` for SVG and HTML comments; and `{# ... #}` for Jinja templates. Preserve each file family's existing layout; do not retrofit headers into Markdown pages, front matter, or strict JSON that does not support them. For example, the Makefile header is:
 
   ```makefile
   #
   # Copyright 2026 Scott Gigawatt
   #
-  # Licensed under the Apache License, Version 2.0.
+  # SPDX-License-Identifier: Apache-2.0
   #
   # Makefile: Automation for building, previewing, validating, and running
   #           Plundarrpedia through its Docker Compose application.
