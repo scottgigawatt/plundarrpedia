@@ -46,6 +46,7 @@ Documentation success means the build and Pages deployment both succeeded. Failu
 | [payloads/](payloads/) | Payload entry point for each notification type |
 | [discord-notifier.sh](../scripts/discord-notifier.sh) | Argument validation, outcome selection, rendering, and optional delivery |
 | [test-discord-notifier.sh](../../test/helpers/test-discord-notifier.sh) | Deterministic offline coverage of states, evidence, and delivery failures |
+| [test_discord_secret_scope.py](../../test/helpers/test_discord_secret_scope.py) | Guards explicit webhook names, destination profiles, and credential isolation |
 
 Keep the first sentence factual and put only a short joke in each catalog variant. Asteres uses light gay culture humor; Hades uses light underworld humor. Keep corrective instructions and metadata labels literal. Use the published image name **Plundarrpedia** and distinguish its container image from the GitHub Pages website.
 
@@ -53,7 +54,7 @@ The supported notification types are `image-start`, `image-verdict`, `docs-start
 
 ## Preview without sending
 
-A dry run needs no webhook and never contacts Discord. Use synthetic values only; the JSON is intended for local inspection. Make also requires the Docker Compose CLI while parsing, even though `make test-workflows` does not use the Docker daemon. Without Compose, run `sh test/helpers/test-discord-notifier.sh` directly.
+A dry run needs no webhook and never contacts Discord. Use synthetic values only; the JSON is intended for local inspection. The complete test suite also requires Python 3. Make requires the Docker Compose CLI while parsing, even though `make test-workflows` does not use the Docker daemon.
 
 1. Render the first Asteres start variant:
 
@@ -71,13 +72,20 @@ A dry run needs no webhook and never contacts Discord. Use synthetic values only
    ```
 
 2. Confirm the sender identifies the image, the title says the pipeline started, the embed color is `3900150` (`#3B82F6`), and `allowed_mentions.parse` is empty. Select `--random-value 1` for the other joke or `--profile image-secondary` for Hades.
-3. Run every supported result and variant:
+3. Run the credential scope guards and every supported result and variant:
 
    ```sh
    make test-workflows
    ```
 
-The expected result ends with `Discord notifier checks passed`. The tests use synthetic metadata and a stubbed transport; they do not prove that a real webhook is configured or a live Discord message renders correctly.
+Without the Compose CLI, run the same checks directly:
+
+```sh
+python3 test/helpers/test_discord_secret_scope.py
+sh test/helpers/test-discord-notifier.sh
+```
+
+The expected result reports `OK` for the credential scope tests, then ends with `Discord notifier checks passed`. The scope guards reject wrong destination bindings, broad or computed secret access, and cross-server fallback. Both suites use synthetic metadata and stubbed transport; they do not prove that a real webhook is configured or a live Discord message renders correctly.
 
 ## Review changes
 
