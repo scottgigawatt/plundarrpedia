@@ -35,7 +35,9 @@ The image workflow reports the start of the image pipeline before release valida
 
 A successful job without confirmed push evidence is yellow, never green. Published tags and digest appear only after a confirmed push with a digest. When a later stage fails after a push, the message states that publication already occurred and identifies the stage needing attention. No failure message promises that nothing was published or deployed.
 
-Notification tags use short names such as `edge`, `latest`, and `sha-0123456789abcdef`. The formatter strips only the exact expected image prefix from full references, accepts already short Docker tag names, and rejects mismatched images or invalid tag syntax without logging the input. Empty optional tag metadata stays empty and its field is omitted; a confirmed digest can still appear. Formatting changes only notification display, never registry publication inputs.
+Notification tags use short names such as `edge`, `latest`, and `sha-0123456789abcdef`. The formatter accepts already short Docker tag names or removes only the exact expected image prefix from full references. Tags can contain up to 128 ASCII characters. It preserves their order and spelling, ignores blank lines, and validates the whole list before printing any output. Mismatched images, whitespace within a tag, digests, and invalid tag syntax are rejected without logging the input.
+
+Formatting changes only notification metadata, never registry publication inputs. It does not disable or bypass GitHub’s secret filtering; a short tag can still match a configured secret. Empty optional tag metadata stays empty and its field is omitted; a confirmed digest can still appear.
 
 Documentation success means the build and Pages deployment both succeeded. Failure text identifies the documentation build or Pages deployment. Cancelled and skipped updates use their own wording instead of failure copy. Workflow names remain metadata; funny workflow titles never become part of a status sentence.
 
@@ -106,6 +108,8 @@ Use the codes to choose the next check. An HTTP error does not identify the reje
 | HTTP `000` | Use curl exit `6` for a name-resolution check, `7` for a connection check, or `28` for a timeout check |
 
 A failed request returns its original curl exit code. Notification failures do not change build or publication results, and retries are not automatic.
+
+Use the actual validation and publication jobs to determine the image result if delivery fails. Do not rebuild or republish an image merely to probe delivery; use synthetic previews first.
 
 ## Review changes
 
