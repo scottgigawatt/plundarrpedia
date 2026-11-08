@@ -52,6 +52,12 @@ jobs:
                   persist-credentials: false
 
             #
+            # Exercise notifications before any image or site work, without secrets.
+            #
+            - name: "Check the notification receipts 📣"
+              run: make test-workflows
+
+            #
             # Install the pinned documentation toolchain with pip caching enabled.
             #
             - name: "Ready the Python Quill 🪶"

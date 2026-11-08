@@ -47,7 +47,9 @@ Workflows have source-path filters. A merge alone does not prove both publicatio
 
 ## Build notifications
 
-Optional Discord build notifications use repository secrets `DISCORD_WEBHOOK_URL` and `DISCORD_HADES_HOOK_URL`. Missing secrets skip their destination. Never put actual webhook URLs in source, issues, or logs.
+Image pipeline updates go to optional Asteres and Hades webhooks. GitHub Pages updates go only to Asteres and identify the documentation build and deployment separately from the Docker image. Started updates use the fixed Plundarrpedia blue; success is green, failure is red, attention needed is yellow, and cancelled or skipped updates are gray.
+
+Maintainers configure repository secrets `DISCORD_WEBHOOK_URL` for Asteres and `DISCORD_HADES_HOOK_URL` for Hades. Missing secrets skip their destination, and delivery failures do not change the publication result. Never put actual webhook URLs in source, issues, or logs. Follow the [notification configuration and preview guide](https://github.com/scottgigawatt/plundarrpedia/blob/main/.github/discord/README.md) to confirm destinations, edit copy, and test without sending messages.
 
 ## Pinned build inputs
 

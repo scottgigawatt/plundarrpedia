@@ -30,6 +30,7 @@ SERVE=serve
 SITE=site
 START=start
 STOP=stop
+TEST_WORKFLOWS=test-workflows
 UP=up
 
 TARGETS= \
@@ -53,6 +54,7 @@ TARGETS= \
 	$(SITE) \
 	$(START) \
 	$(STOP) \
+	$(TEST_WORKFLOWS) \
 	$(UP)
 
 #
@@ -274,6 +276,14 @@ $(LINT):
 	pre-commit run --all-files
 
 #
+# $(TEST_WORKFLOWS): Test Discord payloads and isolated delivery with public fixtures.
+#
+# Dependencies: Host sh, jq, awk, and standard POSIX utilities.
+#
+$(TEST_WORKFLOWS):
+	sh test/helpers/test-discord-notifier.sh
+
+#
 # $(CONFIG): Render and validate the Docker Compose application model.
 #
 # Dependencies:
@@ -376,6 +386,7 @@ $(HELP):
 	$(call help_line,$(SITE),Exports the strict static site through Compose.)
 	$(call help_line,$(START),Alias for $(RUN).)
 	$(call help_line,$(STOP),Alias for $(DOWN).)
+	$(call help_line,$(TEST_WORKFLOWS),Tests notifications without contacting Discord.)
 	$(call help_line,$(UP),Alias for $(RUN).)
 	$(call help_line,$(HELP),Displays this help message.)
 

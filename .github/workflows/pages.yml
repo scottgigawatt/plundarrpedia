@@ -21,6 +21,8 @@ on:
             - "mkdocs.yml"
             - "requirements.txt"
             - ".github/workflows/pages.yml"
+            - ".github/discord/**"
+            - ".github/scripts/discord-notifier.sh"
     workflow_dispatch:
 
 #
@@ -55,6 +57,29 @@ jobs:
               uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
               with:
                   persist-credentials: false
+
+            #
+            # Announce the documentation pipeline to Asteres without blocking it.
+            #
+            - name: "Notify Asteres: documentation started 📚"
+              continue-on-error: true
+              env:
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  WORKFLOW_NAME: ${{ github.workflow }}
+                  REPOSITORY: ${{ github.repository }}
+                  REF_NAME: ${{ github.ref_name }}
+                  ACTOR: ${{ github.actor }}
+              run: |
+                  sh .github/scripts/discord-notifier.sh \
+                      --type docs-start \
+                      --profile docs \
+                      --image-name Plundarrpedia \
+                      --run-url "${RUN_URL}" \
+                      --repository "${REPOSITORY}" \
+                      --ref-name "${REF_NAME}" \
+                      --workflow-name "${WORKFLOW_NAME}" \
+                      --actor "${ACTOR}"
 
             #
             # Install the pinned documentation toolchain with pip caching enabled.
@@ -93,6 +118,8 @@ jobs:
     deploy:
         name: "Raise the Pages Flag 🚩"
         needs: build
+        outputs:
+            page-url: ${{ steps.deployment.outputs.page_url }}
         runs-on: ubuntu-latest
         permissions:
             pages: write
@@ -108,3 +135,50 @@ jobs:
             - name: "Deploy Plundarrpedia 🚀"
               id: deployment
               uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346  # v5
+
+    #
+    # Report both job results even when a failed build prevents deployment.
+    # Only the configured Asteres destination receives documentation updates.
+    #
+    notify:
+        name: "Report the documentation result 📚"
+        if: always()
+        needs: [build, deploy]
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            #
+            # Read the notifier without retaining source credentials.
+            #
+            - name: "Bring the notification guide 📖"
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+              with:
+                  persist-credentials: false
+
+            #
+            # Keep delivery failures separate from build and deployment results.
+            #
+            - name: "Notify Asteres: documentation result 📚"
+              continue-on-error: true
+              env:
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                  DOCS_BUILD_STATUS: ${{ needs.build.result }}
+                  DOCS_DEPLOY_STATUS: ${{ needs.deploy.result }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  WORKFLOW_NAME: ${{ github.workflow }}
+                  SITE_URL: ${{ needs.deploy.outputs.page-url }}
+                  REPOSITORY: ${{ github.repository }}
+                  REF_NAME: ${{ github.ref_name }}
+              run: |
+                  sh .github/scripts/discord-notifier.sh \
+                      --type docs-verdict \
+                      --profile docs \
+                      --image-name Plundarrpedia \
+                      --build-status "${DOCS_BUILD_STATUS}" \
+                      --deploy-status "${DOCS_DEPLOY_STATUS}" \
+                      --run-url "${RUN_URL}" \
+                      --workflow-name "${WORKFLOW_NAME}" \
+                      --site-url "${SITE_URL}" \
+                      --repository "${REPOSITORY}" \
+                      --ref-name "${REF_NAME}"
