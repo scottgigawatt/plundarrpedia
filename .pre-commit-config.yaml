@@ -76,3 +76,15 @@ repos:
     rev: v2.15.1
     hooks:
       - id: hadolint-docker
+
+  #
+  # Test notification contracts without a webhook or external service.
+  #
+  - repo: local
+    hooks:
+      - id: discord-notifier
+        name: Discord notifier contracts
+        entry: sh test/helpers/test-discord-notifier.sh
+        language: system
+        pass_filenames: false
+        always_run: true

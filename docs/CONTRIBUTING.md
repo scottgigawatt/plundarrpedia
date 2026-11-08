@@ -83,16 +83,18 @@ Never publish credentials, webhook URLs, live VPN configuration, private hostnam
 
 ## Full validation
 
-From the repository root:
+Site export needs a working Docker daemon. The command below uses public defaults from `example.env` without reading an operator `.env`. Pre-commit’s hadolint hook also needs Docker. Run these commands from the repository root:
 
 ```sh
 make markdown
-make site
+make site ENV_FILE=example.env
 pre-commit run --all-files
 git diff --check
 ```
 
-Site export needs a working Docker daemon and local `.env`; use isolated public defaults for validation. Pre-commit's hadolint hook also needs Docker. Check spelling, relative links/anchors, navigation, alerts, code, and affected light/dark/narrow-screen renders. Report unavailable checks.
+Check spelling, relative links/anchors, navigation, alerts, code, and affected light/dark/narrow-screen renders. Report unavailable checks.
+
+For workflow notification changes, run `make test-workflows` with a POSIX shell and `jq`. This suite uses synthetic data and a stubbed transport; it never sends to Discord. Follow the [notification guide](https://github.com/scottgigawatt/plundarrpedia/blob/main/.github/discord/README.md) for destination setup, payload previews, and expected results.
 
 Run `make config` with public defaults for Compose changes, `make build` for image/theme/requirements changes, and `make build-multiarch` when published platforms can be affected. Neither strict MkDocs nor lint proves all external links work or live instructions succeed.
 

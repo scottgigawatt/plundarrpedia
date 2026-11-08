@@ -29,6 +29,9 @@ on:
             - "Makefile"
             - "example.env"
             - ".github/workflows/build-and-push.yml"
+            - ".github/discord/**"
+            - ".github/scripts/discord-notifier.sh"
+            - "test/helpers/test-discord-notifier.sh"
     schedule:
         - cron: "23 7 * * 1"
     workflow_dispatch:
@@ -64,122 +67,6 @@ jobs:
 
         steps:
             #
-            # Announce the start independently to each optional Discord webhook.
-            # Missing webhooks skip cleanly without blocking the build.
-            #
-            - name: "Notify Discord: build started 📣"
-              env:
-                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-                  WORKFLOW_NAME: ${{ github.workflow }}
-                  REF_NAME: ${{ github.ref_name }}
-                  ACTOR: ${{ github.actor }}
-                  REPOSITORY: ${{ github.repository }}
-                  GHCR_IMAGE_REF: ${{ env.PLUNDARRPEDIA_IMAGE_REF }}
-                  IMAGE_PLATFORMS: ${{ env.IMAGE_PLATFORMS }}
-              run: |
-                  if [ -z "${DISCORD_WEBHOOK_URL}" ]; then
-                    echo "DISCORD_WEBHOOK_URL is not set; skipping Discord notification."
-                    exit 0
-                  fi
-
-                  embed_colors=(16711884 15961002 11685080 10181046 15844367 16738740)
-                  color="${embed_colors[$((RANDOM % ${#embed_colors[@]}))]}"
-
-                  payload="$(jq -n \
-                    --arg title "🗺️ Plundarrpedia left the map room" \
-                    --arg description "${WORKFLOW_NAME} is building the wiki image. The cartographer brought a cannon." \
-                    --arg url "${RUN_URL}" \
-                    --arg repository "${REPOSITORY}" \
-                    --arg ref "${REF_NAME}" \
-                    --arg actor "${ACTOR}" \
-                    --arg platforms "${IMAGE_PLATFORMS}" \
-                    --arg ghcr "${GHCR_IMAGE_REF}" \
-                    --argjson color "${color}" \
-                    '{
-                      username: "Plundarrpedia Builds",
-                      embeds: [{
-                        title: $title,
-                        description: $description,
-                        url: $url,
-                        color: $color,
-                        fields: [
-                          {name: "📚 Repo", value: $repository, inline: true},
-                          {name: "🌿 Ref", value: $ref, inline: true},
-                          {name: "🧑‍✈️ Captain", value: $actor, inline: true},
-                          {name: "🧱 Platforms", value: $platforms, inline: false},
-                          {name: "📦 GHCR Cargo", value: $ghcr, inline: false}
-                        ],
-                        footer: {text: "If the charts catch fire, check the logs."},
-                        timestamp: now | todate
-                      }]
-                    }')"
-
-                  curl \
-                    --fail \
-                    --silent \
-                    --show-error \
-                    --header "Content-Type: application/json" \
-                    --data "${payload}" \
-                    "${DISCORD_WEBHOOK_URL}"
-
-            - name: "Notify Hades Discord: build started 🔥"
-              env:
-                  DISCORD_HADES_HOOK_URL: ${{ secrets.DISCORD_HADES_HOOK_URL }}
-                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-                  WORKFLOW_NAME: ${{ github.workflow }}
-                  REF_NAME: ${{ github.ref_name }}
-                  ACTOR: ${{ github.actor }}
-                  REPOSITORY: ${{ github.repository }}
-                  GHCR_IMAGE_REF: ${{ env.PLUNDARRPEDIA_IMAGE_REF }}
-                  IMAGE_PLATFORMS: ${{ env.IMAGE_PLATFORMS }}
-              run: |
-                  if [ -z "${DISCORD_HADES_HOOK_URL}" ]; then
-                    echo "DISCORD_HADES_HOOK_URL is not set; skipping Hades Discord notification."
-                    exit 0
-                  fi
-
-                  embed_colors=(16711884 15961002 11685080 10181046 15844367 16738740)
-                  color="${embed_colors[$((RANDOM % ${#embed_colors[@]}))]}"
-
-                  payload="$(jq -n \
-                    --arg title "🔥 The wiki forge opened a cursed footnote" \
-                    --arg description "${WORKFLOW_NAME} entered the underworld carrying Markdown and unreasonable confidence." \
-                    --arg url "${RUN_URL}" \
-                    --arg repository "${REPOSITORY}" \
-                    --arg ref "${REF_NAME}" \
-                    --arg actor "${ACTOR}" \
-                    --arg platforms "${IMAGE_PLATFORMS}" \
-                    --arg ghcr "${GHCR_IMAGE_REF}" \
-                    --argjson color "${color}" \
-                    '{
-                      username: "Hades Build Bureau",
-                      embeds: [{
-                        title: $title,
-                        description: $description,
-                        url: $url,
-                        color: $color,
-                        fields: [
-                          {name: "🏛️ Repo", value: $repository, inline: true},
-                          {name: "🩸 Ref", value: $ref, inline: true},
-                          {name: "😈 Summoner", value: $actor, inline: true},
-                          {name: "🧱 Platforms", value: $platforms, inline: false},
-                          {name: "📦 GHCR Cauldron", value: $ghcr, inline: false}
-                        ],
-                        footer: {text: "Hades Build Bureau: mostly fire, some paperwork."},
-                        timestamp: now | todate
-                      }]
-                    }')"
-
-                  curl \
-                    --fail \
-                    --silent \
-                    --show-error \
-                    --header "Content-Type: application/json" \
-                    --data "${payload}" \
-                    "${DISCORD_HADES_HOOK_URL}"
-
-            #
             # Check out full history so annotated release tags can be verified
             # against the main branch before any image is published.
             #
@@ -189,7 +76,56 @@ jobs:
                   fetch-depth: 0
                   persist-credentials: false
 
+            #
+            # Announce the trusted image pipeline independently to each optional
+            # destination. Delivery failures do not change publication outcomes.
+            #
+            - name: "Notify Asteres: image started 📣"
+              continue-on-error: true
+              env:
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  WORKFLOW_NAME: ${{ github.workflow }}
+                  REPOSITORY: ${{ github.repository }}
+                  REF_NAME: ${{ github.ref_name }}
+                  ACTOR: ${{ github.actor }}
+              run: |
+                  sh .github/scripts/discord-notifier.sh \
+                      --type image-start \
+                      --profile image-primary \
+                      --image-name Plundarrpedia \
+                      --run-url "${RUN_URL}" \
+                      --repository "${REPOSITORY}" \
+                      --ref-name "${REF_NAME}" \
+                      --workflow-name "${WORKFLOW_NAME}" \
+                      --ghcr-image "${PLUNDARRPEDIA_IMAGE_REF}" \
+                      --actor "${ACTOR}" \
+                      --platforms "${IMAGE_PLATFORMS}"
+
+            - name: "Notify Hades: image started 📣"
+              continue-on-error: true
+              env:
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_HADES_HOOK_URL }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  WORKFLOW_NAME: ${{ github.workflow }}
+                  REPOSITORY: ${{ github.repository }}
+                  REF_NAME: ${{ github.ref_name }}
+                  ACTOR: ${{ github.actor }}
+              run: |
+                  sh .github/scripts/discord-notifier.sh \
+                      --type image-start \
+                      --profile image-secondary \
+                      --image-name Plundarrpedia \
+                      --run-url "${RUN_URL}" \
+                      --repository "${REPOSITORY}" \
+                      --ref-name "${REF_NAME}" \
+                      --workflow-name "${WORKFLOW_NAME}" \
+                      --ghcr-image "${PLUNDARRPEDIA_IMAGE_REF}" \
+                      --actor "${ACTOR}" \
+                      --platforms "${IMAGE_PLATFORMS}"
+
             - name: "Inspect the Release Chart 🧭"
+              id: release-validation
               if: startsWith(github.ref, 'refs/tags/')
               env:
                   RELEASE_TAG: ${{ github.ref_name }}
@@ -245,6 +181,7 @@ jobs:
             # High or critical fixed vulnerabilities fail the workflow.
             #
             - name: "Hammer a Local Inspection Hull ⚒️"
+              id: local-image
               uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc  # v7
               with:
                   context: .
@@ -257,6 +194,7 @@ jobs:
                       IMAGE_VERSION=scan
 
             - name: "Inspect the Wiki for Bilge Rot 🔍"
+              id: scan
               uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
               with:
                   image-ref: ${{ env.PLUNDARRPEDIA_IMAGE_REF }}:scan
@@ -312,6 +250,7 @@ jobs:
             # pushed above so consumers can verify the published artifact.
             #
             - name: "Stamp the Provenance Scroll 🧾"
+              id: provenance
               uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8  # v4
               with:
                   subject-name: ${{ env.PLUNDARRPEDIA_IMAGE_REF }}
@@ -319,163 +258,101 @@ jobs:
                   push-to-registry: true
 
             #
-            # Collect compact tag and digest details for final notifications even
-            # when an earlier publication step failed.
+            # Report the final pipeline result independently of webhook delivery.
+            # Publication evidence remains visible when later verification fails.
             #
-            - name: "Collect publish summary 📊"
-              id: publish-summary
+            - name: "Notify Asteres: image result 📣"
               if: always()
-              env:
-                  PLUNDARRPEDIA_TAGS: ${{ steps.meta-plundarrpedia.outputs.tags }}
-                  PLUNDARRPEDIA_DIGEST: ${{ steps.publish-plundarrpedia.outputs.digest }}
-              run: |
-                  {
-                    echo "tags<<EOF"
-                    printf '%s\n' "${PLUNDARRPEDIA_TAGS:-none}"
-                    echo "EOF"
-                    echo "digest=${PLUNDARRPEDIA_DIGEST:-unavailable}"
-                  } >> "${GITHUB_OUTPUT}"
-
-            #
-            # Report the final job state to both optional Discord destinations.
-            # These steps always run so a failed publication never disappears.
-            #
-            - name: "Notify Discord: build finished 📣"
-              if: always()
+              continue-on-error: true
               env:
                   DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-                  JOB_STATUS: ${{ job.status }}
                   RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  WORKFLOW_NAME: ${{ github.workflow }}
                   REPOSITORY: ${{ github.repository }}
                   REF_NAME: ${{ github.ref_name }}
-                  GHCR_IMAGE_REF: ${{ env.PLUNDARRPEDIA_IMAGE_REF }}
-                  GHCR_PACKAGE_URL: ${{ github.server_url }}/${{ github.repository }}/pkgs/container/plundarrpedia
-                  PLUNDARRPEDIA_TAGS: ${{ steps.publish-summary.outputs.tags }}
-                  GHCR_DIGEST: ${{ steps.publish-summary.outputs.digest }}
+                  JOB_STATUS: ${{ job.status }}
+                  PUBLICATION_STATUS: ${{ steps.publish-plundarrpedia.outcome }}
+                  RELEASE_STATUS: ${{ steps.release-validation.outcome }}
+                  BUILD_STATUS: ${{ steps.local-image.outcome }}
+                  SCAN_STATUS: ${{ steps.scan.outcome }}
+                  PROVENANCE_STATUS: ${{ steps.provenance.outcome }}
+                  PUBLISHED_TAGS: ${{ steps.meta-plundarrpedia.outputs.tags }}
+                  PUBLISHED_DIGEST: ${{ steps.publish-plundarrpedia.outputs.digest }}
               run: |
-                  if [ -z "${DISCORD_WEBHOOK_URL}" ]; then
-                    echo "DISCORD_WEBHOOK_URL is not set; skipping Discord notification."
-                    exit 0
+                  failure_stage="image pipeline"
+
+                  if [ "${RELEASE_STATUS}" = "failure" ]; then
+                      failure_stage="release validation"
+                  elif [ "${BUILD_STATUS}" = "failure" ]; then
+                      failure_stage="local image build"
+                  elif [ "${SCAN_STATUS}" = "failure" ]; then
+                      failure_stage="vulnerability scan"
+                  elif [ "${PUBLICATION_STATUS}" = "failure" ]; then
+                      failure_stage="GHCR publication"
+                  elif [ "${PROVENANCE_STATUS}" = "failure" ]; then
+                      failure_stage="provenance verification"
                   fi
 
-                  if [ "${JOB_STATUS}" = "success" ]; then
-                    title="✅ The wiki image made port"
-                    description="The charts are rendered, scanned, attested, and aboard GHCR."
-                  else
-                    title="💥 The wiki image sailed into a 404"
-                    description="Workflow ended ${JOB_STATUS}. The logs know which chart was upside down."
-                  fi
-                  embed_colors=(16711884 15961002 11685080 10181046 15844367 16738740)
-                  color="${embed_colors[$((RANDOM % ${#embed_colors[@]}))]}"
+                  sh .github/scripts/discord-notifier.sh \
+                      --type image-verdict \
+                      --profile image-primary \
+                      --image-name Plundarrpedia \
+                      --run-url "${RUN_URL}" \
+                      --repository "${REPOSITORY}" \
+                      --ref-name "${REF_NAME}" \
+                      --workflow-name "${WORKFLOW_NAME}" \
+                      --ghcr-image "${PLUNDARRPEDIA_IMAGE_REF}" \
+                      --job-status "${JOB_STATUS}" \
+                      --publication-status "${PUBLICATION_STATUS}" \
+                      --failure-stage "${failure_stage}" \
+                      --ghcr-package-url "${GITHUB_SERVER_URL}/${REPOSITORY}/pkgs/container/plundarrpedia" \
+                      --published-tags "${PUBLISHED_TAGS}" \
+                      --published-digest "${PUBLISHED_DIGEST}"
 
-                  formatted_tags="$(printf '%s\n' "${PLUNDARRPEDIA_TAGS:-none}" \
-                    | sed '/^$/d; s#^'"${GHCR_IMAGE_REF}"':##; s/^/• /')"
-                  [ -n "${formatted_tags}" ] || formatted_tags="none"
-                  ghcr_digest_short="$(printf '%s' "${GHCR_DIGEST:-unavailable}" | sed -E 's/^(sha256:[0-9a-f]{12}).*/\1/')"
-
-                  payload="$(jq -n \
-                    --arg title "${title}" \
-                    --arg description "${description}" \
-                    --arg url "${RUN_URL}" \
-                    --arg repository "${REPOSITORY}" \
-                    --arg ref "${REF_NAME}" \
-                    --arg tags "${formatted_tags}" \
-                    --arg ghcrDigest "${ghcr_digest_short}" \
-                    --arg ghcrUrl "${GHCR_PACKAGE_URL}" \
-                    --argjson color "${color}" \
-                    '{
-                      username: "Plundarrpedia Builds",
-                      embeds: [{
-                        title: $title,
-                        description: $description,
-                        url: $url,
-                        color: $color,
-                        fields: [
-                          {name: "📚 Repo", value: $repository, inline: true},
-                          {name: "🌿 Ref", value: $ref, inline: true},
-                          {name: "🏷️ Tags", value: $tags, inline: false},
-                          {name: "🧾 GHCR Digest", value: $ghcrDigest, inline: false},
-                          {name: "📦 GHCR", value: $ghcrUrl, inline: false}
-                        ],
-                        footer: {text: "Plundarrpedia: serving charts without the sea spray."},
-                        timestamp: now | todate
-                      }]
-                    }')"
-
-                  curl \
-                    --fail \
-                    --silent \
-                    --show-error \
-                    --header "Content-Type: application/json" \
-                    --data "${payload}" \
-                    "${DISCORD_WEBHOOK_URL}"
-
-            - name: "Notify Hades Discord: build finished 🔥"
+            - name: "Notify Hades: image result 📣"
               if: always()
+              continue-on-error: true
               env:
-                  DISCORD_HADES_HOOK_URL: ${{ secrets.DISCORD_HADES_HOOK_URL }}
-                  JOB_STATUS: ${{ job.status }}
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_HADES_HOOK_URL }}
                   RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  WORKFLOW_NAME: ${{ github.workflow }}
                   REPOSITORY: ${{ github.repository }}
                   REF_NAME: ${{ github.ref_name }}
-                  GHCR_IMAGE_REF: ${{ env.PLUNDARRPEDIA_IMAGE_REF }}
-                  GHCR_PACKAGE_URL: ${{ github.server_url }}/${{ github.repository }}/pkgs/container/plundarrpedia
-                  PLUNDARRPEDIA_TAGS: ${{ steps.publish-summary.outputs.tags }}
-                  GHCR_DIGEST: ${{ steps.publish-summary.outputs.digest }}
+                  JOB_STATUS: ${{ job.status }}
+                  PUBLICATION_STATUS: ${{ steps.publish-plundarrpedia.outcome }}
+                  RELEASE_STATUS: ${{ steps.release-validation.outcome }}
+                  BUILD_STATUS: ${{ steps.local-image.outcome }}
+                  SCAN_STATUS: ${{ steps.scan.outcome }}
+                  PROVENANCE_STATUS: ${{ steps.provenance.outcome }}
+                  PUBLISHED_TAGS: ${{ steps.meta-plundarrpedia.outputs.tags }}
+                  PUBLISHED_DIGEST: ${{ steps.publish-plundarrpedia.outputs.digest }}
               run: |
-                  if [ -z "${DISCORD_HADES_HOOK_URL}" ]; then
-                    echo "DISCORD_HADES_HOOK_URL is not set; skipping Hades Discord notification."
-                    exit 0
+                  failure_stage="image pipeline"
+
+                  if [ "${RELEASE_STATUS}" = "failure" ]; then
+                      failure_stage="release validation"
+                  elif [ "${BUILD_STATUS}" = "failure" ]; then
+                      failure_stage="local image build"
+                  elif [ "${SCAN_STATUS}" = "failure" ]; then
+                      failure_stage="vulnerability scan"
+                  elif [ "${PUBLICATION_STATUS}" = "failure" ]; then
+                      failure_stage="GHCR publication"
+                  elif [ "${PROVENANCE_STATUS}" = "failure" ]; then
+                      failure_stage="provenance verification"
                   fi
 
-                  if [ "${JOB_STATUS}" = "success" ]; then
-                    title="😈 The infernal wiki press says done"
-                    description="The image escaped the underworld with its provenance paperwork."
-                  else
-                    title="💀 The cursed footnote ate the build"
-                    description="Pipeline ended ${JOB_STATUS}. Cerberus is reviewing the YAML."
-                  fi
-                  embed_colors=(16711884 15961002 11685080 10181046 15844367 16738740)
-                  color="${embed_colors[$((RANDOM % ${#embed_colors[@]}))]}"
-
-                  formatted_tags="$(printf '%s\n' "${PLUNDARRPEDIA_TAGS:-none}" \
-                    | sed '/^$/d; s#^'"${GHCR_IMAGE_REF}"':##; s/^/• /')"
-                  [ -n "${formatted_tags}" ] || formatted_tags="none"
-                  ghcr_digest_short="$(printf '%s' "${GHCR_DIGEST:-unavailable}" | sed -E 's/^(sha256:[0-9a-f]{12}).*/\1/')"
-
-                  payload="$(jq -n \
-                    --arg title "${title}" \
-                    --arg description "${description}" \
-                    --arg url "${RUN_URL}" \
-                    --arg repository "${REPOSITORY}" \
-                    --arg ref "${REF_NAME}" \
-                    --arg tags "${formatted_tags}" \
-                    --arg ghcrDigest "${ghcr_digest_short}" \
-                    --arg ghcrUrl "${GHCR_PACKAGE_URL}" \
-                    --argjson color "${color}" \
-                    '{
-                      username: "Hades Build Bureau",
-                      embeds: [{
-                        title: $title,
-                        description: $description,
-                        url: $url,
-                        color: $color,
-                        fields: [
-                          {name: "🏛️ Repo", value: $repository, inline: true},
-                          {name: "🩸 Ref", value: $ref, inline: true},
-                          {name: "🏷️ Tags", value: $tags, inline: false},
-                          {name: "🧾 GHCR Digest", value: $ghcrDigest, inline: false},
-                          {name: "📦 GHCR", value: $ghcrUrl, inline: false}
-                        ],
-                        footer: {text: "Hades Build Bureau: fire in, documentation out."},
-                        timestamp: now | todate
-                      }]
-                    }')"
-
-                  curl \
-                    --fail \
-                    --silent \
-                    --show-error \
-                    --header "Content-Type: application/json" \
-                    --data "${payload}" \
-                    "${DISCORD_HADES_HOOK_URL}"
+                  sh .github/scripts/discord-notifier.sh \
+                      --type image-verdict \
+                      --profile image-secondary \
+                      --image-name Plundarrpedia \
+                      --run-url "${RUN_URL}" \
+                      --repository "${REPOSITORY}" \
+                      --ref-name "${REF_NAME}" \
+                      --workflow-name "${WORKFLOW_NAME}" \
+                      --ghcr-image "${PLUNDARRPEDIA_IMAGE_REF}" \
+                      --job-status "${JOB_STATUS}" \
+                      --publication-status "${PUBLICATION_STATUS}" \
+                      --failure-stage "${failure_stage}" \
+                      --ghcr-package-url "${GITHUB_SERVER_URL}/${REPOSITORY}/pkgs/container/plundarrpedia" \
+                      --published-tags "${PUBLISHED_TAGS}" \
+                      --published-digest "${PUBLISHED_DIGEST}"
