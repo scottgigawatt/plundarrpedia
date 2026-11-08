@@ -86,7 +86,7 @@ def notification_bindings(sources: Mapping[str, str]) -> dict[tuple[str, str], s
         # Publishing steps may use their own named credentials. Notification
         # steps must not inherit them or export a broad secret context.
         for expression in SECRET_EXPRESSION.finditer(source):
-            if not re.search(r"\bsecrets\b", expression[1]):
+            if not re.search(r"\bsecrets\b", expression[1], re.IGNORECASE):
                 continue
 
             owner = next(
@@ -117,7 +117,7 @@ def notification_bindings(sources: Mapping[str, str]) -> dict[tuple[str, str], s
             secret_access = [
                 match[1].strip()
                 for match in SECRET_EXPRESSION.finditer(block)
-                if re.search(r"\bsecrets\b", match[1])
+                if re.search(r"\bsecrets\b", match[1], re.IGNORECASE)
             ]
 
             if (
@@ -211,24 +211,32 @@ class NotificationSecretScopeTests(unittest.TestCase):
                 notification_bindings(sources)
 
     def test_reject_extra_or_inherited_secret_access(self) -> None:
-        """Reject otherwise valid token names when a notifier could inherit them."""
+        """Reject extra contexts, including case-insensitive Actions lookups."""
         for inherited in (False, True):
-            sources = dict(self.sources)
+            for expression in (
+                "secrets.GITHUB_TOKEN",
+                "toJSON(SeCrEtS)",
+                "SeCrEtS.UNRELATED_TOKEN",
+            ):
+                sources = dict(self.sources)
 
-            if inherited:
-                sources["pages.yml"] = sources["pages.yml"].replace(
-                    "jobs:\n", "env:\n    TOKEN: ${{ secrets.GITHUB_TOKEN }}\n\njobs:\n", 1
-                )
-            else:
-                sources["pages.yml"] = sources["pages.yml"].replace(
-                    "                  DISCORD_WEBHOOK_URL:",
-                    "                  TOKEN: ${{ secrets.GITHUB_TOKEN }}\n"
-                    "                  DISCORD_WEBHOOK_URL:",
-                    1,
-                )
+                if inherited:
+                    sources["pages.yml"] = sources["pages.yml"].replace(
+                        "jobs:\n",
+                        "env:\n    TOKEN: ${{ " + expression + " }}\n\njobs:\n",
+                        1,
+                    )
+                else:
+                    sources["pages.yml"] = sources["pages.yml"].replace(
+                        "                  DISCORD_WEBHOOK_URL:",
+                        "                  TOKEN: ${{ " + expression + " }}\n"
+                        "                  DISCORD_WEBHOOK_URL:",
+                        1,
+                    )
 
-            with self.subTest(inherited=inherited), self.assertRaises(ValueError):
-                notification_bindings(sources)
+                with self.subTest(inherited=inherited, expression=expression):
+                    with self.assertRaises(ValueError):
+                        notification_bindings(sources)
 
     def test_named_publishing_credentials_remain_independent(self) -> None:
         """The notifier guard must not forbid unrelated named registry tokens."""
