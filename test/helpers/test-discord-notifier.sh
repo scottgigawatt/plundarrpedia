@@ -61,7 +61,7 @@ assert_payload() {
             and all(.fields[]; (.value | length) > 0 and (.value | length) <= 1024)
             and ((.title | length) + (.description | length) + (.footer.text | length)
                 + ([.fields[] | (.name | length) + (.value | length)] | add)) <= 6000)
-        and ([.embeds[0].fields[].name] | index("View run")) != null
+        and ([.embeds[0].fields[].name] | index("🔗 View run")) != null
     ' >/dev/null
 }
 
@@ -156,7 +156,7 @@ payload=$(render --type image-verdict --profile image-primary --random-value 0 \
     --job-status failure --publication-status failure --published-tags planned-tag \
     --published-digest sha256:0123456789abcdef)
 printf '%s\n' "${payload}" | jq --exit-status '
-    [.embeds[0].fields[].name] | index("Published tags") == null and index("Digest") == null
+    [.embeds[0].fields[].name] | index("🏷️ Published tags") == null and index("🧾 Digest") == null
 ' >/dev/null
 payload=$(render --type image-verdict --profile image-primary --random-value 0 \
     --job-status success --publication-status success --published-tags planned-tag)
@@ -166,8 +166,8 @@ payload=$(render --type image-verdict --profile image-primary --random-value 0 \
     --published-digest sha256:0123456789abcdef --failure-stage 'provenance verification')
 printf '%s\n' "${payload}" | jq --exit-status '
     (.embeds[0].description | contains("GHCR publication completed before the pipeline stopped"))
-    and any(.embeds[0].fields[]; .name == "Stage needing attention" and .value == "provenance verification")
-    and any(.embeds[0].fields[]; .name == "Published tags" and .value == "actual-tag")
+    and any(.embeds[0].fields[]; .name == "⚠️ Stage needing attention" and .value == "provenance verification")
+    and any(.embeds[0].fields[]; .name == "🏷️ Published tags" and .value == "actual-tag")
 ' >/dev/null
 
 #
@@ -178,7 +178,7 @@ metadata="\$(touch ${TEST_ROOT}/injection) \"quoted\" @everyone"
 payload=$(render --type image-start --profile image-primary --random-value 0 \
     --workflow-name "${metadata}" --ref-name "${metadata}")
 printf '%s\n' "${payload}" | jq --exit-status --arg metadata "${metadata}" '
-    any(.embeds[0].fields[]; .name == "Workflow" and .value == $metadata)
+    any(.embeds[0].fields[]; .name == "⚙️ Workflow" and .value == $metadata)
     and (.embeds[0].description | contains($metadata) | not)
     and .allowed_mentions.parse == []
 ' >/dev/null
