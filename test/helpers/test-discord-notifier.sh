@@ -18,6 +18,7 @@ set -eu
 
 REPOSITORY_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/../.." && pwd)
 NOTIFIER="${REPOSITORY_ROOT}/.github/scripts/discord-notifier.sh"
+TAGS_HELPER="${REPOSITORY_ROOT}/.github/scripts/notification-tags.sh"
 TEST_ROOT=$(mktemp -d "${TMPDIR:-/tmp}/plundarrpedia-discord.XXXXXX")
 trap 'rm -rf "${TEST_ROOT}"' EXIT HUP INT TERM
 
@@ -186,38 +187,147 @@ printf '%s\n' "${payload}" | jq --exit-status --arg metadata "${metadata}" '
 long_value=$(awk 'BEGIN {for (i = 0; i < 10000; i++) printf "x"}')
 payload=$(render --type image-verdict --profile image-secondary --random-value 1 \
     --job-status failure --publication-status success --published-digest "${long_value}" \
-    --published-tags "${long_value}" --workflow-name "${long_value}" --ref-name "${long_value}" \
+    --published-tags bounded-tag --workflow-name "${long_value}" --ref-name "${long_value}" \
     --actor "${long_value}" --platforms "${long_value}" --failure-stage "${long_value}")
 assert_payload 15548997 "${payload}"
 
 #
-# Stub only transport to prove delivery failures return nonzero without logging
-# the URL; independent calls and absent optional webhooks remain usable.
+# Normalize only exact-image references or already valid short tags. Optional
+# empty metadata remains empty, and rejected values never enter diagnostics.
+#
+expected_tags=$(printf '%s\n' edge sha-0123456789abcdef 2.1.8 latest)
+actual_tags=$(sh "${TAGS_HELPER}" --image ghcr.io/example/plundarrpedia --tags "$(printf '%s\n' \
+    ghcr.io/example/plundarrpedia:edge '' ghcr.io/example/plundarrpedia:sha-0123456789abcdef 2.1.8 latest)")
+[ "${actual_tags}" = "${expected_tags}" ]
+[ -z "$(sh "${TAGS_HELPER}" --image ghcr.io/example/plundarrpedia --tags '')" ]
+
+max_tag=$(awk 'BEGIN {for (i = 0; i < 128; i++) printf "x"}')
+[ "$(sh "${TAGS_HELPER}" --image ghcr.io/example/plundarrpedia --tags "${max_tag}")" = "${max_tag}" ]
+
+for invalid in "${max_tag}x" ghcr.io/example/plundarrpedia-other:edge ghcr.io/other/image:edge 'bad tag' '-invalid' 'tag:extra' 'tag/token' "${long_value}"; do
+    if sh "${TAGS_HELPER}" --image ghcr.io/example/plundarrpedia --tags "${invalid}" \
+        >"${TEST_ROOT}/invalid-tags-output" 2>"${TEST_ROOT}/invalid-tags-error"; then
+        echo 'Invalid notification tag unexpectedly accepted.' >&2
+        exit 1
+    fi
+
+    [ ! -s "${TEST_ROOT}/invalid-tags-output" ]
+
+    if grep -F -- "${invalid}" "${TEST_ROOT}/invalid-tags-error" >/dev/null; then
+        echo 'Rejected tag value appeared in diagnostics.' >&2
+        exit 1
+    fi
+done
+
+payload=$(render --type image-verdict --profile image-primary --random-value 0 \
+    --job-status success --publication-status success --published-digest sha256:0123456789abcdef \
+    --published-tags "$(printf '%s\n' ghcr.io/example/plundarrpedia:edge ghcr.io/example/plundarrpedia:sha-0123456789abcdef)")
+printf '%s\n' "${payload}" | jq --exit-status '
+    any(.embeds[0].fields[]; .name == "🏷️ Published tags" and .value == "edge\nsha-0123456789abcdef")
+' >/dev/null
+
+payload=$(render --type image-verdict --profile image-primary --random-value 0 \
+    --job-status success --publication-status success --published-digest sha256:0123456789abcdef)
+printf '%s\n' "${payload}" | jq --exit-status '
+    ([.embeds[0].fields[].name] | index("🏷️ Published tags") == null)
+    and any(.embeds[0].fields[]; .name == "🧾 Digest")
+' >/dev/null
+
+#
+# Stub transport to cover HTTP and connection failures. The deliberately noisy
+# stderr includes synthetic secrets that must never reach notification logs.
 #
 mkdir "${TEST_ROOT}/bin"
 cat > "${TEST_ROOT}/bin/curl" <<'STUB'
 #!/bin/sh
+set -eu
 printf '%s\n' called >> "${CURL_TEST_CALLS}"
+connect_timeout=false
+request_timeout=false
+numeric_output=false
+body_discarded=false
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --connect-timeout)
+            [ "$2" = 10 ] || exit 91
+            connect_timeout=true
+            shift 2
+            ;;
+        --max-time)
+            [ "$2" = 30 ] || exit 91
+            request_timeout=true
+            shift 2
+            ;;
+        --write-out)
+            [ "$2" = '%{http_code}' ] || exit 91
+            numeric_output=true
+            shift 2
+            ;;
+        --output)
+            [ "$2" = /dev/null ] || exit 91
+            body_discarded=true
+            shift 2
+            ;;
+        --retry* | --show-error | --verbose | --include)
+            exit 91
+            ;;
+        *) shift ;;
+    esac
+done
+
+[ "${connect_timeout}" = true ]
+[ "${request_timeout}" = true ]
+[ "${numeric_output}" = true ]
+[ "${body_discarded}" = true ]
+printf '%s\n' "RAW_RESPONSE_BODY RAW_HEADER PRIVATE_TOKEN PAYLOAD_PRIVATE_TOKEN ${DISCORD_WEBHOOK_URL}" >&2
+printf '%s' "${CURL_TEST_HTTP_CODE:-204}"
 exit "${CURL_TEST_EXIT:-0}"
 STUB
 chmod +x "${TEST_ROOT}/bin/curl"
 export CURL_TEST_CALLS="${TEST_ROOT}/calls"
+call_count=0
 
-if PATH="${TEST_ROOT}/bin:${PATH}" CURL_TEST_EXIT=22 DISCORD_WEBHOOK_URL=https://example.invalid/private-hook \
-    sh "${NOTIFIER}" --type image-start --profile image-primary --run-url https://example.invalid/run \
-        --repository example/plundarrpedia --ref-name test-ref --ghcr-image ghcr.io/example/plundarrpedia \
-        >"${TEST_ROOT}/transport-output" 2>&1; then
-    echo 'Failed transport unexpectedly returned success.' >&2
-    exit 1
-fi
+for scenario in success redirect client_error rate_limit server_error dns_error timeout malformed_status; do
+    case "${scenario}" in
+        success) http_status=204; curl_exit=0; expected_status=204 ;;
+        redirect) http_status=302; curl_exit=0; expected_status=302 ;;
+        client_error) http_status=400; curl_exit=22; expected_status=400 ;;
+        rate_limit) http_status=429; curl_exit=22; expected_status=429 ;;
+        server_error) http_status=503; curl_exit=22; expected_status=503 ;;
+        dns_error) http_status=000; curl_exit=6; expected_status=000 ;;
+        timeout) http_status=000; curl_exit=28; expected_status=000 ;;
+        malformed_status) http_status=RAW_SECRET_STATUS; curl_exit=22; expected_status=000 ;;
+    esac
 
-[ ! -s "${TEST_ROOT}/transport-output" ]
+    if PATH="${TEST_ROOT}/bin:${PATH}" CURL_TEST_HTTP_CODE="${http_status}" CURL_TEST_EXIT="${curl_exit}" \
+        DISCORD_WEBHOOK_URL=https://example.invalid/private-hook \
+        sh "${NOTIFIER}" --type image-start --profile image-primary --run-url https://example.invalid/run \
+            --repository example/plundarrpedia --ref-name test-ref --ghcr-image ghcr.io/example/plundarrpedia \
+            --workflow-name PAYLOAD_PRIVATE_TOKEN >"${TEST_ROOT}/transport-output" 2>&1; then
+        actual_exit=0
+    else
+        actual_exit=$?
+    fi
+
+    [ "${actual_exit}" = "${curl_exit}" ]
+    [ "$(cat "${TEST_ROOT}/transport-output")" = "Discord notification request finished: HTTP ${expected_status}; curl exit ${curl_exit}." ]
+    call_count=$((call_count + 1))
+done
+
+#
+# A failed primary request does not prevent a separate secondary request, and
+# an absent optional webhook skips without calling transport at all.
+#
 PATH="${TEST_ROOT}/bin:${PATH}" CURL_TEST_EXIT=0 DISCORD_WEBHOOK_URL=https://example.invalid/public-hook \
     sh "${NOTIFIER}" --type image-start --profile image-secondary --run-url https://example.invalid/run \
-        --repository example/plundarrpedia --ref-name test-ref --ghcr-image ghcr.io/example/plundarrpedia
-[ "$(wc -l < "${CURL_TEST_CALLS}" | tr -d ' ')" = 2 ]
+        --repository example/plundarrpedia --ref-name test-ref --ghcr-image ghcr.io/example/plundarrpedia \
+        >"${TEST_ROOT}/secondary-output" 2>&1
+[ "$(cat "${TEST_ROOT}/secondary-output")" = 'Discord notification request finished: HTTP 204; curl exit 0.' ]
+call_count=$((call_count + 1))
+[ "$(wc -l < "${CURL_TEST_CALLS}" | tr -d ' ')" = "${call_count}" ]
 PATH="${TEST_ROOT}/bin:${PATH}" DISCORD_WEBHOOK_URL='' sh "${NOTIFIER}" >/dev/null
-[ "$(wc -l < "${CURL_TEST_CALLS}" | tr -d ' ')" = 2 ]
+[ "$(wc -l < "${CURL_TEST_CALLS}" | tr -d ' ')" = "${call_count}" ]
 
 #
 # Protect workflow-level result isolation and Asteres-only documentation routing.
