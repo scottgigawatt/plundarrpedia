@@ -15,6 +15,8 @@
 # Keep all inputs as data and reject malformed options without printing values.
 #
 set -eu
+LC_ALL=C
+export LC_ALL
 expected_image=""
 notification_tags=""
 
@@ -44,7 +46,7 @@ while [ "$#" -gt 0 ]; do
 done
 
 #
-# The expected image is an untagged public reference. Registry ports are allowed,
+# The expected image is an untagged reference. Registry ports are allowed,
 # while control characters, digests, tags, and pattern syntax are not.
 #
 case "${expected_image}" in
@@ -65,7 +67,7 @@ esac
 # Buffer every validated tag before printing anything. An invalid later entry
 # cannot leak a partial metadata list. Blank lines remain optional metadata.
 #
-printf '%s\n' "${notification_tags}" | LC_ALL=C awk -v image="${expected_image}" '
+printf '%s\n' "${notification_tags}" | awk -v image="${expected_image}" '
     $0 == "" { next }
     {
         tag = $0
