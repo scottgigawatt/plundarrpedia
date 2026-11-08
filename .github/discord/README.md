@@ -17,7 +17,7 @@ You need permission to manage the intended Discord webhook and the repository’
 | `image-secondary` | Public Hades | `DISCORD_HADES_HOOK_URL` | Image notices with Underworld Archives copy |
 | `docs` | Private Asteres | `DISCORD_WEBHOOK_URL` | GitHub Pages notices with Reading Is Fundamental copy |
 
-Missing webhooks skip their destination. Each delivery is independent and uses a bounded timeout. Workflow notification steps use `continue-on-error: true`, so delivery failures do not change image or documentation results. Check the notification step outcome if a message is missing. Never publish a webhook URL in source, issues, logs, or screenshots.
+Missing webhooks skip their destination. Each delivery is independent, keeps a 10-second connection timeout and 30-second total timeout, and makes no automatic retry. Workflow notification steps use `continue-on-error: true`, so delivery failures do not change image or documentation results. Check the notification step outcome if a message is missing. Never publish a webhook URL in source, issues, logs, or screenshots.
 
 ## Understand events and colors
 
@@ -35,6 +35,10 @@ The image workflow reports the start of the image pipeline before release valida
 
 A successful job without confirmed push evidence is yellow, never green. Published tags and digest appear only after a confirmed push with a digest. When a later stage fails after a push, the message states that publication already occurred and identifies the stage needing attention. No failure message promises that nothing was published or deployed.
 
+Notification tags use short names such as `edge`, `latest`, and `sha-0123456789abcdef`. The formatter accepts already short Docker tag names or removes only the exact expected image prefix from full references. Tags can contain up to 128 ASCII characters. It preserves their order and spelling, ignores blank lines, and validates the whole list before printing any output. Mismatched images, whitespace within a tag, digests, and invalid tag syntax are rejected without logging the input.
+
+Formatting changes only notification metadata, never registry publication inputs. It does not disable or bypass GitHub’s secret filtering; a short tag can still match a configured secret. Empty optional tag metadata stays empty and its field is omitted; a confirmed digest can still appear.
+
 Documentation success means the build and Pages deployment both succeeded. Failure text identifies the documentation build or Pages deployment. Cancelled and skipped updates use their own wording instead of failure copy. Workflow names remain metadata; funny workflow titles never become part of a status sentence.
 
 ## Edit copy and presentation
@@ -45,7 +49,9 @@ Documentation success means the build and Pages deployment both succeeded. Failu
 | [payloads/common.jq](payloads/common.jq) | Literal status sentences, metadata fields, length bounds, and disabled mentions |
 | [payloads/](payloads/) | Payload entry point for each notification type |
 | [discord-notifier.sh](../scripts/discord-notifier.sh) | Argument validation, outcome selection, rendering, and optional delivery |
-| [test-discord-notifier.sh](../../test/helpers/test-discord-notifier.sh) | Deterministic offline coverage of states, evidence, and delivery failures |
+| [notification-tags.sh](../scripts/notification-tags.sh) | Validates notification tag names against the expected image and formats short names |
+| [test-discord-notifier.sh](../../test/helpers/test-discord-notifier.sh) | Deterministic offline coverage of states, evidence, tag formatting, and safe delivery diagnostics |
+| [test_discord_secret_scope.py](../../test/helpers/test_discord_secret_scope.py) | Guards explicit webhook names, destination profiles, and credential isolation |
 
 Keep the first sentence factual and put only a short joke in each catalog variant. Asteres uses light gay culture humor; Hades uses light underworld humor. Keep corrective instructions and metadata labels literal. Use the published image name **Plundarrpedia** and distinguish its container image from the GitHub Pages website.
 
@@ -53,7 +59,7 @@ The supported notification types are `image-start`, `image-verdict`, `docs-start
 
 ## Preview without sending
 
-A dry run needs no webhook and never contacts Discord. Use synthetic values only; the JSON is intended for local inspection. Make also requires the Docker Compose CLI while parsing, even though `make test-workflows` does not use the Docker daemon. Without Compose, run `sh test/helpers/test-discord-notifier.sh` directly.
+A dry run needs no webhook and never contacts Discord. Use synthetic values only; the JSON is intended for local inspection. The complete test suite also requires Python 3. Make requires the Docker Compose CLI while parsing, even though `make test-workflows` does not use the Docker daemon.
 
 1. Render the first Asteres start variant:
 
@@ -71,13 +77,39 @@ A dry run needs no webhook and never contacts Discord. Use synthetic values only
    ```
 
 2. Confirm the sender identifies the image, the title says the pipeline started, the embed color is `3900150` (`#3B82F6`), and `allowed_mentions.parse` is empty. Select `--random-value 1` for the other joke or `--profile image-secondary` for Hades.
-3. Run every supported result and variant:
+3. Run the credential scope guards and every supported result and variant:
 
    ```sh
    make test-workflows
    ```
 
-The expected result ends with `Discord notifier checks passed`. The tests use synthetic metadata and a stubbed transport; they do not prove that a real webhook is configured or a live Discord message renders correctly.
+Without the Compose CLI, run the same checks directly:
+
+```sh
+python3 test/helpers/test_discord_secret_scope.py
+sh test/helpers/test-discord-notifier.sh
+```
+
+The expected result reports `OK` for the credential scope tests, then ends with `Discord notifier checks passed`. The scope guards reject wrong destination bindings, broad or computed secret access, and cross-server fallback. Both suites use synthetic metadata and stubbed transport, including HTTP errors, connection failures, and deliberately noisy error output; they do not prove that a real webhook is configured or a live Discord message renders correctly.
+
+## Diagnose delivery failures safely
+
+Each request logs only a numeric HTTP status and curl exit code with fixed text, for example `Discord notification request finished: HTTP 204; curl exit 0.` Raw response bodies, headers, curl error text, webhook URLs, payloads, and tokens are never logged. An unavailable or malformed HTTP status is reported as `000`.
+
+Use the codes to choose the next check. An HTTP error does not identify the rejected payload detail because response bodies remain private.
+
+| Result | What to check |
+| --- | --- |
+| HTTP `400` with curl exit `22` | Review a synthetic payload and its metadata against Discord limits and required fields |
+| HTTP `401` or `403` with curl exit `22` | Verify webhook access and permissions in Discord without sharing its URL |
+| HTTP `404` with curl exit `22` | Verify that the existing webhook is still available |
+| HTTP `429` with curl exit `22` | Wait before another authorized send; rebuilding the image does not resolve rate limits |
+| HTTP `5xx` with curl exit `22` | Check Discord service availability before another authorized send |
+| HTTP `000` | Use curl exit `6` for a name-resolution check, `7` for a connection check, or `28` for a timeout check |
+
+A failed request returns its original curl exit code. Notification failures do not change build or publication results, and retries are not automatic.
+
+Use the actual validation and publication jobs to determine the image result if delivery fails. Do not rebuild or republish an image merely to probe delivery; use synthetic previews first.
 
 ## Review changes
 

@@ -88,3 +88,10 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+
+      - id: discord-secret-scope
+        name: Discord webhook credential scope
+        entry: python3 test/helpers/test_discord_secret_scope.py
+        language: system
+        pass_filenames: false
+        always_run: true

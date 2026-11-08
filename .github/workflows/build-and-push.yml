@@ -31,6 +31,7 @@ on:
             - ".github/workflows/build-and-push.yml"
             - ".github/discord/**"
             - ".github/scripts/discord-notifier.sh"
+            - ".github/scripts/notification-tags.sh"
             - "test/helpers/test-discord-notifier.sh"
     schedule:
         - cron: "23 7 * * 1"

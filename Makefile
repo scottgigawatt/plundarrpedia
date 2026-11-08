@@ -278,9 +278,10 @@ $(LINT):
 #
 # $(TEST_WORKFLOWS): Test Discord payloads and isolated delivery with public fixtures.
 #
-# Dependencies: Host sh, jq, awk, and standard POSIX utilities.
+# Dependencies: Host Python 3, sh, jq, awk, and standard POSIX utilities.
 #
 $(TEST_WORKFLOWS):
+	python3 test/helpers/test_discord_secret_scope.py
 	sh test/helpers/test-discord-notifier.sh
 
 #
