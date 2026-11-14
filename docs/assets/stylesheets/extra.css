@@ -22,6 +22,7 @@
 
 /* Warm lilac surfaces distinguish the wiki from Plundarr's ocean palette. */
 [data-md-color-scheme="default"] {
+  --pedia-nav-heading-background: #e9dfee;
   --md-primary-fg-color: #30264f;
   --md-primary-fg-color--light: #5b497d;
   --md-primary-fg-color--dark: #19132d;
@@ -39,6 +40,7 @@
 
 /* Inky violet surfaces pair with coral and copper instead of sea glass. */
 [data-md-color-scheme="slate"] {
+  --pedia-nav-heading-background: #392b49;
   color-scheme: dark;
   --md-hue: 258;
   --md-primary-fg-color: #171329;
@@ -469,6 +471,51 @@ body {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/*
+ *
+ * Center sidebar headings in theme-colored highlights without a shadow offset.
+ * Keep desktop heading styles separate from mobile drawer controls.
+ *
+ */
+.md-sidebar--secondary .md-nav__title {
+  background: var(--pedia-nav-heading-background);
+  border: 1px solid var(--pedia-border);
+  border-radius: 0.3rem;
+  box-shadow: none;
+  color: var(--md-default-fg-color);
+  line-height: 1.5;
+  padding: 0.4rem 0.6rem;
+}
+
+@media screen and (min-width: 76.25em) {
+  .md-sidebar--primary .md-nav--lifted > .md-nav__list > .md-nav__item--active > .md-nav__link {
+    align-items: center;
+    background: var(--pedia-nav-heading-background);
+    border: 1px solid var(--pedia-border);
+    border-radius: 0.3rem;
+    box-shadow: none;
+    color: var(--md-default-fg-color);
+    line-height: 1.5;
+    margin-inline: -0.6rem 0;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .md-sidebar--primary .md-nav--lifted > .md-nav__list > .md-nav__item--active > .md-nav__link > .md-nav__link {
+    align-items: center;
+    color: inherit;
+    line-height: inherit;
+    margin: 0;
+  }
+
+  .md-sidebar--primary .md-nav--lifted > .md-nav__list > .md-nav__item--active > .md-nav__link span[aria-hidden] {
+    display: inline-flex;
+  }
+
+  .md-sidebar--primary .md-nav--lifted > .md-nav__list > .md-nav__item--active > .md-nav__link svg {
+    margin-top: 0;
   }
 }
 
