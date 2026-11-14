@@ -1,85 +1,120 @@
 ---
-title: Plundarr Quick Start
-description: Generate, review, and launch the default Plundarr deployment under dist/plundarr.
+title: Plundarr quick start
+description: Choose services interactively with the published Maraudarr image, then configure and start Plundarr.
 icon: material/rocket-launch
-status: updated
 ---
 
-# Plundarr quick start
+# Generate and start Plundarr
 
-Generate one Compose project, review its private settings, then launch and verify it. You need Git, Make, Docker with Compose, and an active PIA subscription for a VPN-enabled preset. Check every selected image's architecture support; the default Calibre-Web Automated and Tracearr services require amd64 or arm64.
+Maraudarr's interactive terminal helps you choose services and generates your Plundarr project. You edit its settings, then start the stack with Docker Compose. No Git, Make, or local image build is needed for this route.
 
-For an existing deployment, start with [update and backup checks](upgrading.md).
+## Before you start
 
-## Clone the repository
+You need Docker with Compose v2, an amd64 or arm64 host, and an active PIA subscription for the default preset. Choose persistent host directories for downloads and media, and the host user/group that should own them. For NAS deployment, review the [platform requirements](../../guides/index.md).
+
+The default preset includes automation and download services, a dashboard, and ebooks. Plex and Jellyfin are optional additions. Applications still need their own first-run setup after the containers start.
+
+Watchtower is selected by default and can update eligible containers across this Docker host, including other projects. Run only one persistent Watchtower per host. Deselect it in the picker if you already use one or prefer manual updates; [review its update policy](../presets/watchtower.md#run-the-persistent-preset) before launch.
+
+![Maraudarr's interactive service picker generates the default Plundarr project](https://raw.githubusercontent.com/scottgigawatt/plundarr/main/docs/assets/maraudarr-demo.gif)
+
+🔎 [View the full-size demo](https://raw.githubusercontent.com/scottgigawatt/plundarr/main/docs/assets/maraudarr-demo.gif).
+
+## 1. Open the interactive generator
+
+Run these commands in a new directory. Keep an existing deployment's files and settings; use the [update guide](upgrading.md) when regenerating it.
 
 ```sh
-git clone https://github.com/scottgigawatt/plundarr.git
+mkdir -p plundarr
 cd plundarr
+docker run --rm -it --pull always \
+  --user "$(id -u):$(id -g)" \
+  --read-only --network none \
+  --cap-drop ALL --security-opt no-new-privileges:true \
+  --tmpfs /tmp:rw,noexec,nosuid,size=64m \
+  --volume "$PWD:/output:rw" \
+  ghcr.io/scottgigawatt/maraudarr:latest configure
 ```
 
-## Choose the generator
+Choose **Plundarr**, review the preselected services, and confirm generation. Use the arrow keys to move, **Space** to select services, and **Enter** to continue. Maraudarr exits when the files are ready; it does not start the selected applications.
 
-`MARAUDARR_IMAGE` selects the generator and its packaged service catalog. To refresh and use the configured published image (default `latest`):
+Your project is in `dist/plundarr/`: `docker-compose.yml`, `.env`, `example.env`, and `config/`. Container output paths beginning `/output/` correspond to the directory you mounted above.
+
+## 2. Edit the generated settings
+
+Enter the generated project, then open `.env` in a text editor:
 
 ```sh
-make pull-image
-make ship
+cd dist/plundarr
 ```
 
-For this checkout's catalog instead, explicitly build and select the source image:
+Search for `Edit before launch:`, `Edit for your host:`, and host-port comments. Keep generated passwords and keys private; `example.env` is a reference and has no working generated secrets.
 
-```sh
-export MARAUDARR_IMAGE=maraudarr:local
-make build
-make ship
-```
-
-Keep that image selection for later commands. A checkout alone does not refresh a cached published catalog; source changes may be unreleased. Without an explicit selection, Make uses `ghcr.io/scottgigawatt/maraudarr:latest`, reuses it locally if present, or tries a pull and source-build fallback.
-
-The project appears under `dist/plundarr/`: `docker-compose.yml`, safe `example.env`, private `.env`, and `config/`. Use `make configure` for interactive choices, or `make presets` and `make services` to inspect the selected catalog.
-
-## Review the generated environment
-
-Edit `dist/plundarr/.env` before launch:
-
-| Review | Required action |
+| Review | What to change |
 | --- | --- |
-| `PIA_USER` / `PIA_PASS` | Supply PIA credentials for the VPN lane |
-| User/group settings | Match host ownership and supplemental access |
-| Host paths | Replace Synology-shaped examples with real absolute paths |
-| `TZ`, `COMPOSE_NETWORK_*`, `*_WEBUI_PORT` | Set timezone and avoid route/port conflicts |
-| [Homepage settings](homepage.md) | Match the browser URL/allowed host and read the generated password privately |
-| [Recovery settings](../privateerr/automatic-recovery.md) | Keep the generated shared key private; review preserved opt-outs/image pins |
+| `PIA_USER`, `PIA_PASS` | Your PIA VPN username and password; the username is `p` or `P` followed by seven digits, not your email |
+| `DEFAULT_PUID`, `DEFAULT_PGID`, `DEFAULT_GROUP` | The numeric host user and groups with access to your folders; obtain them with `id` |
+| Host media/download paths | Real absolute paths on the machine that will run the stack; replace `/volume1/...` examples where needed |
+| `TZ`, `COMPOSE_NETWORK_*`, `*_WEBUI_PORT` | Your timezone and available network/host ports |
+| `HOMEPAGE_EXTERNAL_URL`, `HOMEPAGE_ALLOWED_HOSTS` | The browser URL and matching hostname/port without its scheme; see [Homepage login](homepage.md) |
 
-`example.env` contains reference values, not working generated credentials.
+For Calibre-Web Automated, set `CWA_CONFIG_PATH`, `CWA_INGEST_PATH`, and `CWA_LIBRARY_PATH` to three separate writable host directories. Books are removed from ingest after processing; keep originals and ongoing downloads elsewhere. A new library can use an empty directory, which CWA initializes automatically, or you can select an existing Calibre library. See [ebook folder setup](../presets/media-servers-and-books.md#calibre-web-automated).
 
-## Validate before launch
+Maraudarr generates the shared recovery key and Homepage password. Keep automatic recovery enabled for the default stack. [Configuration](configuration.md) explains optional region selection and service settings.
 
-`make config` prints resolved configuration that can contain secrets. Keep its output private:
+## 3. Validate and start
 
-```sh
-make config
-```
-
-Fix syntax/interpolation errors and review mounts, network choices, and host ports. This does not prove paths, permissions, or runtime health.
-
-## Launch and test the VPN lane
+From the generated `dist/plundarr/` directory, validate without printing passwords:
 
 ```sh
-make up
-make test-vpn
+docker compose config --quiet
 ```
 
-`make up` pulls and recreates selected services. Check Privateerr readiness, Gluetun's healthy tunnel, then the download client's Web UI and synchronized port/interface before configuring managers. See [troubleshooting](troubleshooting.md) if any layer fails.
+Success produces no output. Fix any reported setting before continuing. This validates the Compose model; it does not verify PIA credentials, folder permissions, or live connections. Check those after startup.
 
-> [!WARNING]
-> VPN validation uses real provider credentials and generated material. Keep `.env`, VPN files, API responses, and unsanitized logs private.
+For Synology or TrueNAS, transfer this complete project directory and continue with [your platform's deployment steps](../../guides/index.md). Start only one copy. For Docker Compose on this host:
 
-## Generate common variations
+```sh
+docker compose up --detach --pull always
+docker compose ps
+```
 
-Use the [preset comparison and examples](../presets/index.md) to choose another deployment or add/remove services. Repeat the complete intended `ADD_SERVICES` / `REMOVE_SERVICES` selection on regeneration; saved environment assignments do not remember it.
+Image downloads can take several minutes. Check that Privateerr is ready, Gluetun is healthy, and qBittorrent is running. Inspect locally if needed:
 
-## Regenerate an existing deployment
+```sh
+docker compose logs --tail 100 privateerr gluetun qbittorrent
+```
 
-Follow [update a deployment](upgrading.md) for backups, generator refresh, selection review, and recreation. Regeneration preserves known environment values and application state, but does not stop removed services or back up databases, external state, or `.env`.
+Look for `Automatic recovery enabled` and `Gluetun tunnel is healthy` in Privateerr's logs. Keep logs, `.env`, and VPN files private. Use [troubleshooting](troubleshooting.md) for the first failing service.
+
+## 4. Open your applications
+
+Use the machine running Docker as `YOUR-HOST`, or `localhost` when it is this computer. Use the ports from your `.env` if you changed them.
+
+| Application | Default browser address | First action |
+| --- | --- | --- |
+| Homepage | Your `HOMEPAGE_EXTERNAL_URL` | Sign in with `HOMEPAGE_AUTH_PASSWORD` from `.env`; no username |
+| qBittorrent | `http://YOUR-HOST:8080` | Read the initial password locally in qBittorrent's logs, sign in as `admin`, and change it |
+| Prowlarr | `http://YOUR-HOST:9696` | Complete initial authentication setup |
+| Radarr / Sonarr | `http://YOUR-HOST:7878` / `http://YOUR-HOST:8989` | Complete initial authentication setup |
+
+You have reached the first milestone when these UIs open and the VPN is healthy. Next, [connect your applications](connect-applications.md) so requests, downloads, and imports work together. Configure [Tracearr monitoring](monitoring.md) and other optional integrations afterward.
+
+To stop the project while retaining settings and data:
+
+```sh
+docker compose down
+```
+
+## Use repository helpers later
+
+Git and Make provide shortcuts for generation and maintenance. From a directory outside the project folder above:
+
+```sh
+git clone https://github.com/scottgigawatt/plundarr.git plundarr-source
+cd plundarr-source
+make pull-image
+make configure
+```
+
+This generates a separate project under that checkout's `dist/`. Do not start another copy against the same application data. To manage the project you already generated, keep using its Compose commands. See [command reference](../../reference/commands.md) for Make equivalents and [developer documentation](https://scottgigawatt.github.io/plundarr/development/maraudarr/) when you want to build your own generator.

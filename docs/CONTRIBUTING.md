@@ -24,10 +24,10 @@ You need Git, Make, Docker with Compose, and pre-commit for lint. From a new che
 git clone https://github.com/scottgigawatt/plundarrpedia.git
 cd plundarrpedia
 cp example.env .env
-make serve
+make docs-serve
 ```
 
-Keep an existing `.env`; never overwrite it for validation. The preview opens at <http://localhost:8000>; change the authoring port with `make serve MKDOCS_AUTHOR_PORT=8001`. Initial tool builds/hooks can need network access.
+Keep an existing `.env`; never overwrite it for validation. The preview opens at <http://localhost:8000>; change the authoring port with `make docs-serve MKDOCS_AUTHOR_PORT=8001`. Initial tool builds/hooks can need network access.
 
 ## Page structure
 
@@ -55,7 +55,7 @@ Project-owned documentation and related Markdown must follow [GitHub's style gui
 
 Make information relevant, findable, understandable, and usable for the intended reader. State the task, prerequisites, and required decisions; lead with actions/results; use familiar words and active voice. Include expected results and recovery where needed. Keep short nautical touches outside commands and warnings.
 
-Maintain one canonical explanation per topic. Remove obsolete, duplicate, speculative, and non-actionable content; preserve safety, compatibility, backup/restore limits, support policy, licensing, and attribution. Essential local steps should remain together.
+Document current supported behavior; keep prior-version migrations, historical comparisons, and older-image workarounds out of the reader journey. Maintain one canonical explanation per topic. Remove obsolete, duplicate, speculative, and non-actionable content; preserve safety, compatibility, backup/restore limits, support policy, licensing, and attribution. Essential local steps should remain together.
 
 Review the changed reader journey from its entry point through verification, including assumptions, links, failure recovery, and narrow-screen use. Record which journeys you checked and distinguish author review from actual reader feedback/testing. Lint and a strict build do not prove usability or ISO conformity. Preserve existing badge/community blocks; place H1 and purpose before them.
 
@@ -79,7 +79,7 @@ Never publish credentials, webhook URLs, live VPN configuration, private hostnam
 
 ## Lint and preview
 
-`make markdown` runs markdownlint; `make serve` provides the live Material preview. Make checks Docker/Compose availability while parsing even these targets. Check GitHub rendering separately for repository-only files.
+`make markdown` runs markdownlint; `make docs-serve` provides the live Material preview. Make checks Docker/Compose availability while parsing even these targets. Check GitHub rendering separately for repository-only files.
 
 ## Full validation
 
@@ -87,7 +87,7 @@ Site export needs a working Docker daemon. The command below uses public default
 
 ```sh
 make markdown
-make site ENV_FILE=example.env
+make docs ENV_FILE=example.env
 pre-commit run --all-files
 git diff --check
 ```
@@ -96,7 +96,7 @@ Check spelling, relative links/anchors, navigation, alerts, code, and affected l
 
 For workflow notification changes, run `make test-workflows` with a POSIX shell and `jq`. This suite uses synthetic data and a stubbed transport; it never sends to Discord. Follow the [notification guide](https://github.com/scottgigawatt/plundarrpedia/blob/main/.github/discord/README.md) for destination setup, payload previews, and expected results.
 
-Run `make config` with public defaults for Compose changes, `make build` for image/theme/requirements changes, and `make build-multiarch` when published platforms can be affected. Neither strict MkDocs nor lint proves all external links work or live instructions succeed.
+Run `make config` with public defaults for Compose changes, `make build` for image/theme/requirements changes, and `make build-platforms` when published platforms can be affected. Neither strict MkDocs nor lint proves all external links work or live instructions succeed.
 
 ## Repository style
 

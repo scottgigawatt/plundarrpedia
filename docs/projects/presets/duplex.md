@@ -5,7 +5,7 @@ icon: material/television-classic
 status: updated
 ---
 
-# Duplex preset 📺
+# Duplex preset 🎭
 
 Duplex is the Plundarr preset for the backstage work around an existing Plex Media Server and Plex/Jellyfin theme songs. Maraudarr generates the complete project under `dist/duplex/`.
 
@@ -26,17 +26,13 @@ The name is short for **Docker Utilities for Plex**. The preset does not deploy 
 
 ## Generate the preset
 
-Complete [generator setup](../plundarr/quick-start.md#choose-the-generator), then generate Duplex:
-
-```sh
-make ship PRESET=duplex
-```
+Choose **Duplex** in the [interactive generator](../plundarr/quick-start.md#1-open-the-interactive-generator). Repository users can use `make generate PRESET=duplex` instead.
 
 Review `dist/duplex/.env`, especially Plex connection values, Kometa/ImageMaid paths, and Themerr's key permissions. Prepare the external settings and writable directories below, then validate and launch:
 
 ```sh
-make config PRESET=duplex
-make up PRESET=duplex
+docker compose --project-directory dist/duplex config --quiet
+docker compose --project-directory dist/duplex up --detach --pull always
 ```
 
 ## Keep Kometa state external
@@ -73,10 +69,10 @@ Keep seeded cleanup, automatic Jellyfin restarts, legacy-plugin removal, and use
 
 ## Reset overlays safely
 
-First add Overlay Reset, retaining any other service additions and removals:
+Select Overlay Reset in the picker. For optional [repository helpers](../plundarr/quick-start.md#use-repository-helpers-later), retain any other additions/removals:
 
 ```sh
-make ship PRESET=duplex ADD_SERVICES=overlay-reset
+make generate PRESET=duplex ADD_SERVICES=overlay-reset
 ```
 
 It is excluded from ordinary `make up` runs by the `tools` profile. Confirm the Plex URL, token, and target library in `.env`, keep `OVERLAY_RESET_DRY_RUN=True`, then inspect a dry run:
@@ -92,10 +88,10 @@ For monitoring, add Tracearr or Tautulli explicitly; neither is included in Dupl
 
 ## Add Watchtower
 
-Watchtower is not a Duplex default. Add it only if one Watchtower instance does not already manage the host:
+Watchtower is not a Duplex default. Select it in the picker only if another instance does not already manage this host. Repository users can use:
 
 ```sh
-make ship PRESET=duplex ADD_SERVICES=watchtower
+make generate PRESET=duplex ADD_SERVICES=watchtower
 ```
 
 [Compare every preset](index.md){ .md-button } [Open the Plundarr repository](https://github.com/scottgigawatt/plundarr){ .md-button .md-button--primary }

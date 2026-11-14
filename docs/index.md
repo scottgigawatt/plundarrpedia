@@ -1,96 +1,39 @@
 ---
-title: Chart Room
-description: One harbor for Plundarr, Privateerr, and the generated media deployments they power.
+title: Start here
+description: Run a working VPN download stack, then generate and expand your media stack.
 icon: material/map
-hide:
-  - navigation
-  - toc
-status: new
 ---
 
-<section class="hero" markdown>
+# Start your media stack
 
-# Your media fleet, finally on one map
-
-Plundarrpedia connects Plundarr, Privateerr, generated presets, containers, paths, and practical decisions behind a self-hosted media stack—without assuming your harbor is a Synology.
-
-[Plot a course](start-here/index.md){ .md-button .md-button--primary } [Open the Plundarr charts](projects/plundarr/index.md){ .md-button }
-
-</section>
-
-<div class="fleet-line" aria-hidden="true">
-  <b>DISCOVER</b><span></span><b>DOWNLOAD</b><span></span><b>STREAM</b>
-</div>
-
-<span id="what-makes-this-wiki-different"></span>
-
-## Pick up the right chart
+Run Privateerr with Gluetun and qBittorrent, or generate the larger Plundarr stack through Maraudarr's interactive terminal. These guides start with published images; building source is optional.
 
 <div class="grid cards" markdown>
 
--   :material-ship-wheel:{ .lg .middle } **Build a complete media stack**
+-   :material-shield-key:{ .lg .middle } **Start with Privateerr**
 
     ---
 
-    Use Maraudarr to generate one complete Plundarr Compose file and its
-    matching environment.
+    Run three containers: Privateerr generates the PIA WireGuard configuration file, Gluetun runs the tunnel, and qBittorrent downloads through it.
 
-    [:octicons-arrow-right-24: Start with Plundarr](projects/plundarr/quick-start.md)
+    [:octicons-arrow-right-24: Start the VPN download stack](projects/privateerr/quick-start.md)
 
--   :material-shield-key:{ .lg .middle } **Generate a PIA WireGuard config**
-
-    ---
-
-    Generate PIA WireGuard settings with Privateerr, then enable its internal supervisor for Gluetun recovery when needed.
-
-    [:octicons-arrow-right-24: Start with Privateerr](projects/privateerr/quick-start.md)
-
--   :material-view-grid-plus:{ .lg .middle } **Choose a focused preset**
+-   :material-ship-wheel:{ .lg .middle } **Generate Plundarr**
 
     ---
 
-    Generate Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, Watchtower, Portainer, or a custom project from the same maintained catalog.
+    Choose your services interactively, edit the generated settings, and start a complete media automation stack.
 
-    [:octicons-arrow-right-24: Compare presets](projects/presets/index.md)
-
--   :material-server-network:{ .lg .middle } **Choose your Docker harbor**
-
-    ---
-
-    Translate the same Compose stack to Linux Docker, Synology Container
-    Manager, or the Docker-based TrueNAS Apps system.
-
-    [:octicons-arrow-right-24: Choose a deployment](start-here/choose-a-deployment.md)
+    [:octicons-arrow-right-24: Generate and launch Plundarr](projects/plundarr/quick-start.md)
 
 </div>
 
-## The fleet at a glance
+Already running? [Connect your applications](projects/plundarr/connect-applications.md), [add a preset](projects/presets/index.md), or [update and back up your deployment](projects/plundarr/upgrading.md).
 
-<div class="flow-map" role="img" aria-label="Requests flow from your crew through Seerr, media managers, a download client, the media library, and Plex or Jellyfin.">
-  <span class="flow-map__step">👥 Your crew</span>
-  <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">🔎 Seerr</span>
-  <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">🎬 Radarr / Sonarr</span>
-  <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">⬇️ Download client</span>
-  <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">🗂️ Media library</span>
-  <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">📺 Plex / Jellyfin</span>
-</div>
+## What you need
 
-<div class="flow-map flow-map--support" role="img" aria-label="Privateerr generates WireGuard configuration for the Gluetun VPN tunnel, while Plundarr presets provide focused deployment shapes such as Duplex.">
-  <span class="flow-map__step">🔐 Privateerr</span>
-  <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">📄 WireGuard config</span>
-  <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">🛡️ Gluetun VPN tunnel</span>
-  <span class="flow-map__divider" aria-hidden="true">◆</span>
-  <span class="flow-map__step">🧩 Plundarr presets</span>
-  <span class="flow-map__arrow" aria-hidden="true">→</span>
-  <span class="flow-map__step">📺 Playback / books / Plex tools</span>
-</div>
+Use Docker with Compose v2, private storage for settings, and an active Private Internet Access (PIA) subscription for the VPN-enabled routes. The default three-container and Plundarr stacks need an amd64 or arm64 host. Know where your media and downloads should live; each quick start identifies the values to change.
 
-> [!IMPORTANT]
-> **Privateerr draws the map; Gluetun sails the tunnel.** Privateerr generates `wg0.conf` and endpoint metadata, and its optional supervisor refreshes stale settings through Gluetun's API. Gluetun establishes and maintains the tunnel. See [automatic recovery](projects/privateerr/automatic-recovery.md) for setup and operating limits.
+For NAS deployment, use the [Synology or TrueNAS guide](guides/index.md) at the deployment step. You can generate a stack on a workstation and transfer it to the NAS.
+
+[See how the containers connect](start-here/architecture.md). The Privateerr container generates the PIA WireGuard configuration file and can recover stale VPN connections; Gluetun carries VPN traffic.

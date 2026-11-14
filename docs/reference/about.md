@@ -14,7 +14,7 @@ The source repositories own behavior and exact configuration. This wiki owns cro
 
 ## Visual direction
 
-Local theme overrides provide the chart-room palette and responsive architecture maps. Instructions remain readable in light/dark themes and on narrow screens.
+Local theme overrides provide the chart-room palette and connected SVG diagrams. Instructions remain readable in light/dark themes and on narrow screens.
 
 ## Material features in use
 

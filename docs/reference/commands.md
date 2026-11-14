@@ -1,71 +1,52 @@
 ---
-title: Command Deck
-description: Quick command reference for Plundarr, Privateerr, generated presets, and Plundarrpedia.
+title: Commands
+description: Use Docker Compose for generated projects and optional Make shortcuts from source checkouts.
 icon: material/console
-status: updated
 ---
 
-# Command deck
+# Commands
 
-Run Make targets from the repository that owns the deployment. For copied Synology or TrueNAS projects, use Compose in the directory containing the matching definition and private `.env`. Resolved configuration, environment output, and logs can contain secrets.
+Run Compose commands from the deployed directory containing `docker-compose.yml` and its private `.env`. This works for Docker-only generation and copied NAS projects. Logs and resolved configuration can contain secrets; inspect them locally.
 
-## Plundarr and Maraudarr
-
-Most deployment targets accept `PRESET=YOUR-PRESET`; omit it for `plundarr`.
+## Everyday Compose commands
 
 | Task | Command |
 | --- | --- |
-| Choose services | `make configure`, `make presets`, `make services` |
-| Generate a project | `make ship PRESET=YOUR-PRESET` |
-| Validate before launch | `make config PRESET=YOUR-PRESET` |
-| Pull and recreate selected services | `make up PRESET=YOUR-PRESET` |
-| Check status or logs | `make ps PRESET=YOUR-PRESET`, `make logs PRESET=YOUR-PRESET` |
-| Validate the running VPN lane | `make test-vpn PRESET=YOUR-PRESET` |
-| Stop while preserving application state | `make down PRESET=YOUR-PRESET` |
-| Archive host configuration | `make backup PRESET=YOUR-PRESET` |
+| Validate without displaying secrets | `docker compose config --quiet` |
+| Pull and start selected services | `docker compose up --detach --pull always` |
+| Check status | `docker compose ps` |
+| Inspect one service | `docker compose logs --tail 100 SERVICE` |
+| Stop while retaining application state | `docker compose down` |
 
-Choose the [generator image](../projects/plundarr/quick-start.md#choose-the-generator) first. Backup archives exclude `.env`, external state, and named-volume databases; follow [update and backup checks](../projects/plundarr/upgrading.md). Select maintenance tools before invoking their targets: [Watchtower](../projects/presets/watchtower.md), [Overlay Reset](../projects/presets/duplex.md#reset-overlays-safely), and [Recyclarr](../projects/plundarr/configuration.md#music-and-quality-synchronization).
+Replace `SERVICE` with a Compose service name. Starting a service does not complete its application setup; follow the relevant quick start.
+
+## Plundarr repository helpers
+
+These optional commands run from a [Plundarr source checkout](../projects/plundarr/quick-start.md#use-repository-helpers-later). They operate on that checkout's `dist/<preset>/`, not an unrelated copied deployment. Omit `PRESET` for `plundarr`.
+
+| Task | Command |
+| --- | --- |
+| Interactive generation | `make configure` |
+| Inspect the selected catalog | `make presets`, `make services` |
+| Generate directly | `make generate PRESET=YOUR-PRESET` |
+| Pull and start services | `make up PRESET=YOUR-PRESET` |
+| Status or logs | `make ps PRESET=YOUR-PRESET`, `make logs PRESET=YOUR-PRESET` |
+| Inspect a running VPN | `make test-vpn PRESET=YOUR-PRESET` |
+| Archive host config | `make backup PRESET=YOUR-PRESET` |
+
+Replace `YOUR-PRESET` with its catalog ID. Repeat the complete service additions/removals when regenerating. The backup archive excludes `.env`, external state, and named-volume databases; follow [updates and backups](../projects/plundarr/upgrading.md).
 
 > [!CAUTION]
-> `make nuke` removes scoped Docker resources/cache, clears Gluetun runtime state, and overwrites the saved VPN pair with examples. `make delete-config` deletes the selected config tree. Preserve needed VPN files and independent application backups first. Neither is an ordinary update step.
+> `make remove-stack` removes the selected project's Docker resources, the separate Maraudarr project, and scoped build cache; application volumes, deployment settings, VPN files, config, and backups remain. `make delete-config` deletes the selected host config tree, including exports stored there. Neither is an ordinary update step.
 
-Use `make help` and the [developer documentation](https://scottgigawatt.github.io/plundarr/) for the complete target list. `make clean` removes disposable developer artifacts, preserving deployments and Docker resources.
+`make clean-artifacts` removes only disposable developer artifacts. `make config` and `make env` print resolved values and can reveal credentials. Use `make help` for the full list and source documentation for [maintenance tools](https://scottgigawatt.github.io/plundarr/project-guides/).
 
-## Privateerr standalone source
+## Privateerr repository helpers
 
-| Task | Command |
-| --- | --- |
-| Generate a fresh saved pair once | `make run-privateerr` |
-| Pull and start the application stack | `make up` |
-| Build Privateerr from the checkout and start | `make up-build` |
-| Inspect services | `make ps`, `make logs` |
-| Stop while preserving saved configuration | `make down` |
+From the [standalone checkout](../projects/privateerr/quick-start.md), `make up` pulls and starts the three published services; `make ps`, `make logs`, and `make down` provide their Compose equivalents. `make up-build` builds Privateerr from source. `make wireguard-config` builds and creates fresh VPN files once; stop every supervisor sharing the destination first.
 
-Follow the [standalone setup](../projects/privateerr/quick-start.md#run-the-standalone-example-stack) before startup. Stop every supervisor sharing the output directory before one-shot generation. Developer and live-test targets belong to the [Privateerr testing guide](https://scottgigawatt.github.io/privateerr/development/privateerr/testing/).
+Source builds and disruptive live tests belong to the [developer testing guide](https://scottgigawatt.github.io/privateerr/development/privateerr/testing/).
 
-## Preset examples
+## Plundarrpedia authoring
 
-Use the [preset comparison](../projects/presets/index.md) for focused deployments and service selection. Repeat the complete additions/removals on regeneration.
-
-## Plundarrpedia
-
-| Task | Command |
-| --- | --- |
-| Preview authoring with live reload | `make serve` |
-| Export the strict site | `make site` |
-| Check Markdown and repository rules | `make markdown`, `make lint` |
-| Build and start a local production copy | `make run` |
-| Stop the local copy | `make down` |
-
-See [contributing](../CONTRIBUTING.md) for prerequisites and [advanced usage](../ADVANCED_USAGE.md) for image/maintenance details. `make clean` deletes only generated site output.
-
-## Universal diagnostics
-
-Inspect status first, then the failing service's logs:
-
-```sh
-docker compose ps
-docker compose logs --tail=100 SERVICE
-```
-
-Replace `SERVICE` with its Compose name. Validate syntax with `docker compose config --quiet`; inspect resolved output locally only when needed.
+Use the [contribution guide](../CONTRIBUTING.md) for `make docs-serve`, `make docs`, and lint prerequisites. Use the [image guide](../GHCR_README.md) to host the published wiki; local builds are optional.

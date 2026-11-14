@@ -13,9 +13,9 @@
 ALL=all
 BUILD=build
 BUILD_DEPENDS=build-depends
-BUILD_MULTIARCH=build-multiarch
+BUILD_PLATFORMS=build-platforms
 CHECK_ENV=check-env
-CLEAN=clean
+CLEAN_ARTIFACTS=clean-artifacts
 CONFIG=config
 DOWN=down
 ENV=env
@@ -26,8 +26,8 @@ MARKDOWN=markdown
 PRINT_CONFIG=print-config
 PRINT_ENV=print-env
 RUN=run
-SERVE=serve
-SITE=site
+DOCS_SERVE=docs-serve
+DOCS=docs
 START=start
 STOP=stop
 TEST_WORKFLOWS=test-workflows
@@ -37,9 +37,9 @@ TARGETS= \
 	$(ALL) \
 	$(BUILD) \
 	$(BUILD_DEPENDS) \
-	$(BUILD_MULTIARCH) \
+	$(BUILD_PLATFORMS) \
 	$(CHECK_ENV) \
-	$(CLEAN) \
+	$(CLEAN_ARTIFACTS) \
 	$(CONFIG) \
 	$(DOWN) \
 	$(ENV) \
@@ -50,8 +50,8 @@ TARGETS= \
 	$(PRINT_CONFIG) \
 	$(PRINT_ENV) \
 	$(RUN) \
-	$(SERVE) \
-	$(SITE) \
+	$(DOCS_SERVE) \
+	$(DOCS) \
 	$(START) \
 	$(STOP) \
 	$(TEST_WORKFLOWS) \
@@ -193,13 +193,13 @@ $(BUILD): $(BUILD_DEPENDS) $(CHECK_ENV)
 		$(PLUNDARRPEDIA_SERVICE)
 
 #
-# $(BUILD_MULTIARCH): Verify all published platforms with a cache-only build.
+# $(BUILD_PLATFORMS): Verify all published platforms with a cache-only build.
 #
 # Dependencies:
 #   $(BUILD_DEPENDS) - Ensure Docker and Docker Compose are installed.
 #   $(CHECK_ENV) - Ensure the deployment environment file exists.
 #
-$(BUILD_MULTIARCH): $(BUILD_DEPENDS) $(CHECK_ENV)
+$(BUILD_PLATFORMS): $(BUILD_DEPENDS) $(CHECK_ENV)
 	@echo "\nVerifying multi-architecture builds for amd64, arm64, and arm/v7. 🧭"
 	@set -a; \
 	. ./$(COMPOSE_ENV_FILE); \
@@ -214,13 +214,13 @@ $(BUILD_MULTIARCH): $(BUILD_DEPENDS) $(CHECK_ENV)
 		$(DOCKER_BUILD_CONTEXT)
 
 #
-# $(SITE): Export the strict static site through a one-shot Compose service.
+# $(DOCS): Export the strict static site through a one-shot Compose service.
 #
 # Dependencies:
 #   $(BUILD_DEPENDS) - Ensure Docker and Docker Compose are installed.
 #   $(CHECK_ENV) - Ensure the deployment environment file exists.
 #
-$(SITE): $(BUILD_DEPENDS) $(CHECK_ENV)
+$(DOCS): $(BUILD_DEPENDS) $(CHECK_ENV)
 	@echo "\nRendering the static Plundarrpedia site. 🗺️"
 	SITE_OUTPUT_PATH=$(SITE_OUTPUT_PATH) \
 		$(DOCKER_COMPOSE) $(COMPOSE_PROJECT_OPTIONS) run \
@@ -228,9 +228,9 @@ $(SITE): $(BUILD_DEPENDS) $(CHECK_ENV)
 		$(SITE_SERVICE)
 
 #
-# $(CLEAN): Delete only the configured generated static-site directory.
+# $(CLEAN_ARTIFACTS): Delete only the configured generated static-site directory.
 #
-$(CLEAN):
+$(CLEAN_ARTIFACTS):
 	@case "$(SITE_OUTPUT_PATH)" in \
 		""|"."|".."|"/"|/*|*".."*) \
 			echo "Refusing unsafe SITE_OUTPUT_PATH: $(SITE_OUTPUT_PATH)"; \
@@ -245,12 +245,12 @@ $(CLEAN):
 	fi
 
 #
-# $(SERVE): Run the Compose authoring service with live reload.
+# $(DOCS_SERVE): Run the Compose authoring service with live reload.
 #
 # Dependencies:
 #   $(BUILD_DEPENDS) - Ensure Docker and Docker Compose are installed.
 #
-$(SERVE): $(BUILD_DEPENDS)
+$(DOCS_SERVE): $(BUILD_DEPENDS)
 	@echo "\nStarting the authoring server on port $(MKDOCS_AUTHOR_PORT). 📚"
 	MKDOCS_AUTHOR_PORT=$(MKDOCS_AUTHOR_PORT) \
 		$(DOCKER_COMPOSE) $(COMPOSE_AUTHOR_OPTIONS) run \
@@ -371,9 +371,9 @@ $(HELP):
 	$(call help_line,$(ALL),Builds the production Plundarrpedia image.)
 	$(call help_line,$(BUILD),Builds the production image through Compose.)
 	$(call help_line,$(BUILD_DEPENDS),Ensures Docker and Compose are installed.)
-	$(call help_line,$(BUILD_MULTIARCH),Verifies amd64/arm64/arm/v7 builds.)
+	$(call help_line,$(BUILD_PLATFORMS),Check image builds for amd64/arm64/arm/v7.)
 	$(call help_line,$(CHECK_ENV),Ensures .env exists.)
-	$(call help_line,$(CLEAN),Deletes the generated static site.)
+	$(call help_line,$(CLEAN_ARTIFACTS),Delete the generated static site; keep source files and Docker resources.)
 	$(call help_line,$(CONFIG),Renders the Docker Compose model.)
 	$(call help_line,$(DOWN),Stops and removes the complete Compose stack.)
 	$(call help_line,$(ENV),Prints Compose interpolation values.)
@@ -383,8 +383,8 @@ $(HELP):
 	$(call help_line,$(PRINT_CONFIG),Prints uncommented Compose YAML.)
 	$(call help_line,$(PRINT_ENV),Prints uncommented example env values.)
 	$(call help_line,$(RUN),Builds and starts the Compose stack.)
-	$(call help_line,$(SERVE),Starts the Compose authoring service.)
-	$(call help_line,$(SITE),Exports the strict static site through Compose.)
+	$(call help_line,$(DOCS_SERVE),Preview documentation with live reload at localhost:8000.)
+	$(call help_line,$(DOCS),Build documentation with strict checks and export it to site/.)
 	$(call help_line,$(START),Alias for $(RUN).)
 	$(call help_line,$(STOP),Alias for $(DOWN).)
 	$(call help_line,$(TEST_WORKFLOWS),Tests notifications without contacting Discord.)

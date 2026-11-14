@@ -13,6 +13,10 @@
     "ruff.importStrategy": "useBundled",
 
     "cSpell.words": [
+        "Segoe",
+        "scrollfix",
+        "Donath",
+        "endmacro",
         "urandom",
         "startswith",
         "cksum",
@@ -34,6 +38,7 @@
         "configurator",
         "Cruisarr",
         "cutover",
+        "dasharray",
         "Dockge",
         "downloaders",
         "Duplicati",
@@ -72,6 +77,8 @@
         "multiarch",
         "nghttp",
         "nickfedor",
+        "noexec",
+        "nosuid",
         "nosniff",
         "Notifiarr",
         "NZBGET",

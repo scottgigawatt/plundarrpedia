@@ -10,9 +10,9 @@ Use this page to build or host Plundarrpedia and review its publication model. F
 
 ## Authoring routes
 
-`make serve` starts the Docker-based live preview at <http://localhost:8000>, using `example.env` if no local `.env` exists. Use `make serve MKDOCS_AUTHOR_PORT=8001` for a port conflict.
+`make docs-serve` starts the Docker-based live preview at <http://localhost:8000>, using `example.env` if no local `.env` exists. Use `make docs-serve MKDOCS_AUTHOR_PORT=8001` for a port conflict.
 
-For other build/runtime targets, create `.env` from `example.env` only if absent and review host-specific values. Keep existing assignments. `make site` exports a strict build to `site/`; `make clean` deletes that generated directory, so inspect any `SITE_OUTPUT_PATH` override first. Edit sources, not generated HTML.
+For other build/runtime targets, create `.env` from `example.env` only if absent and review host-specific values. Keep existing assignments. `make docs` exports a strict build to `site/`; `make clean-artifacts` deletes that generated directory, so inspect any `SITE_OUTPUT_PATH` override first. Edit sources, not generated HTML.
 
 ## Material features
 
@@ -29,10 +29,10 @@ make build
 The image serves static files on port `8080` through unprivileged Nginx. It supports amd64, arm64, and arm/v7. Validate all published platforms when image inputs change:
 
 ```sh
-make build-multiarch
+make build-platforms
 ```
 
-This Buildx target is cache-only by default, not publication. The [README](https://github.com/scottgigawatt/plundarrpedia#readme) explains running a published image without rebuilding source.
+This Buildx target is cache-only by default, not publication. The [published-image hosting guide](GHCR_README.md) explains running a published image without rebuilding source.
 
 ## Publishing routes
 
@@ -47,9 +47,7 @@ Workflows have source-path filters. A merge alone does not prove both publicatio
 
 ## Build notifications
 
-Image pipeline updates go to optional Asteres and Hades webhooks. GitHub Pages updates go only to Asteres and identify the documentation build and deployment separately from the Docker image. Started updates use the fixed Plundarrpedia blue; success is green, failure is red, attention needed is yellow, and cancelled or skipped updates are gray.
-
-Maintainers configure repository secrets `DISCORD_WEBHOOK_URL` for Asteres and `DISCORD_HADES_HOOK_URL` for Hades. Missing secrets skip their destination, and delivery failures do not change the publication result. Never put actual webhook URLs in source, issues, or logs. Follow the [notification configuration and preview guide](https://github.com/scottgigawatt/plundarrpedia/blob/main/.github/discord/README.md) to confirm destinations, edit copy, and test without sending messages.
+Maintainers can configure optional Discord publication notices. The [notification guide](https://github.com/scottgigawatt/plundarrpedia/blob/main/.github/discord/README.md) owns destinations, secret names, payload previews, and delivery troubleshooting. Notification failures do not change publication results; never use a rebuild to probe delivery.
 
 ## Pinned build inputs
 

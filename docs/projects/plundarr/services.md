@@ -13,7 +13,8 @@ Choose services for the tasks you need. `make services` and `make presets` repor
 
 | Services | Purpose |
 | --- | --- |
-| Privateerr and Gluetun | Generate PIA settings and run the VPN tunnel respectively |
+| Privateerr | Generate the PIA WireGuard configuration file and monitor VPN recovery |
+| Gluetun | Run the VPN tunnel used by torrent clients |
 | Prowlarr | Share indexers across media managers |
 | FlareSolverr | Handle supported challenges when a configured indexer requires it |
 
@@ -26,11 +27,11 @@ Choose services for the tasks you need. `make services` and `make presets` repor
 | Radarr, Sonarr, Sonarr Anime, Lidarr | Movie, television, separate anime, or music management |
 | Whisparr and Whisparr Alt | Independent adult-media instances with separate providers, state, and categories |
 | Bazarr | Subtitles |
-| Seerr, Cruisarr, or Velvarr | Media requests; Cruisarr and Velvarr use Jellyfin authentication |
+| Seerr or Cruisarr | Media requests; Cruisarr uses Jellyfin authentication |
 | Cleanuparr | Policy-driven rejected/stalled download cleanup |
 | Recyclarr | Explicit preview/apply of Radarr/Sonarr quality settings |
 
-Lidarr supports amd64/arm64, not arm/v7. Cruisarr requires amd64/arm64 and private-registry access; complete [Boudoirr setup](../presets/boudoirr.md) before use. The optional official Velvarr image requires amd64 and has provider-specific limits. See [NZBGet settings](configuration.md#nzbget-first-run-settings) and [Recyclarr commands](configuration.md#music-and-quality-synchronization) for application setup.
+Lidarr supports amd64/arm64, not arm/v7. Cruisarr requires amd64/arm64 and private-registry access; complete [Boudoirr setup](../presets/boudoirr.md) before use. See [NZBGet settings](configuration.md#nzbget-first-run-settings) and [Recyclarr commands](configuration.md#music-and-quality-synchronization) for application setup.
 
 ## Playback and ebooks
 
@@ -38,10 +39,11 @@ Lidarr supports amd64/arm64, not arm/v7. Cruisarr requires amd64/arm64 and priva
 | --- | --- |
 | Plex | Host-networked media server with read-only library mounts |
 | Jellyfin | Media server with a writable `/data` root |
+| Stash | Independent adult-media cataloging and playback with protected shared media |
 | Jellyfin Vue | Optional experimental browser client; requires a browser-reachable Jellyfin server |
 | Calibre-Web Automated | Ebook library and automatic ingest |
 
-Jellyfin and Cruisarr/Velvarr/Vue can connect across projects; selecting a client does not force a local Jellyfin server. Vue and Calibre-Web Automated require amd64/arm64. Calibre's ingest directory removes processed files, and its image is excluded from Watchtower because updates can migrate databases. Follow [media-server and ebook setup](../presets/media-servers-and-books.md).
+Jellyfin and Cruisarr/Vue can connect across projects; selecting a client does not force a local Jellyfin server. Stash is a removable Boudoirr default; see [shared-library setup](../presets/boudoirr.md#add-stash-cataloging) before enabling file changes. Vue and Calibre-Web Automated require amd64/arm64. Calibre's ingest directory removes processed files, and its image is excluded from Watchtower because updates can migrate databases. Follow [media-server and ebook setup](../presets/media-servers-and-books.md).
 
 ## Media curation utilities
 
@@ -63,7 +65,7 @@ Kometa uses external operator-owned configuration. Themerr requires amd64/arm64 
 | Duplicati | Encrypted configuration/host-data backups |
 | Portainer | Docker management through the host socket |
 | Speedtest Tracker and Apprise | Network history and notifications |
-| Watchtower | Deliberate automatic or one-shot image updates |
+| Watchtower | Automatic updates or a single update pass |
 
 Read [Tracearr setup and database exports](monitoring.md), [Homepage login](homepage.md), and [Portainer access](../presets/portainer.md) before launch.
 
@@ -72,12 +74,11 @@ Read [Tracearr setup and database exports](monitoring.md), [Homepage login](home
 
 ## Inspect dependency resolution
 
-After [choosing the generator](quick-start.md#choose-the-generator), replace the placeholders with catalog IDs:
+After [choosing the generator](quick-start.md#use-repository-helpers-later), replace the placeholders with catalog IDs:
 
 ```sh
-make ship PRESET=YOUR-PRESET ADD_SERVICES=SERVICE-ID
+make generate PRESET=YOUR-PRESET ADD_SERVICES=SERVICE-ID
 make compose-services PRESET=YOUR-PRESET
-make config PRESET=YOUR-PRESET
 ```
 
 Keep your complete existing service selection on regeneration. Generator architecture support does not guarantee support for every selected application.

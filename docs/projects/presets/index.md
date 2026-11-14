@@ -1,63 +1,56 @@
 ---
-title: Choose a Preset
-description: Compare the maintained Plundarr presets and select the smallest generated deployment that fits the job.
+title: Choose a preset
+description: Choose a focused media server, automation stack, or utility project.
 icon: material/view-grid-plus
-status: updated
 ---
 
-# Choose a Plundarr preset
+# Choose a preset
 
-Maraudarr generates every normal deployment under `dist/<preset>/` with one commented `docker-compose.yml`, one editable `.env`, and the selected service configuration directories. Choose the smallest preset that owns the job, then add or remove optional services deliberately.
+A preset is a starting service selection in Maraudarr. Choose it in the [interactive generator](../plundarr/quick-start.md#1-open-the-interactive-generator), adjust optional services, and review the final selection. Each project gets its own `dist/<preset>/` directory.
 
-## Compare the presets
+| 🗺️ Preset | 🎯 Use it for | ✅ Before launch |
+| --- | --- | --- |
+| 🏴‍☠️&nbsp;`plundarr` | Movies, television, ebooks, requests, monitoring, and VPN downloads | [Default quick start](../plundarr/quick-start.md) |
+| 🔞&nbsp;`boudoirr` | Whisparr automation, requests, Jellyfin playback, and Stash cataloging | [Boudoirr setup](boudoirr.md); Cruisarr requires private-image access |
+| 🎞️&nbsp;`jellyfin`, 📺&nbsp;`plex` | One media server | [Media server setup](media-servers-and-books.md) |
+| 📚&nbsp;`calibre-web-automated` | Ebook library and ingest | [Book paths and ingest behavior](media-servers-and-books.md#calibre-web-automated) |
+| 🎭&nbsp;`duplex` | Plex curation and Plex/Jellyfin theme songs | [External configuration and keys](duplex.md) |
+| 🔭&nbsp;`watchtower` | Deliberate container image updates | [Host update policy](watchtower.md) |
+| 🚢&nbsp;`portainer` | Docker host management | [Administrator access](portainer.md) |
+| 🧩&nbsp;`custom` | Your own service selection | Review dependencies and each selected service |
 
-| Preset | Primary purpose | Required core | Removable defaults |
-| --- | --- | --- | --- |
-| `plundarr` | Movies, television, subtitles, ebooks, requests, monitoring, and VPN-protected downloads | Privateerr, Gluetun, FlareSolverr, Prowlarr, Radarr, Sonarr, Bazarr, Seerr, Homepage, Duplicati, Speedtest Tracker, Apprise | qBittorrent, Calibre-Web Automated, Cleanuparr, Watchtower, Tracearr |
-| `boudoirr` | Whisparr automation with adult requests, playback, and VPN downloads | Privateerr, Gluetun, FlareSolverr, Prowlarr, Whisparr | qBittorrent, Cruisarr, Jellyfin, Cleanuparr, Watchtower |
-| `jellyfin` | One focused Jellyfin media server | Jellyfin | None |
-| `plex` | One focused Plex Media Server | Plex | None |
-| `calibre-web-automated` | Ebook library and automatic ingest | Calibre-Web Automated | None |
-| `duplex` | Plex curation, Plex/Jellyfin theme songs, and maintenance | Kometa, ImageMaid, Themerr | PATTRMM Neo, Notifiarr |
-| `watchtower` | Persistent or one-shot updates for eligible host containers | Watchtower | None |
-| `portainer` | Docker host management through Portainer Community Edition | Portainer | None |
-| `custom` | A deployment assembled service by service | None | None |
+Required core services stay selected. Removable defaults start checked, and optional services start unchecked. Maraudarr adds required companions and shows the result before generating files. Generator platform support does not guarantee that every application supports your host.
 
-Preset core services cannot be removed. Defaults are preselected conveniences that you may remove interactively or with `REMOVE_SERVICES`. Maraudarr resolves required companions before writing the final project.
+## Launch a focused project
 
-## Generate and inspect a preset
+Choose your preset and generate it. Open its `.env`, edit the indicated host settings, and prepare any service-specific files from its guide. From the generated directory containing `docker-compose.yml`:
+
+```sh
+docker compose config --quiet
+docker compose up --detach --pull always
+docker compose ps
+```
+
+For Synology or TrueNAS, transfer the complete generated directory and use the [platform procedure](../../guides/index.md) instead of launching another copy locally.
+
+## Use repository helpers
+
+After [setting up the optional Git/Make route](../plundarr/quick-start.md#use-repository-helpers-later), you can inspect the selected image's catalog and generate directly:
 
 ```sh
 make presets
 make services
-make ship PRESET=YOUR-PRESET
-make config PRESET=YOUR-PRESET
+make generate PRESET=boudoirr
 ```
 
-Complete [generator setup](../plundarr/quick-start.md#choose-the-generator) first. Replace `YOUR-PRESET` with a preset ID from the table. Review `dist/YOUR-PRESET/.env` before running `make up PRESET=YOUR-PRESET`.
-
-## Add or remove services
-
-`ADD_SERVICES` and `REMOVE_SERVICES` accept comma-separated service IDs:
+`ADD_SERVICES` and `REMOVE_SERVICES` accept comma-separated service IDs. For example:
 
 ```sh
-make ship PRESET=duplex ADD_SERVICES=watchtower
-make ship PRESET=plundarr REMOVE_SERVICES=qbittorrent,cleanuparr ADD_SERVICES=nzbget
-make ship PRESET=plundarr REMOVE_SERVICES=calibre-web-automated
+make generate PRESET=plundarr REMOVE_SERVICES=qbittorrent,cleanuparr ADD_SERVICES=nzbget
 ```
 
-Keep your complete `ADD_SERVICES` and `REMOVE_SERVICES` selection when regenerating; preserving environment values does not preserve a previous service selection. Tracearr is the default Plundarr monitor; Tautulli and Overlay Reset are optional. See [media monitoring](../plundarr/monitoring.md) and the [Duplex guide](duplex.md).
+Repeat your complete service selection on regeneration; saved `.env` values do not reselect services. Regeneration preserves application state, but does not stop omitted containers or move external data. Follow [updates and backups](../plundarr/upgrading.md) before changing an existing project.
 
-Generator architecture support is not service support. Boudoirr's Cruisarr image requires amd64/arm64 and authenticated access to its private registry package; see [Boudoirr prerequisites](boudoirr.md#before-you-start). Duplex's required Themerr supports amd64/arm64, not arm/v7. Review the [service catalog](../plundarr/services.md) and each selected image before launch.
+## Run projects side by side
 
-## Run presets side by side
-
-Each preset has its own Compose project and `dist/<preset>/` directory. Bridge-network defaults run from `172.20.0.0/16` through `172.28.0.0/16`: Watchtower uses `172.26.0.0/16`, Portainer uses `172.27.0.0/16`, and Custom uses `172.28.0.0/16`. Some presets offset host ports; always check the generated values before running projects together.
-
-Change a subnet when it overlaps your local-area network, another Docker network, or a route reached through a virtual private network. Plex uses host networking and is the main exception to the bridge-network pattern.
-
-## Update without losing state
-
-Regeneration preserves known environment assignments and application state, but it does not stop containers omitted from the selection or move external data. Back up databases, private keys, and external settings separately; inspect image pins, mounts, service choices, and Compose orphans before recreating the project. Follow [update and backup checks](../plundarr/upgrading.md).
-
-[Generate the default Plundarr stack](../plundarr/quick-start.md){ .md-button .md-button--primary } [Read the configuration guide](../plundarr/configuration.md){ .md-button }
+Presets have distinct project names, networks, and some offset host ports. Review the generated ports and subnet before launch; defaults do not reserve resources on your host. Plex uses host networking. Run only one persistent Watchtower per Docker host, and never run two applications against the same database files.
