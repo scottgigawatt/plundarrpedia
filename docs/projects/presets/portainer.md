@@ -38,6 +38,6 @@ Portainer receives the host Docker socket and can control containers on that hos
 
 Regeneration preserves environment values and Portainer data. Recreate the service after editing `.env`. Portainer is eligible for Watchtower updates on its configured image channel if an existing host updater manages it, even though this preset does not start an updater.
 
-Select it in the picker to add it to another compatible preset. Repository users can use `make ship PRESET=portainer` or `ADD_SERVICES=portainer`, retaining the complete intended selection. Check generated host ports because other presets may offset them.
+Select it in the picker to add it to another compatible preset. Repository users can use `make generate PRESET=portainer` or `ADD_SERVICES=portainer`, retaining the complete intended selection. Check generated host ports because other presets may offset them.
 
 [Compare presets](index.md){ .md-button }

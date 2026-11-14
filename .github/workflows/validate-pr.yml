@@ -115,4 +115,4 @@ jobs:
                   exit-code: 1
 
             - name: "Test the Three-Deck Hull Plans 🛠️"
-              run: make build-multiarch
+              run: make build-platforms

@@ -86,9 +86,9 @@ Apply [GitHub's documentation style guide](https://docs.github.com/en/contributi
 
 - Read the target before running it. Bare `make` currently builds the production image through `all: build`; it is not a harmless help command. Use `make help` to list targets.
 - Make checks Docker Compose availability while parsing, even for `help`, `markdown`, `lint`, and `clean`. Docker and Compose must be installed; image and site builds also need a working daemon and may pull dependencies.
-- Build, site, config, and runtime targets require `.env`; copy `example.env` only when `.env` is absent, and use public defaults for validation. `make serve` can fall back to `example.env`. Never overwrite an existing deployment environment.
-- `make serve` runs live reload on host port `8000` by default. `make serve MKDOCS_AUTHOR_PORT=8001` avoids a local port conflict. `make site` exports a strict build to `site/`; it does not start the production server.
-- `make clean` deletes the configured generated site directory. Inspect `SITE_OUTPUT_PATH` before using it; existing guards reject some unsafe paths, but they are not a reason to trust arbitrary overrides or shell input.
+- Build, site, config, and runtime targets require `.env`; copy `example.env` only when `.env` is absent, and use public defaults for validation. `make docs-serve` can fall back to `example.env`. Never overwrite an existing deployment environment.
+- `make docs-serve` runs live reload on host port `8000` by default. `make docs-serve MKDOCS_AUTHOR_PORT=8001` avoids a local port conflict. `make docs` exports a strict build to `site/`; it does not start the production server.
+- `make clean-artifacts` deletes the configured generated site directory. Inspect `SITE_OUTPUT_PATH` before using it; existing guards reject some unsafe paths, but they are not a reason to trust arbitrary overrides or shell input.
 - `make run`/`up` builds and starts/recreates the production stack; `start`, `stop`, and `down` change container state. These are operational actions, not ordinary lint checks. Avoid them during documentation-only validation.
 - For authorized Make changes, preserve `.PHONY` declarations, real prerequisites, quoted paths, failure propagation, safe cleanup checks, and separation of validation from runtime operations. Do not introduce implicit destructive or credentialed actions into default/check targets.
 - Preserve Make's framed target-purpose comments in the existing `$(TARGET): Purpose.` form. Where prerequisites exist, retain the `Dependencies:` block with an aligned entry explaining each real prerequisite, enclosed by blank `#` separator lines. Update those explanations when dependencies change; do not replace the blocks with bare target names or invent prerequisites for presentation.
@@ -110,9 +110,9 @@ Run checks appropriate to the changed files and record exact results. Use public
 | Change | Real local checks |
 | --- | --- |
 | Agent guidance or other Markdown | `make markdown`, `pre-commit run --all-files`, and `git diff --check`. |
-| Public pages, navigation, extensions, or theme | Above checks plus `make site`; inspect affected pages, links, anchors, and components in the rendered site. |
+| Public pages, navigation, extensions, or theme | Above checks plus `make docs`; inspect affected pages, links, anchors, and components in the rendered site. |
 | Compose or environment examples | `make config` using a local `.env` copied from public defaults; review output for secrets before sharing. |
-| Docker context, requirements, theme, or runtime | `make build`; use `make build-multiarch` when image inputs or workflows affect published platforms. |
+| Docker context, requirements, theme, or runtime | `make build`; use `make build-platforms` when image inputs or workflows affect published platforms. |
 | Workflow or container source | Relevant pre-commit actionlint, YAML, and hadolint checks plus the build/config checks affected by the change. |
 
 With installed dependencies or cached hook environments, Markdown and static checks can run offline. Initial pre-commit setup can need network access; the hadolint hook uses Docker. Compose config validation needs the CLI but does not start containers. Container builds need the daemon and potentially registry/package access. Report missing prerequisites rather than treating skipped checks as passing.
@@ -123,7 +123,7 @@ As used in CI, a strict site build can also run from the repository root in an i
 mkdocs build --strict
 ```
 
-This validates the configured source site, not the production Nginx image or all three architectures. The root `AGENTS.md` is outside `docs/` and is checked by Markdown lint rather than rendered as a wiki page. Do not claim a render review for files the site does not include. `make build-multiarch` is a cache-only Buildx validation by default, not an image publication command.
+This validates the configured source site, not the production Nginx image or all three architectures. The root `AGENTS.md` is outside `docs/` and is checked by Markdown lint rather than rendered as a wiki page. Do not claim a render review for files the site does not include. `make build-platforms` is a cache-only Buildx validation by default, not an image publication command.
 
 ## Handoff
 

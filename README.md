@@ -63,16 +63,16 @@ docker run --detach --name plundarrpedia \
   ghcr.io/scottgigawatt/plundarrpedia:latest
 ```
 
-Open <http://localhost:8000>. Stop and remove this container with `docker stop plundarrpedia` and `docker rm plundarrpedia`. The [image guide](docs/GHCR_README.md) covers image selection and the Compose option.
+Open <http://localhost:8000>. Stop and remove this container with `docker stop plundarrpedia` and `docker rm plundarrpedia`. The [image guide](https://scottgigawatt.github.io/plundarrpedia/GHCR_README/) covers image selection and the Compose option.
 
 ## Improve the wiki
 
-Follow [contributing](docs/CONTRIBUTING.md) to clone the source, preview pages, and validate changes. [Advanced usage](docs/ADVANCED_USAGE.md) covers local image builds and publication. Project repositories own exact configuration and code; this wiki owns integrated operator walkthroughs.
+Follow [contributing](https://scottgigawatt.github.io/plundarrpedia/CONTRIBUTING/) to clone the source, preview pages, and validate changes. [Advanced usage](https://scottgigawatt.github.io/plundarrpedia/ADVANCED_USAGE/) covers local image builds and publication. Project repositories own exact configuration and code; this wiki owns integrated operator walkthroughs.
 
 ## Get help
 
 - [Report a documentation problem](https://github.com/scottgigawatt/plundarrpedia/issues/new/choose) with the page and sanitized reproduction steps.
 - Ask setup questions in [HADES Discord](https://discord.gg/BpEGzWwGYf).
-- Follow the [security policy](docs/SECURITY.md) for private vulnerability reports and the [Code of Conduct](docs/CODE_OF_CONDUCT.md) when participating.
+- Follow the [security policy](https://scottgigawatt.github.io/plundarrpedia/SECURITY/) for private vulnerability reports and the [Code of Conduct](https://scottgigawatt.github.io/plundarrpedia/CODE_OF_CONDUCT/) when participating.
 
 Maintained by [Scott Gigawatt](https://github.com/scottgigawatt); licensed under [Apache 2.0](LICENSE).

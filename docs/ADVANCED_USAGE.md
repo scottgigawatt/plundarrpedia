@@ -10,9 +10,9 @@ Use this page to build or host Plundarrpedia and review its publication model. F
 
 ## Authoring routes
 
-`make serve` starts the Docker-based live preview at <http://localhost:8000>, using `example.env` if no local `.env` exists. Use `make serve MKDOCS_AUTHOR_PORT=8001` for a port conflict.
+`make docs-serve` starts the Docker-based live preview at <http://localhost:8000>, using `example.env` if no local `.env` exists. Use `make docs-serve MKDOCS_AUTHOR_PORT=8001` for a port conflict.
 
-For other build/runtime targets, create `.env` from `example.env` only if absent and review host-specific values. Keep existing assignments. `make site` exports a strict build to `site/`; `make clean` deletes that generated directory, so inspect any `SITE_OUTPUT_PATH` override first. Edit sources, not generated HTML.
+For other build/runtime targets, create `.env` from `example.env` only if absent and review host-specific values. Keep existing assignments. `make docs` exports a strict build to `site/`; `make clean-artifacts` deletes that generated directory, so inspect any `SITE_OUTPUT_PATH` override first. Edit sources, not generated HTML.
 
 ## Material features
 
@@ -29,10 +29,10 @@ make build
 The image serves static files on port `8080` through unprivileged Nginx. It supports amd64, arm64, and arm/v7. Validate all published platforms when image inputs change:
 
 ```sh
-make build-multiarch
+make build-platforms
 ```
 
-This Buildx target is cache-only by default, not publication. The [README](https://github.com/scottgigawatt/plundarrpedia#readme) explains running a published image without rebuilding source.
+This Buildx target is cache-only by default, not publication. The [published-image hosting guide](GHCR_README.md) explains running a published image without rebuilding source.
 
 ## Publishing routes
 

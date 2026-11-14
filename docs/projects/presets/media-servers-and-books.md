@@ -35,7 +35,7 @@ Local alternative styles and account-specific settings are covered in the [Jelly
 The experimental Vue frontend is optional and does not force a local server. Select it in the picker, or use the optional [repository helpers](../plundarr/quick-start.md#use-repository-helpers-later):
 
 ```sh
-make ship PRESET=jellyfin ADD_SERVICES=jellyfin-vue
+make generate PRESET=jellyfin ADD_SERVICES=jellyfin-vue
 ```
 
 It uses the upstream `unstable` channel and supports amd64/arm64, not arm/v7. The standalone Jellyfin preset exposes Vue on `28082`; Boudoirr uses `18082`. Set `JELLYFIN_VUE_DEFAULT_SERVERS` to browser-reachable URLs, or leave it empty for manual selection. Keep server selection enabled until that URL works. An HTTPS frontend requires an HTTPS Jellyfin URL; Docker service names and loopback addresses do not identify the server from a remote browser.
@@ -55,7 +55,7 @@ Plex uses host networking and separate read-only movie and television library mo
 
 ## Calibre-Web Automated
 
-Set `CWA_CONFIG_PATH`, `CWA_INGEST_PATH`, and `CWA_LIBRARY_PATH` to three separate writable host directories. For a new library, choose an empty library directory; CWA creates and registers the library automatically. For an existing library, point `CWA_LIBRARY_PATH` at the Calibre library directory containing `metadata.db`. See [CWA library setup](https://github.com/crocodilestick/Calibre-Web-Automated#library-auto-detect).
+Set `CWA_CONFIG_PATH`, `CWA_INGEST_PATH`, and `CWA_LIBRARY_PATH` to three separate writable host directories. For a new library, choose an empty library directory; CWA creates and registers the library automatically. For an existing library, point `CWA_LIBRARY_PATH` at the Calibre library directory containing `metadata.db`. See [CWA library setup](https://github.com/crocodilestick/Calibre-Web-Automated/blob/main/README.md#library-auto-detect).
 
 The ingest directory is destructive: Calibre-Web Automated removes books after processing them. Finish downloads elsewhere and place only completed files in the ingest directory. Set `CWA_NETWORK_SHARE_MODE=true` only when the library uses Network File System (NFS) or Server Message Block (SMB) storage.
 
@@ -78,9 +78,9 @@ The service image currently supports `linux/amd64` and `linux/arm64`, not `linux
 Jellyfin, Plex, and Calibre-Web Automated are also selectable services. Select them in the picker, or from a source checkout use these independent examples:
 
 ```sh
-make ship ADD_SERVICES=plex
-make ship PRESET=boudoirr REMOVE_SERVICES=cruisarr
-make ship REMOVE_SERVICES=calibre-web-automated
+make generate ADD_SERVICES=plex
+make generate PRESET=boudoirr REMOVE_SERVICES=cruisarr
+make generate REMOVE_SERVICES=calibre-web-automated
 ```
 
 Use `make services` before generation to confirm the current catalog and dependency resolution.

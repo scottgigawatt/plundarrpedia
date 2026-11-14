@@ -14,7 +14,7 @@ Run Privateerr with Gluetun and qBittorrent, or generate the larger Plundarr sta
 
     ---
 
-    Run three containers: Privateerr prepares the VPN settings, Gluetun runs the tunnel, and qBittorrent downloads through it.
+    Run three containers: Privateerr generates the PIA WireGuard configuration file, Gluetun runs the tunnel, and qBittorrent downloads through it.
 
     [:octicons-arrow-right-24: Start the VPN download stack](projects/privateerr/quick-start.md)
 
@@ -36,4 +36,4 @@ Use Docker with Compose v2, private storage for settings, and an active Private 
 
 For NAS deployment, use the [Synology or TrueNAS guide](guides/index.md) at the deployment step. You can generate a stack on a workstation and transfer it to the NAS.
 
-[See how the containers connect](start-here/architecture.md). Privateerr prepares configuration and can recover stale VPN connections; Gluetun carries VPN traffic.
+[See how the containers connect](start-here/architecture.md). The Privateerr container generates the PIA WireGuard configuration file and can recover stale VPN connections; Gluetun carries VPN traffic.

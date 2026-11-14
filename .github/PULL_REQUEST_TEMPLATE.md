@@ -11,10 +11,10 @@
 ## Validation 🧪
 
 - [ ] `make markdown` for Markdown changes
-- [ ] `make site` for pages, navigation, theme, or MkDocs configuration
+- [ ] `make docs` for pages, navigation, theme, or MkDocs configuration
 - [ ] `make config` for Compose or environment changes
 - [ ] `make build` for Dockerfile, requirements, theme, or runtime changes
-- [ ] `make build-multiarch` for image inputs or published-platform changes
+- [ ] `make build-platforms` for image inputs or published-platform changes
 - [ ] Light and dark themes inspected for visual changes
 - [ ] Synology, TrueNAS, or ordinary Docker instructions checked when affected
 - [ ] `pre-commit run --all-files`

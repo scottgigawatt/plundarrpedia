@@ -70,4 +70,4 @@ Check matching container paths, categories, manager read/write permissions, and 
 
 ## Safe reset
 
-Stop with `docker compose down` while preserving state. Back up private settings and export databases before destructive cleanup. Repository `make nuke` removes scoped Docker resources/cache while preserving application volumes, deployment files, VPN configuration, and backups. `make delete-config` deletes the selected host config tree and exports there. See [updates and backups](upgrading.md); cleanup does not replace recovery.
+Stop with `docker compose down` while preserving state. Back up private settings and export databases before destructive cleanup. Repository `make remove-stack` removes scoped Docker resources/cache while preserving application volumes, deployment files, VPN configuration, and backups. `make delete-config` deletes the selected host config tree and exports there. See [updates and backups](upgrading.md); cleanup does not replace recovery.

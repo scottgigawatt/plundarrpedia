@@ -40,13 +40,13 @@ After [setting up the optional Git/Make route](../plundarr/quick-start.md#use-re
 ```sh
 make presets
 make services
-make ship PRESET=boudoirr
+make generate PRESET=boudoirr
 ```
 
 `ADD_SERVICES` and `REMOVE_SERVICES` accept comma-separated service IDs. For example:
 
 ```sh
-make ship PRESET=plundarr REMOVE_SERVICES=qbittorrent,cleanuparr ADD_SERVICES=nzbget
+make generate PRESET=plundarr REMOVE_SERVICES=qbittorrent,cleanuparr ADD_SERVICES=nzbget
 ```
 
 Repeat your complete service selection on regeneration; saved `.env` values do not reselect services. Regeneration preserves application state, but does not stop omitted containers or move external data. Follow [updates and backups](../plundarr/upgrading.md) before changing an existing project.

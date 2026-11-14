@@ -7,7 +7,7 @@
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 790" role="img" aria-labelledby="title desc">
   <title id="title">VPN configuration and download traffic</title>
-  <desc id="desc">Privateerr writes WireGuard configuration and PIA settings that Gluetun reads. Privateerr can also send recovery settings directly to Gluetun's API. qBittorrent shares Gluetun's network and sends torrent traffic through Gluetun's VPN tunnel to PIA.</desc>
+  <desc id="desc">The Privateerr container writes the PIA WireGuard configuration file, wg0.conf, and matching server metadata, privateerr.env, that the Gluetun VPN container reads. Privateerr can also send recovery settings directly to Gluetun's API. qBittorrent shares Gluetun's network and sends torrent traffic through Gluetun's VPN tunnel to PIA.</desc>
   <defs>
     <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="none" stroke="#365a74" stroke-width="1.7"/></marker>
     <style>
@@ -28,7 +28,7 @@
   <text x="346" y="162" class="small">writes</text>
   <rect x="130" y="190" width="340" height="65" rx="10" class="node"/>
   <text x="300" y="218" class="name">Shared configuration files</text>
-  <text x="300" y="242" class="small">WireGuard + matching PIA settings</text>
+  <text x="300" y="242" class="small">wg0.conf + privateerr.env</text>
   <path d="M300 255 V309" class="line"/>
   <text x="360" y="290" class="small">reads at startup</text>
   <rect x="160" y="317" width="280" height="65" rx="10" class="node"/>

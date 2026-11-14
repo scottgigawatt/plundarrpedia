@@ -28,7 +28,7 @@ These optional commands run from a [Plundarr source checkout](../projects/plunda
 | --- | --- |
 | Interactive generation | `make configure` |
 | Inspect the selected catalog | `make presets`, `make services` |
-| Generate directly | `make ship PRESET=YOUR-PRESET` |
+| Generate directly | `make generate PRESET=YOUR-PRESET` |
 | Pull and start services | `make up PRESET=YOUR-PRESET` |
 | Status or logs | `make ps PRESET=YOUR-PRESET`, `make logs PRESET=YOUR-PRESET` |
 | Inspect a running VPN | `make test-vpn PRESET=YOUR-PRESET` |
@@ -37,16 +37,16 @@ These optional commands run from a [Plundarr source checkout](../projects/plunda
 Replace `YOUR-PRESET` with its catalog ID. Repeat the complete service additions/removals when regenerating. The backup archive excludes `.env`, external state, and named-volume databases; follow [updates and backups](../projects/plundarr/upgrading.md).
 
 > [!CAUTION]
-> `make nuke` removes the selected project's Docker resources, the separate Maraudarr project, and scoped build cache; application volumes, deployment settings, VPN files, config, and backups remain. `make delete-config` deletes the selected host config tree, including exports stored there. Neither is an ordinary update step.
+> `make remove-stack` removes the selected project's Docker resources, the separate Maraudarr project, and scoped build cache; application volumes, deployment settings, VPN files, config, and backups remain. `make delete-config` deletes the selected host config tree, including exports stored there. Neither is an ordinary update step.
 
-`make clean` removes only disposable developer artifacts. `make config` and `make env` print resolved values and can reveal credentials. Use `make help` for the full list and source documentation for [maintenance tools](https://scottgigawatt.github.io/plundarr/project-guides/).
+`make clean-artifacts` removes only disposable developer artifacts. `make config` and `make env` print resolved values and can reveal credentials. Use `make help` for the full list and source documentation for [maintenance tools](https://scottgigawatt.github.io/plundarr/project-guides/).
 
 ## Privateerr repository helpers
 
-From the [standalone checkout](../projects/privateerr/quick-start.md), `make up` pulls and starts the three published services; `make ps`, `make logs`, and `make down` provide their Compose equivalents. `make up-build` builds Privateerr from source. `make run-privateerr` builds and creates fresh VPN files once; stop every supervisor sharing the destination first.
+From the [standalone checkout](../projects/privateerr/quick-start.md), `make up` pulls and starts the three published services; `make ps`, `make logs`, and `make down` provide their Compose equivalents. `make up-build` builds Privateerr from source. `make wireguard-config` builds and creates fresh VPN files once; stop every supervisor sharing the destination first.
 
 Source builds and disruptive live tests belong to the [developer testing guide](https://scottgigawatt.github.io/privateerr/development/privateerr/testing/).
 
 ## Plundarrpedia authoring
 
-Use the [contribution guide](../CONTRIBUTING.md) for `make serve`, `make site`, and lint prerequisites. Use the [image guide](../GHCR_README.md) to host the published wiki; local builds are optional.
+Use the [contribution guide](../CONTRIBUTING.md) for `make docs-serve`, `make docs`, and lint prerequisites. Use the [image guide](../GHCR_README.md) to host the published wiki; local builds are optional.

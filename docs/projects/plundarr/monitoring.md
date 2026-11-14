@@ -16,8 +16,8 @@ The `tracearr` selection includes the application, TimescaleDB, and Redis as one
 For a focused alternative or another preset:
 
 ```sh
-make ship PRESET=plundarr REMOVE_SERVICES=tracearr ADD_SERVICES=tautulli
-make ship PRESET=duplex ADD_SERVICES=tracearr
+make generate PRESET=plundarr REMOVE_SERVICES=tracearr ADD_SERVICES=tautulli
+make generate PRESET=duplex ADD_SERVICES=tracearr
 ```
 
 These are separate examples. Keep your complete service additions and removals when regenerating an existing deployment. You may also select both monitors.
@@ -51,7 +51,7 @@ Regeneration rebuilds Homepage service cards while preserving existing `settings
 
 ## Back up and update
 
-Tracearr's database, Redis state, and internal backup workspace use project-scoped named Docker volumes. Regeneration, `make down`, and `make nuke` preserve these volumes. `make backup` archives the host config tree only; it does not dump databases or copy named volumes.
+Tracearr's database, Redis state, and internal backup workspace use project-scoped named Docker volumes. Regeneration, `make down`, and `make remove-stack` preserve these volumes. `make backup` archives the host config tree only; it does not dump databases or copy named volumes.
 
 With Tracearr running, export a consistent application backup before archiving host configuration. From the Plundarr repository root:
 

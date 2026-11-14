@@ -6,13 +6,13 @@ icon: material/transit-connection-variant
 
 # How the containers connect
 
-**Privateerr prepares VPN settings. Gluetun runs the tunnel. qBittorrent sends torrent traffic through Gluetun.** Privateerr is not a VPN tunnel and does not carry downloads.
+**The Privateerr container generates the PIA WireGuard configuration file. The Gluetun VPN container runs the tunnel. qBittorrent sends torrent traffic through Gluetun.** Privateerr is not a VPN tunnel and does not carry downloads.
 
-## VPN settings and traffic
+## VPN configuration and traffic
 
 ![Privateerr writes configuration for Gluetun and uses its recovery API; qBittorrent traffic travels through Gluetun to PIA](../assets/images/vpn-flow.svg)
 
-At startup, the Privateerr container writes the WireGuard configuration and matching PIA settings into a directory shared with Gluetun. Gluetun reads them and connects to PIA. During a sustained outage, Privateerr's Python supervisor can send replacement settings to Gluetun's authenticated internal API. Rewriting a file alone does not change a running tunnel.
+At startup, the Privateerr container writes the PIA WireGuard configuration file (`wg0.conf`) and matching server metadata (`privateerr.env`) into a directory shared with the Gluetun VPN container. Gluetun reads them and connects to PIA. During a sustained outage, Privateerr's Python supervisor can send replacement settings to Gluetun's authenticated internal API. Rewriting a file alone does not change a running tunnel.
 
 qBittorrent shares Gluetun's network, so its torrent traffic uses Gluetun's VPN tunnel. Privateerr stays on the ordinary project network so it can contact PIA when that tunnel is unavailable. Other applications normally remain on the project network.
 

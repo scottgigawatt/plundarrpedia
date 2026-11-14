@@ -13,7 +13,8 @@ Choose services for the tasks you need. `make services` and `make presets` repor
 
 | Services | Purpose |
 | --- | --- |
-| Privateerr and Gluetun | Generate PIA settings and run the VPN tunnel respectively |
+| Privateerr | Generate the PIA WireGuard configuration file and monitor VPN recovery |
+| Gluetun | Run the VPN tunnel used by torrent clients |
 | Prowlarr | Share indexers across media managers |
 | FlareSolverr | Handle supported challenges when a configured indexer requires it |
 
@@ -76,7 +77,7 @@ Read [Tracearr setup and database exports](monitoring.md), [Homepage login](home
 After [choosing the generator](quick-start.md#use-repository-helpers-later), replace the placeholders with catalog IDs:
 
 ```sh
-make ship PRESET=YOUR-PRESET ADD_SERVICES=SERVICE-ID
+make generate PRESET=YOUR-PRESET ADD_SERVICES=SERVICE-ID
 make compose-services PRESET=YOUR-PRESET
 make config PRESET=YOUR-PRESET
 ```

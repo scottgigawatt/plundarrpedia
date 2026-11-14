@@ -6,7 +6,7 @@ icon: material/flash
 
 # Start Privateerr, Gluetun, and qBittorrent
 
-This starts three published images. **Privateerr** prepares PIA WireGuard settings and monitors VPN recovery. **Gluetun** runs the VPN tunnel. **qBittorrent** downloads through Gluetun.
+This starts three published images. The **Privateerr container** generates the PIA WireGuard configuration file and monitors VPN recovery. The **Gluetun VPN container** runs the VPN tunnel. **qBittorrent** downloads through Gluetun.
 
 ## Before you start
 
@@ -17,7 +17,7 @@ You need Git, Docker with Compose v2, an active PIA subscription, and an amd64 o
 Start a new checkout:
 
 ```sh
-git clone https://github.com/scottgigawatt/privateerr.git
+git clone --recurse-submodules https://github.com/scottgigawatt/privateerr.git
 cd privateerr
 cp example.env .env
 ```
@@ -38,7 +38,7 @@ Generate the shared recovery key locally, then paste it into `PRIVATEERR_GLUETUN
 openssl rand -hex 24
 ```
 
-Keep `PIA_VPN_PROTOCOL=wireguard`, `PIA_CONNECT=false`, `PIA_PF=true`, `PRIVATEERR_AUTO_RECOVER=true`, and `QBITTORRENT_PORT_SYNC=true`. Privateerr and Gluetun share `config/gluetun/`; startup installs the integration scripts automatically.
+Keep `PIA_VPN_PROTOCOL=wireguard`, `PIA_CONNECT=false`, `PIA_PF=true`, `PRIVATEERR_AUTO_RECOVER=true`, and `QBITTORRENT_PORT_SYNC=true`. The Privateerr container and the Gluetun VPN container mount the same host directory, `config/gluetun/`; Privateerr installs the integration scripts there at startup.
 
 > [!WARNING]
 > Keep `.env`, WireGuard files, API keys, and unsanitized logs private. Do not commit them or paste them into support requests.

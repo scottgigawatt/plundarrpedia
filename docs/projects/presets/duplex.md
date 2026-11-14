@@ -26,7 +26,7 @@ The name is short for **Docker Utilities for Plex**. The preset does not deploy 
 
 ## Generate the preset
 
-Choose **Duplex** in the [interactive generator](../plundarr/quick-start.md#1-open-the-interactive-generator). Repository users can use `make ship PRESET=duplex` instead.
+Choose **Duplex** in the [interactive generator](../plundarr/quick-start.md#1-open-the-interactive-generator). Repository users can use `make generate PRESET=duplex` instead.
 
 Review `dist/duplex/.env`, especially Plex connection values, Kometa/ImageMaid paths, and Themerr's key permissions. Prepare the external settings and writable directories below, then validate and launch:
 
@@ -72,7 +72,7 @@ Keep seeded cleanup, automatic Jellyfin restarts, legacy-plugin removal, and use
 Select Overlay Reset in the picker. For optional [repository helpers](../plundarr/quick-start.md#use-repository-helpers-later), retain any other additions/removals:
 
 ```sh
-make ship PRESET=duplex ADD_SERVICES=overlay-reset
+make generate PRESET=duplex ADD_SERVICES=overlay-reset
 ```
 
 It is excluded from ordinary `make up` runs by the `tools` profile. Confirm the Plex URL, token, and target library in `.env`, keep `OVERLAY_RESET_DRY_RUN=True`, then inspect a dry run:
@@ -91,7 +91,7 @@ For monitoring, add Tracearr or Tautulli explicitly; neither is included in Dupl
 Watchtower is not a Duplex default. Select it in the picker only if another instance does not already manage this host. Repository users can use:
 
 ```sh
-make ship PRESET=duplex ADD_SERVICES=watchtower
+make generate PRESET=duplex ADD_SERVICES=watchtower
 ```
 
 [Compare every preset](index.md){ .md-button } [Open the Plundarr repository](https://github.com/scottgigawatt/plundarr){ .md-button .md-button--primary }

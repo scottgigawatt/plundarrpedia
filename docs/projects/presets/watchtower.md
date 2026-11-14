@@ -40,7 +40,7 @@ Containers labeled `com.centurylinklabs.watchtower.enable=false` remain excluded
 Watchtower is a removable default in the Plundarr and Boudoirr presets. Select it in the picker for Duplex or another compatible project. The optional repository equivalent is:
 
 ```sh
-make ship PRESET=duplex ADD_SERVICES=watchtower
+make generate PRESET=duplex ADD_SERVICES=watchtower
 ```
 
 Do not select Watchtower in several generated projects on the same host unless only one instance is allowed to run.

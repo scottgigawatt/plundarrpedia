@@ -25,19 +25,19 @@ Cruisarr connects to Jellyfin and Whisparr over the network. They can run in thi
 In the picker, keep or deselect Cruisarr, Jellyfin, and Stash independently. From an optional Plundarr checkout, the equivalent default generation is:
 
 ```sh
-make ship PRESET=boudoirr
+make generate PRESET=boudoirr
 ```
 
 To use an external Jellyfin server, omit only the local playback service:
 
 ```sh
-make ship PRESET=boudoirr REMOVE_SERVICES=jellyfin
+make generate PRESET=boudoirr REMOVE_SERVICES=jellyfin
 ```
 
 Use `REMOVE_SERVICES=cruisarr,jellyfin` to omit requests and the local Jellyfin server while retaining Stash. For a Usenet-only downloader lane:
 
 ```sh
-make ship PRESET=boudoirr REMOVE_SERVICES=qbittorrent,cleanuparr ADD_SERVICES=sabnzbd
+make generate PRESET=boudoirr REMOVE_SERVICES=qbittorrent,cleanuparr ADD_SERVICES=sabnzbd
 ```
 
 Repeat the complete service selection on regeneration. Review PIA credentials, host paths, user/group IDs, ports, generated secrets, and [recovery settings](../privateerr/automatic-recovery.md) in `dist/boudoirr/.env`, then validate:
@@ -55,7 +55,7 @@ Choose the movie metadata provider under **Settings → General → Movie metada
 For an independent second instance:
 
 ```sh
-make ship PRESET=boudoirr ADD_SERVICES=whisparr-alt
+make generate PRESET=boudoirr ADD_SERVICES=whisparr-alt
 ```
 
 Whisparr Alt uses its own config, API key, libraries, recycle directory, download category, and host port (`16970` by default). Add it separately in Prowlarr at `http://whisparr-alt:6969`; the primary instance uses `http://whisparr:6969`. Process shared import staging through one instance at a time. Follow the [Whisparr Alt setup](https://github.com/scottgigawatt/plundarr/blob/main/docker/services/whisparr-alt/README.md) for provider and mount details.
@@ -123,7 +123,7 @@ Use [Stash setup and backup](https://scottgigawatt.github.io/plundarr/project-gu
 Jellyfin playback is selected by default. Its Web client supports preserved host-side JSON and local CSS; the separate Vue client is opt-in:
 
 ```sh
-make ship PRESET=boudoirr ADD_SERVICES=jellyfin-vue
+make generate PRESET=boudoirr ADD_SERVICES=jellyfin-vue
 ```
 
 See [Jellyfin clients and customization](media-servers-and-books.md#customize-jellyfin-web-and-vue) for browser URLs, theme activation, privacy configuration, and client-specific limits. Plex is an optional additional service with host networking; Cruisarr still requires Jellyfin for sign-in.
