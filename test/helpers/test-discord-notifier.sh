@@ -62,7 +62,16 @@ assert_payload() {
             and all(.fields[]; (.value | length) > 0 and (.value | length) <= 1024)
             and ((.title | length) + (.description | length) + (.footer.text | length)
                 + ([.fields[] | (.name | length) + (.value | length)] | add)) <= 6000)
-        and ([.embeds[0].fields[].name] | index("🔗 View run")) != null
+        and ([.embeds[0].fields[] | select(.inline) | .name]
+            == ["📋 Build context", "🧾 Details"])
+        and all(.embeds[0].fields[]; (.value | contains("\n\n") | not))
+        and (if .username | startswith("Plundarrpedia Docs") then
+            any(.embeds[0].fields[]; .name == "🧾 Details"
+                and (.value | startswith("**Project: 📖** Plundarrpedia\n**Target: 🗺️** GitHub Pages")))
+          else any(.embeds[0].fields[]; .name == "🧾 Details"
+                and (.value | startswith("**Image:** **🐳** Plundarrpedia"))) end)
+        and any(.embeds[0].fields[]; .name == "🔗 Quick links"
+            and (.value | contains("[View run](https://example.invalid/run)")))
     ' >/dev/null
 }
 
@@ -157,18 +166,80 @@ payload=$(render --type image-verdict --profile image-primary --random-value 0 \
     --job-status failure --publication-status failure --published-tags planned-tag \
     --published-digest sha256:0123456789abcdef)
 printf '%s\n' "${payload}" | jq --exit-status '
-    [.embeds[0].fields[].name] | index("🏷️ Published tags") == null and index("🧾 Digest") == null
+    ([.embeds[0].fields[].value] | join("\n")) as $values
+    | ($values | contains("planned-tag") | not)
+        and ($values | contains("sha256:0123456789abcdef") | not)
+        and ([.embeds[0].fields[].name] | index("🧾 Digest") == null)
 ' >/dev/null
 payload=$(render --type image-verdict --profile image-primary --random-value 0 \
     --job-status success --publication-status success --published-tags planned-tag)
 assert_payload 16705372 "${payload}"
+printf '%s\n' "${payload}" | jq --exit-status '
+    [.embeds[0].fields[].value] | join("\n") | contains("planned-tag") | not
+' >/dev/null
 payload=$(render --type image-verdict --profile image-primary --random-value 0 \
     --job-status failure --publication-status success --published-tags actual-tag \
     --published-digest sha256:0123456789abcdef --failure-stage 'provenance verification')
 printf '%s\n' "${payload}" | jq --exit-status '
     (.embeds[0].description | contains("GHCR publication completed before the pipeline stopped"))
     and any(.embeds[0].fields[]; .name == "⚠️ Stage needing attention" and .value == "provenance verification")
-    and any(.embeds[0].fields[]; .name == "🏷️ Published tags" and .value == "actual-tag")
+    and any(.embeds[0].fields[]; .value | contains("**Tags: 🏷️** `actual-tag`"))
+' >/dev/null
+
+#
+# Match the approved grouped layout with linked source context, compact lists,
+# one image identity, and full publication evidence. Pedia has only GHCR.
+#
+full_digest=sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+payload=$(render --type image-verdict --profile image-primary --random-value 0 \
+    --job-status success --publication-status success --published-digest "${full_digest}" \
+    --published-tags "$(printf '%s\n' edge sha-0123456789abcdef)" \
+    --ghcr-package-url https://example.invalid/package)
+printf '%s\n' "${payload}" | jq --exit-status --arg digest "${full_digest}" '
+    any(.embeds[0].fields[]; .name == "📋 Build context" and .inline
+        and .value == "**Repo: 📁** [plundarrpedia](https://github.com/example/plundarrpedia)\n**Ref: 🌿** `test-ref`\n**User: 👤** [example-user](https://github.com/example-user)")
+    and any(.embeds[0].fields[]; .name == "🧾 Details" and .inline
+        and .value == "**Image:** **🐳** Plundarrpedia\n**GHCR:** ✅ success")
+    and any(.embeds[0].fields[]; .value == "**Tags: 🏷️** `edge` · `sha-0123456789abcdef`\n**Platforms:** **🧱** `amd64` · `arm64` · `arm/v7`\n**Workflow: ⚙️** A deliberately funny workflow name")
+    and any(.embeds[0].fields[]; .name == "🧾 Digest" and .value == $digest)
+    and any(.embeds[0].fields[]; .name == "🔗 Quick links"
+        and .value == "[View run](https://example.invalid/run) · [GHCR image](https://example.invalid/package)")
+    and ([.embeds[0].fields[].value] | join("\n") | contains("**Docker Hub:**") | not)
+    and ([.embeds[0].fields[].name] | index("📦 Image") == null and index("📦 Registry targets") == null)
+' >/dev/null
+
+payload=$(render --type docs-verdict --profile docs --random-value 0 \
+    --build-status success --deploy-status success --site-url https://example.invalid/docs/)
+printf '%s\n' "${payload}" | jq --exit-status '
+    any(.embeds[0].fields[]; .name == "🧾 Details"
+        and .value == "**Project: 📖** Plundarrpedia\n**Target: 🗺️** GitHub Pages\n**Build:** ✅ success\n**Pages:** ✅ success")
+    and any(.embeds[0].fields[]; .name == "🔗 Quick links"
+        and .value == "[View run](https://example.invalid/run) · [Open documentation](https://example.invalid/docs/)")
+    and ([.embeds[0].fields[].value] | join("\n") | contains("**Platforms:**") | not)
+    and ([.embeds[0].fields[].name] | index("📦 Registry targets") == null and index("🧾 Digest") == null)
+' >/dev/null
+
+#
+# Invalid identifiers and unsafe Markdown link targets stay unlinked. Ref code
+# spans cannot be closed by an embedded backtick; bot names stay plain text.
+#
+payload=$(render --type image-verdict --profile image-primary --random-value 0 \
+    --job-status success --publication-status success --published-digest "${full_digest}" \
+    --repository 'owner/repo)[forged](https://bad.invalid)' \
+    --actor 'user](https://bad.invalid)' --ref-name 'ref` [forged](https://bad.invalid)' \
+    --ghcr-package-url 'https://example.invalid/image)[forged](https://bad.invalid)')
+printf '%s\n' "${payload}" | jq --exit-status '
+    any(.embeds[0].fields[]; .name == "📋 Build context"
+        and (.value | contains("https://github.com/") | not)
+        and (.value | contains("**Ref: 🌿** `ref\u0027 [forged](https://bad.invalid)`")))
+    and any(.embeds[0].fields[]; .name == "🔗 Quick links"
+        and .value == "[View run](https://example.invalid/run)")
+' >/dev/null
+payload=$(render --type image-start --profile image-primary --random-value 0 --actor 'example-bot[bot]')
+printf '%s\n' "${payload}" | jq --exit-status '
+    any(.embeds[0].fields[]; .name == "📋 Build context"
+        and (.value | contains("example-bot"))
+        and (.value | contains("https://github.com/example-bot") | not))
 ' >/dev/null
 
 #
@@ -179,7 +250,8 @@ metadata="\$(touch ${TEST_ROOT}/injection) \"quoted\" @everyone"
 payload=$(render --type image-start --profile image-primary --random-value 0 \
     --workflow-name "${metadata}" --ref-name "${metadata}")
 printf '%s\n' "${payload}" | jq --exit-status --arg metadata "${metadata}" '
-    any(.embeds[0].fields[]; .name == "⚙️ Workflow" and .value == $metadata)
+    any(.embeds[0].fields[]; (.value | contains("**Workflow: ⚙️**"))
+        and (.value | contains("touch")) and (.value | contains("quoted")))
     and (.embeds[0].description | contains($metadata) | not)
     and .allowed_mentions.parse == []
 ' >/dev/null
@@ -190,6 +262,44 @@ payload=$(render --type image-verdict --profile image-secondary --random-value 1
     --published-tags bounded-tag --workflow-name "${long_value}" --ref-name "${long_value}" \
     --actor "${long_value}" --platforms "${long_value}" --failure-stage "${long_value}")
 assert_payload 15548997 "${payload}"
+
+#
+# Bound combined metadata with Markdown punctuation without cutting links or code spans.
+# Oversized lists visibly mark omissions, and only a leading linux/ is removed.
+#
+long_markdown=$(awk 'BEGIN {for (i = 0; i < 1000; i++) printf "[*](_x_)`"}')
+payload=$(render --type image-verdict --profile image-secondary --random-value 1 \
+    --job-status failure --publication-status success --published-digest "${full_digest}" \
+    --published-tags bounded-tag --workflow-name "${long_markdown}" --ref-name "${long_markdown}" \
+    --actor "${long_markdown}" --repository "${long_markdown}" --platforms "${long_markdown}" \
+    --failure-stage "${long_markdown}" --ghcr-package-url "https://example.invalid/${long_value}")
+assert_payload 15548997 "${payload}"
+
+many_tags=$(awk 'BEGIN {for (i = 0; i < 100; i++) printf "tag-%03d\n", i}')
+payload=$(render --type image-verdict --profile image-primary --random-value 0 \
+    --job-status success --publication-status success --published-digest "${full_digest}" \
+    --published-tags "${many_tags}")
+assert_payload 5763719 "${payload}"
+printf '%s\n' "${payload}" | jq --exit-status '
+    any(.embeds[0].fields[]; (.value | startswith("**Tags: 🏷️**"))
+        and (.value | split("\n")[0] | endswith(" · ..."))
+        and ((.value | split("\n")[0] | [match("`"; "g")] | length) % 2 == 0)
+        and (.value | split("🏷️") | length) == 2)
+' >/dev/null
+
+payload=$(render --type image-start --profile image-primary --random-value 0 \
+    --platforms linux/amd64,windows/amd64,custom/linux/arm64)
+printf '%s\n' "${payload}" | jq --exit-status '
+    any(.embeds[0].fields[];
+        .value | contains("**Platforms:** **🧱** `amd64` · `windows/amd64` · `custom/linux/arm64`"))
+' >/dev/null
+
+payload=$(render --type image-start --profile image-primary --random-value 0 \
+    --run-url 'https://example.invalid/run)[forged](https://bad.invalid)')
+printf '%s\n' "${payload}" | jq --exit-status '
+    (.embeds[0] | has("url") | not)
+    and ([.embeds[0].fields[].name] | index("🔗 Quick links") == null)
+' >/dev/null
 
 #
 # Normalize only exact-image references or already valid short tags. Optional
@@ -223,13 +333,14 @@ payload=$(render --type image-verdict --profile image-primary --random-value 0 \
     --job-status success --publication-status success --published-digest sha256:0123456789abcdef \
     --published-tags "$(printf '%s\n' ghcr.io/example/plundarrpedia:edge ghcr.io/example/plundarrpedia:sha-0123456789abcdef)")
 printf '%s\n' "${payload}" | jq --exit-status '
-    any(.embeds[0].fields[]; .name == "🏷️ Published tags" and .value == "edge\nsha-0123456789abcdef")
+    any(.embeds[0].fields[];
+        .value | contains("**Tags: 🏷️** `edge` · `sha-0123456789abcdef`"))
 ' >/dev/null
 
 payload=$(render --type image-verdict --profile image-primary --random-value 0 \
     --job-status success --publication-status success --published-digest sha256:0123456789abcdef)
 printf '%s\n' "${payload}" | jq --exit-status '
-    ([.embeds[0].fields[].name] | index("🏷️ Published tags") == null)
+    ([.embeds[0].fields[].value] | join("\n") | contains("**Tags: 🏷️**") | not)
     and any(.embeds[0].fields[]; .name == "🧾 Digest")
 ' >/dev/null
 

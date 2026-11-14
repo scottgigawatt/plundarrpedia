@@ -4,7 +4,7 @@ Maintainers use `discord-notifier.sh` to validate metadata, render a selected pa
 
 Follow the [notification guide](../discord/README.md) for destination secrets, profiles, colors, copy ownership, safe dry runs, and delivery troubleshooting. Use `sh .github/scripts/discord-notifier.sh --help` from the repository root for supported arguments.
 
-Image verdict callers pass `--job-status` for the pipeline result, `--publication-status` for the actual push outcome, and `--failure-stage` when a stage needs attention. `--published-tags` and `--published-digest` are publication evidence only after a confirmed push. Documentation verdict callers pass independent `--build-status` and `--deploy-status` values.
+Image verdict callers pass `--job-status` for the pipeline result, `--publication-status` for the actual push outcome, and `--failure-stage` when a stage needs attention. `--published-tags` and `--published-digest` are publication evidence only after a confirmed push. Documentation verdict callers pass independent `--build-status` and `--deploy-status` values. Every caller supplies `--actor` and `--workflow-name`; image callers also supply `--platforms`.
 
 [notification-tags.sh](notification-tags.sh) accepts `--image` and newline-separated `--tags`, validates exact-image references or short Docker tags, and prints only short names. The notifier uses it for image verdicts; empty optional metadata stays empty. Registry publication references are not changed.
 
