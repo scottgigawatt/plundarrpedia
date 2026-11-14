@@ -1,70 +1,40 @@
 ---
-title: Paths and Permissions
-description: Design mounts that support imports, hardlinks, backups, and least privilege.
+title: Paths and permissions
+description: Prepare shared download paths, library permissions, and complete application backups.
 icon: material/folder-key-network
 ---
 
 # Paths and permissions
 
-Most apparently mysterious media automation failures are ordinary filesystem problems with better costumes.
+A downloader and media manager must agree where the same file lives inside their containers. Host paths choose storage; container paths are what applications report to one another.
 
-## Use a shared path vocabulary
+## Use matching download paths
 
-```yaml
-services:
-  qbittorrent:
-    volumes:
-      - /srv/media/downloads:/downloads
-  radarr:
-    volumes:
-      - /srv/media/downloads:/downloads
-      - /srv/media/movies:/movies
-```
+In the generated default stack, qBittorrent sees `/downloads/torrents` and Radarr/Sonarr see the parent `/downloads`. Set `HOST_TORRENTS_DOWNLOADS_PATH` to the `torrents` child of `HOST_DOWNLOADS_PATH`. A completed file then has the same `/downloads/torrents/...` path in each application.
 
-The download client and Radarr agree that the same file is under `/downloads`. No remote-path translation is needed.
+Radarr imports into `/movies`; Sonarr imports into `/tv`. Keep final libraries out of incomplete downloads. [Connect your applications](../projects/plundarr/connect-applications.md) after the containers start.
 
 ## Understand hardlinks
 
-Hardlinks require the source and destination to live on the same filesystem. If downloads and the movie library are separate mounts/filesystems, Radarr may copy instead of hardlinking. A common alternative is one shared host root:
+The default generated download and library paths are separate bind mounts, so imports between them use copies. Storing both host directories on one disk alone does not enable hardlinks across those container mounts.
 
-```text
-/srv/media
-├── downloads
-├── movies
-└── tv
-```
+A custom hardlink layout needs downloads and libraries under one shared container mount and on one host filesystem. ZFS child datasets are separate filesystems. Design and verify that layout deliberately; it changes paths and mounts beyond the default quick start.
 
-mounted as `/data` in relevant containers, with application-specific subpaths. Choose one model and use it consistently.
+## Set numeric permissions
 
-## Numeric identity
+Use `id` for the host account that owns the folders. Match the generated user/group settings and give each service the access it needs:
 
-Container images often accept `PUID` and `PGID`. Those values must correspond to host ownership; a username inside one container does not grant host access by magic.
+- Download clients write downloads.
+- Managers read downloads and write their own final libraries.
+- Plex reads libraries; generated Jellyfin has a writable `/data` root.
+- Privateerr writes the shared Gluetun configuration directory.
+- Stash's shared media is read-only except its explicit creators and recycle mounts.
+- Backup tools need access to selected sources and a protected destination.
 
-```sh
-id media
-stat -c '%u:%g %a %n' /srv/media/downloads /srv/media/movies
-```
+A `:rw` mount does not override host permissions. On Synology or TrueNAS, check ACLs and mapped container identities too. On SELinux hosts, use the distribution's supported `:z`/`:Z` labeling for shared or private container mounts rather than changing Unix modes blindly.
 
-On BSD/macOS, use that platform's equivalent `stat` options.
+## Back up durable state
 
-## Least privilege
+Save configuration, application-created database exports, private `.env`, encryption keys, and external state. Tracearr's database and backup workspace use named volumes; export a [Tracearr application backup](../projects/plundarr/monitoring.md#back-up-and-update) before archiving host config. Back up external Kometa/Plex state separately.
 
-- Download clients need write access to downloads, not final libraries.
-- Radarr/Sonarr need downloads plus their own final libraries.
-- Plex/Jellyfin normally need read access to libraries and write access only to
-  their own configuration/transcode locations.
-- Privateerr needs write access to the shared Gluetun configuration directory.
-- Backup tools need deliberate read access and a separately protected
-  destination.
-
-## SELinux hosts
-
-On SELinux-enforcing distributions, normal Unix ownership can look correct while the security label blocks the container. Use your distribution's supported container volume labeling (`:z`/`:Z` where appropriate) and understand whether the directory is shared between multiple services before relabeling it.
-
-## Named-volume application backups
-
-Tracearr stores its database, Redis state, and internal backup workspace in named Docker volumes. Plundarr's `make backup` archives the host configuration tree only; it does not dump those databases or copy their volumes. Export a consistent [Tracearr application backup](../projects/plundarr/monitoring.md#back-up-and-update) before archiving configuration, and keep the matching private `.env` and an off-host copy. Back up external Kometa and Plex state separately when their paths sit outside the generated config tree.
-
-## Back up state, not caches
-
-Prioritize application databases, configuration, `.env` through a secret-safe path, custom scripts, and generated Compose inputs. Exclude disposable image caches, transcode directories, package caches, and ordinary logs unless they serve a specific audit need.
+A host config archive does not replace database or volume backups. Caches, transcodes, and generated previews can usually be rebuilt. Keep an independent off-host copy and verify recovery before deleting originals.

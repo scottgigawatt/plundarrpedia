@@ -1,53 +1,19 @@
 ---
-title: Plundarr
-description: A generated, single-file Docker Compose media fleet for Synology and any compatible Docker host.
+title: About Plundarr
+description: Generate one editable Docker Compose project from the services you choose.
 icon: material/pirate
-status: updated
 ---
 
-# Plundarr 🏴‍☠️
+# Plundarr
 
-Plundarr is a complete Docker Compose media fleet generated from the services you actually want. The output is deliberately ordinary: one commented `docker-compose.yml`, one matching `.env`, and service configuration directories. That makes the same artifact usable from the command line or from Synology Container Manager.
+Plundarr is a generated media stack: one commented `docker-compose.yml`, a matching `.env`, and configuration directories. **Maraudarr** is the interactive generator image that creates those files and exits. Docker Compose or Synology Container Manager runs the resulting applications.
 
-**Maraudarr** is the shipwright. It is a short-lived Docker image and Python application that selects a preset, resolves required companions, preserves handwritten comments, seeds configuration directories, and asks Docker Compose to validate the result.
+[Generate and start Plundarr](quick-start.md){ .md-button .md-button--primary }
 
-## What Plundarr solves
+## Start small, then expand
 
-- Keeps a large Compose stack readable without asking users to merge fragments.
-- Makes qBittorrent, SABnzbd, NZBGet, or a deliberate combination explicit.
-- Keeps selected download clients behind Gluetun while other apps use the
-  project network.
-- Preserves environment values when a stack is regenerated.
-- Offers maintained Plundarr, Boudoirr, Jellyfin, Plex, Calibre-Web Automated, Duplex, Watchtower, Portainer, and custom presets.
-- Produces a Synology-friendly deployment artifact without becoming
-  Synology-only.
+The default preset includes VPN-protected downloads, Radarr/Sonarr automation, requests, monitoring, ebooks, and Homepage. Plex and Jellyfin are optional. [Other presets](../presets/index.md) provide focused media servers, books, or utilities from the same service catalog.
 
-## Core output
+You edit the generated `.env` before launch. Maraudarr preserves existing environment values and application state when you regenerate; it does not configure every application for you. After startup, [connect your applications](connect-applications.md).
 
-```text
-dist/
-└── plundarr/
-    ├── docker-compose.yml   # Generated complete deployment
-    ├── example.env          # Safe reference values
-    ├── .env                 # Local settings and secrets; never commit
-    └── config/              # Persistent application state
-```
-
-> [!IMPORTANT]
-> Review `dist/plundarr/.env` before launching. PIA credentials, user/group IDs, host media paths, timezone, and port choices belong to your harbor and cannot be safely guessed by the generator.
-
-## Where to go next
-
-<div class="grid cards" markdown>
-
-- [:material-rocket-launch: **Generate the default stack**](quick-start.md)
-- [:material-tune: **Understand the important settings**](configuration.md)
-- [:material-view-grid-plus: **Browse available services**](services.md)
-- [:material-lifebuoy: **Recover from common failures**](troubleshooting.md)
-- [:material-update: **Update and back up a deployment**](upgrading.md)
-
-</div>
-
-[Plundarr's developer documentation](https://scottgigawatt.github.io/plundarr/) covers Maraudarr architecture, service-extension contracts, testing, and the source-generated Python reference. Plundarrpedia stays focused on deployment, configuration, and troubleshooting voyages.
-
-[View Plundarr on GitHub](https://github.com/scottgigawatt/plundarr){ .md-button } [Open the developer documentation](https://scottgigawatt.github.io/plundarr/){ .md-button .md-button--primary }
+Use [configuration](configuration.md), [updates and backups](upgrading.md), or [troubleshooting](troubleshooting.md) for the task you need. [Developer documentation](https://scottgigawatt.github.io/plundarr/development/maraudarr/) covers source builds, architecture, service extensions, and the Python reference.

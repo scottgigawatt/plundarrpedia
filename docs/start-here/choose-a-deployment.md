@@ -1,13 +1,11 @@
 ---
-title: Choose a Deployment
-description: Compare Linux Docker, Synology Container Manager, TrueNAS Apps, and the Plundarrpedia image.
-icon: material/source-branch
+title: Choose your platform
+description: Find the deployment procedure for Docker, Synology, or TrueNAS.
+icon: material/server-network
 ---
 
-# Choose a deployment
+# Choose your platform
 
-Use the [platform comparison](../guides/index.md) to choose Linux Docker, Synology Container Manager, or TrueNAS. Each route uses the same generated Compose project and explains the platform's storage, permissions, and deployment differences.
+Use the [platform comparison](../guides/index.md) to choose Docker Compose, Synology Container Manager, or TrueNAS. Each route starts from the same generated project.
 
-## Running this wiki itself
-
-You can read the published wiki without installing anything. To host a copy, follow the [repository quick start](https://github.com/scottgigawatt/plundarrpedia#readme) or [image guide](../GHCR_README.md). Its static Nginx runtime requires no database.
+To host this wiki itself, use the [published-image instructions](../GHCR_README.md). Reading the public wiki needs no installation.

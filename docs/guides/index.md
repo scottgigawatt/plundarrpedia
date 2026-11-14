@@ -1,26 +1,19 @@
 ---
-title: Choose a Harbor
-description: Match Plundarr and the media fleet to Linux Docker, Synology, or TrueNAS.
-icon: material/ferry
+title: Choose your platform
+description: Deploy one generated project with Docker Compose, Synology Container Manager, or TrueNAS.
+icon: material/server-network
 ---
 
-# Choose a harbor
+# Choose your platform
 
-Generate Plundarr once, then use the route for your host. Keep the complete `docker-compose.yml`, private `.env`, and configuration tree together.
+Generate your project with [Maraudarr](../projects/plundarr/quick-start.md), then deploy it once on the host that will run the applications. Keep `docker-compose.yml`, private `.env`, and `config/` together.
 
-| Platform | Deployment route | Main differences |
+| Host | Deployment guide | Main preparation |
 | --- | --- | --- |
-| Linux Docker | [Compose CLI](docker.md) | Host paths, numeric ownership, firewall, and devices |
-| Synology DSM | [Container Manager](synology.md) | Shared folders, DSM permissions, project import, and TUN |
-| TrueNAS | [Dockge or Custom App](truenas.md) | ZFS datasets, ACLs, stack paths, and rendered YAML |
-| Docker Desktop | [Compose CLI for evaluation](docker.md) | Folder sharing and host networking differences |
+| Linux or Docker Desktop | [Docker Compose](docker.md) | Folder access, numeric ownership, firewall, and supported devices |
+| Synology DSM 7.4 | [Container Manager](synology.md) | Shared folders, DSM permissions, TUN device, project directory |
+| TrueNAS with Docker-based Apps | [Dockge or Custom App](truenas.md) | ZFS datasets, ACLs, and stack directory |
 
-## What stays the same
+Docker Desktop needs permission to share your host folders. Selected service images and hardware features must support your host; the generator's architecture support alone is insufficient.
 
-Prepare durable storage, choose accessible numeric user/group IDs, and avoid overlapping subnets. Gluetun needs `/dev/net/tun` and `NET_ADMIN`; download clients sharing its network publish their Web UI ports on Gluetun. Validate this lane before configuring media managers.
-
-See [paths and permissions](storage-and-permissions.md) and [networking and VPN](networking-and-vpn.md) for the shared requirements.
-
-## Pick the platform guide
-
-Choose [Linux Docker](docker.md), [Synology](synology.md), or [TrueNAS](truenas.md). Platform guides add host-specific steps to the [Plundarr quick start](../projects/plundarr/quick-start.md); they do not require a different generator.
+For any platform, review [storage and permissions](storage-and-permissions.md) and avoid overlapping networks. Gluetun needs `/dev/net/tun` and `NET_ADMIN`; Privateerr does not need those tunnel privileges. The [network guide](networking-and-vpn.md) explains the shared downloader ports.

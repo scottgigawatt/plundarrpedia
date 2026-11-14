@@ -1,37 +1,24 @@
 ---
-title: Privateerr
-description: Generate PIA WireGuard settings and recover stale Gluetun connections inside the existing Privateerr container.
+title: About Privateerr
+description: Understand Privateerr settings, Gluetun VPN traffic, and automatic recovery.
 icon: material/shield-key
-status: updated
 ---
 
-# Privateerr ⚓
+# Privateerr
 
-Privateerr generates PIA WireGuard settings for Gluetun or another compatible VPN client. Its optional supervisor refreshes stale Gluetun connections through an authenticated API. Gluetun establishes and runs the tunnel.
+Privateerr creates PIA WireGuard configuration for Gluetun or another compatible VPN client. Its built-in Python supervisor can replace stale connection settings through Gluetun's authenticated API. **Gluetun establishes and runs the VPN tunnel.**
 
-Use a VPN-enabled Plundarr preset for a complete generated deployment, or the standalone project for one-shot generation and a focused Privateerr/Gluetun/qBittorrent stack.
+[Start Privateerr, Gluetun, and qBittorrent](quick-start.md){ .md-button .md-button--primary }
 
-## The two outputs
+## What Privateerr creates
 
-| File | Purpose |
+| File in `config/gluetun/wireguard/` | Purpose |
 | --- | --- |
-| `config/gluetun/wireguard/wg0.conf` | WireGuard keys, interface, peer, and endpoint |
-| `config/gluetun/wireguard/privateerr.env` | Matching PIA server identity, region, and forwarding support |
+| `wg0.conf` | WireGuard keys, interface, peer, and endpoint |
+| `privateerr.env` | Matching PIA server identity and port-forwarding support |
 
-Keep both files private. The matching metadata lets Gluetun request port forwarding for the selected endpoint.
+Keep both files private and together. The supplied three-service stack installs its integration scripts automatically. [Automatic recovery](automatic-recovery.md) is enabled in that stack and in Plundarr when Privateerr and Gluetun are selected. If you write your own Compose file, enable recovery and set its shared key explicitly.
 
-## Recovery without another service
+For a different task, [create configuration files once for another VPN client](https://scottgigawatt.github.io/privateerr/advanced-usage/#generate-without-make). Privateerr supports amd64, arm64, and arm/v7; companion services can support fewer platforms.
 
-[Automatic recovery](automatic-recovery.md) is enabled when generated Plundarr selects both Privateerr and Gluetun. It preserves the container/network namespace while replacing tunnel settings; connections can still disconnect. Custom image-only deployments must opt in.
-
-The [quick start](quick-start.md) separates ordinary application startup from tests that deliberately interrupt the VPN.
-
-## Images and platforms
-
-Stable `latest` and exact release tags are available from [GHCR](https://github.com/scottgigawatt/privateerr/pkgs/container/privateerr) and [Docker Hub](https://hub.docker.com/r/scottgigawatt/privateerr). `edge` follows successful `main` builds. Privateerr supports amd64, arm64, and arm/v7; companion applications can have narrower support.
-
-## Trust boundary
-
-Privateerr invokes PIA's unmodified scripts and publishes the saved pair. Long-running startup installs its two image-owned integration scripts before readiness. One-shot generation with both `PRIVATEERR_KEEPALIVE=false` and `PRIVATEERR_AUTO_RECOVER=false` leaves those scripts untouched. Test tools run separately in Buccaneerr. See the [source and developer contracts](https://scottgigawatt.github.io/privateerr/) and [security policy](https://scottgigawatt.github.io/privateerr/SECURITY/) for implementation and retained vulnerability findings.
-
-[Start with Privateerr](quick-start.md){ .md-button .md-button--primary } [View the source](https://github.com/scottgigawatt/privateerr){ .md-button }
+See [configuration handoff](config-handoff.md) for file/mount details or [developer documentation](https://scottgigawatt.github.io/privateerr/development/privateerr/) for source and tests. Privateerr uses PIA's unmodified connection scripts; test tools stay in the separate Buccaneerr image.

@@ -55,7 +55,7 @@ Project-owned documentation and related Markdown must follow [GitHub's style gui
 
 Make information relevant, findable, understandable, and usable for the intended reader. State the task, prerequisites, and required decisions; lead with actions/results; use familiar words and active voice. Include expected results and recovery where needed. Keep short nautical touches outside commands and warnings.
 
-Maintain one canonical explanation per topic. Remove obsolete, duplicate, speculative, and non-actionable content; preserve safety, compatibility, backup/restore limits, support policy, licensing, and attribution. Essential local steps should remain together.
+Document current supported behavior; keep prior-version migrations, historical comparisons, and older-image workarounds out of the reader journey. Maintain one canonical explanation per topic. Remove obsolete, duplicate, speculative, and non-actionable content; preserve safety, compatibility, backup/restore limits, support policy, licensing, and attribution. Essential local steps should remain together.
 
 Review the changed reader journey from its entry point through verification, including assumptions, links, failure recovery, and narrow-screen use. Record which journeys you checked and distinguish author review from actual reader feedback/testing. Lint and a strict build do not prove usability or ISO conformity. Preserve existing badge/community blocks; place H1 and purpose before them.
 

@@ -14,7 +14,7 @@
 # Public site identity and search-engine metadata.
 #
 site_name: Plundarrpedia
-site_description: The captain's field guide to Plundarr, Privateerr, and the generated media presets they power.
+site_description: Run Privateerr and Plundarr with practical Docker and NAS setup guides.
 site_url: https://scottgigawatt.github.io/plundarrpedia/
 copyright: Copyright &copy; 2026 Scott Gigawatt
 
@@ -26,78 +26,63 @@ repo_url: https://github.com/scottgigawatt/plundarrpedia
 edit_uri: edit/main/docs/
 
 #
-# Keep registry-specific documentation available to builds but out of the
-# public navigation tree.
+# Keep direct-link routes available without repeating their content in the
+# primary task navigation.
 #
 not_in_nav: |
-  GHCR_README.md
   projects/catalog.md
   projects/duplex/index.md
+  start-here/choose-a-deployment.md
+  start-here/index.md
+  guides/core/index.md
+  reference/index.md
 
 #
 # Define the complete public navigation hierarchy explicitly so page order and
 # labels stay stable as new Markdown files are added.
 #
 nav:
-  # Use the landing page as the first top-level navigation tab.
-  - Chart Room: index.md
-
-  # Orient new readers before sending them into project-specific instructions.
-  - Start Here:
-      - Pick a Route: start-here/index.md
-      - How the Fleet Fits Together: start-here/architecture.md
-      - Choose a Deployment: start-here/choose-a-deployment.md
-
-  # Keep Plundarr tasks ordered from introduction through troubleshooting.
-  - Plundarr:
-      - Overview: projects/plundarr/index.md
-      - Quick Start: projects/plundarr/quick-start.md
-      - Configure the Stack: projects/plundarr/configuration.md
-      - Update a Deployment: projects/plundarr/upgrading.md
-      - Homepage Login: projects/plundarr/homepage.md
-      - Media Monitoring: projects/plundarr/monitoring.md
-      - Service Catalog: projects/plundarr/services.md
-      - Troubleshooting: projects/plundarr/troubleshooting.md
-
-  # Explain Privateerr's configuration role separately from Gluetun's tunnel.
+  - Start here:
+      - Get started: index.md
   - Privateerr:
-      - Overview: projects/privateerr/index.md
-      - Quick Start: projects/privateerr/quick-start.md
-      - Config Handoff: projects/privateerr/config-handoff.md
-      - Automatic Recovery: projects/privateerr/automatic-recovery.md
+      - Start the VPN download stack: projects/privateerr/quick-start.md
+      - About Privateerr: projects/privateerr/index.md
+      - Automatic recovery: projects/privateerr/automatic-recovery.md
       - Troubleshooting: projects/privateerr/troubleshooting.md
-
-  # Keep focused deployment shapes together under the maintained preset guides.
-  - Presets:
-      - Choose a Preset: projects/presets/index.md
+  - Plundarr:
+      - Generate and start: projects/plundarr/quick-start.md
+      - Connect your applications: projects/plundarr/connect-applications.md
+      - Configure settings: projects/plundarr/configuration.md
+      - Homepage login: projects/plundarr/homepage.md
+      - About Plundarr: projects/plundarr/index.md
+      - Troubleshooting: projects/plundarr/troubleshooting.md
+  - Expand your stack:
+      - Choose a preset: projects/presets/index.md
+      - Service catalog: projects/plundarr/services.md
       - Boudoirr: projects/presets/boudoirr.md
       - Duplex: projects/presets/duplex.md
-      - Media Servers and Books: projects/presets/media-servers-and-books.md
+      - Media servers and books: projects/presets/media-servers-and-books.md
+      - Monitoring: projects/plundarr/monitoring.md
       - Watchtower: projects/presets/watchtower.md
       - Portainer: projects/presets/portainer.md
-
-  # Provide platform-specific routes after the project concepts are established.
-  - Platform Guides:
-      - Choose a Harbor: guides/index.md
-      - Any Docker Host: guides/docker.md
+  - Run and maintain:
+      - Choose your platform: guides/index.md
+      - Docker hosts: guides/docker.md
       - Synology: guides/synology.md
       - TrueNAS: guides/truenas.md
-
-  # Share operational guidance that applies across deployment platforms.
-  - Core Guides:
-      - Overview: guides/core/index.md
-      - Paths and Permissions: guides/storage-and-permissions.md
+      - Paths and permissions: guides/storage-and-permissions.md
       - Networking and VPN: guides/networking-and-vpn.md
-
-  # Collect command, policy, contribution, and project background pages.
-  - Reference:
-      - Overview: reference/index.md
-      - Command Deck: reference/commands.md
-      - Advanced Usage: ADVANCED_USAGE.md
+      - Updates and backups: projects/plundarr/upgrading.md
+  - Reference and contribute:
+      - How the containers connect: start-here/architecture.md
+      - Commands: reference/commands.md
+      - VPN configuration handoff: projects/privateerr/config-handoff.md
+      - Host this wiki: GHCR_README.md
+      - Build and publish this wiki: ADVANCED_USAGE.md
       - Contributing: CONTRIBUTING.md
-      - Code of Conduct: CODE_OF_CONDUCT.md
-      - Security Policy: SECURITY.md
-      - About This Wiki: reference/about.md
+      - Code of conduct: CODE_OF_CONDUCT.md
+      - Security policy: SECURITY.md
+      - About this wiki: reference/about.md
 
 #
 # Configure Material's appearance, repository actions, palettes, and navigation
@@ -138,7 +123,6 @@ theme:
 
   # Enable only the Material behaviors intentionally used by this site.
   features:
-    - announce.dismiss
     - content.action.edit
     - content.action.view
     - content.code.annotate

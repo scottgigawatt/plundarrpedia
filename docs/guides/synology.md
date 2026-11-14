@@ -6,11 +6,11 @@ icon: material/nas
 
 # Synology
 
-This guide covers deploying Plundarr on a Synology NAS through DSM's **Container Manager**. Synology is one supported harbor, not a requirement baked into the applications. DSM-specific work is concentrated in shared-folder paths, permissions, firewall rules, Container Manager projects, and the TUN device used by Gluetun.
+This guide covers deploying Plundarr on a Synology NAS through DSM 7.4's **Container Manager**. Synology is one supported harbor, not a requirement baked into the applications. DSM-specific work is concentrated in shared-folder paths, permissions, firewall rules, Container Manager projects, and the TUN device used by Gluetun.
 
 ## 1. Generate the deployment artifact
 
-Follow the [Plundarr quick start](../projects/plundarr/quick-start.md) on this host or another Docker-capable computer through **Validate before launch**, then return here. Deployment continues below; do not start a second copy on the generation host.
+Complete [Plundarr quick start steps 1–2](../projects/plundarr/quick-start.md#1-open-the-interactive-generator) on this host or a workstation, then validate without starting. Continue deployment here; do not start another copy on the generation host.
 
 Keep the generated `dist/plundarr/docker-compose.yml`, `.env`, and `config/` tree together. Copy that complete directory to a durable location such as:
 
@@ -52,7 +52,7 @@ Giving every container full control of every shared folder makes a permissions e
 
 ## 4. Confirm the VPN device
 
-Gluetun needs `/dev/net/tun` plus the `NET_ADMIN` capability declared in the generated Compose file. Privateerr separately runs as UID 0 with all Linux capabilities dropped and `no-new-privileges`; do not grant it Gluetun's network privileges. Review [recovery requirements](../projects/privateerr/automatic-recovery.md#configure-a-generated-deployment) alongside the generated definition.
+Gluetun needs `/dev/net/tun` plus the `NET_ADMIN` capability declared in the generated Compose file. Privateerr separately runs as UID 0 with all Linux capabilities dropped and `no-new-privileges`; do not grant it Gluetun's network privileges. Review [recovery requirements](../projects/privateerr/automatic-recovery.md#enable-recovery) alongside the generated definition.
 
 ```sh
 ls -l /dev/net/tun
@@ -60,7 +60,49 @@ ls -l /dev/net/tun
 
 If the device is absent after a reboot, review Plundarr's `scripts/synology/tun.sh` helper before adding it as a boot-triggered task under **Control Panel → Task Scheduler**. Run host-level scripts with the smallest privilege that works and keep a record of the change.
 
-## 5. Restore trusted Docker CLI access after boot
+## 5. Create the Container Manager project
+
+1. Open **Container Manager → Project**.
+2. Select **Create** and choose the generated project directory.
+3. Use a stable project name such as `plundarr`.
+4. Confirm Container Manager found `docker-compose.yml` and `.env` together.
+5. Review host paths, published ports, and the custom network before building.
+
+Do not paste only the Compose file into an unrelated directory. Relative `./config/...` mounts resolve from the project directory and must travel with the deployment.
+
+## 6. Check networking and the DSM firewall
+
+- Make sure the Plundarr subnet does not overlap the LAN, another Compose
+  project, or a remote VPN route.
+- Permit only the Web UI host ports you intend to use from trusted LAN sources.
+- Publish qBittorrent, SABnzbd, or NZBGet ports on Gluetun when those services
+  use `network_mode: service:gluetun`.
+- Prefer a private access layer or authenticated HTTPS reverse proxy over
+  exposing application UIs directly to the internet.
+- Enable WebSocket and HTTP/1.1 proxy support for applications that require
+  persistent connections.
+
+### Homepage behind HTTPS
+
+Before opening Homepage, set `HOMEPAGE_EXTERNAL_URL` to its HTTPS browser URL and `HOMEPAGE_ALLOWED_HOSTS` to the matching hostname and optional nonstandard port without the scheme. Configure the DSM reverse proxy and certificate separately, forwarding to `HOMEPAGE_WEBUI_PORT` and preserving the original host and forwarded HTTPS scheme. Recreate Homepage after editing `.env`, then sign in with the generated password. See [Homepage login](../projects/plundarr/homepage.md) for the complete setup and recovery steps.
+
+## 7. Validate in layers
+
+Start the project, then run these checks from the deployed directory containing `docker-compose.yml` and `.env`:
+
+```sh
+docker compose config --quiet
+docker compose ps
+docker compose logs --tail=100 privateerr gluetun
+```
+
+When operating directly from the Plundarr checkout, use `make test-vpn PRESET=plundarr` to check its generated deployment. A copied Container Manager deployment has no Makefile; validate its VPN lane through the running service logs and client interface.
+
+Only after the tunnel and download-client path are healthy should you configure Prowlarr, Radarr, Sonarr, request services, and playback applications.
+
+Back up `config/` and the private `.env` through a secret-aware process. Transcode directories, caches, and ordinary container logs usually do not belong in the same backup tier as application databases.
+
+## Optional: restore trusted Docker CLI access after boot
 
 This optional step is only for trusted administrators using Docker over SSH. Container Manager can recreate `/var/run/docker.sock` with root-only group ownership after a DSM reboot or package update. This affects trusted users who run Docker commands over SSH; it does not require making the socket writable by every local account.
 
@@ -82,45 +124,3 @@ Replace the example source-checkout path with your actual Plundarr checkout. The
 
 > [!CAUTION]
 > Docker-group membership grants root-equivalent control of the NAS through the Docker daemon. Add only trusted administrators; do not replace the helper's `0660` mode with world-writable permissions.
-
-## 6. Create the Container Manager project
-
-1. Open **Container Manager → Project**.
-2. Select **Create** and choose the generated project directory.
-3. Use a stable project name such as `plundarr`.
-4. Confirm Container Manager found `docker-compose.yml` and `.env` together.
-5. Review host paths, published ports, and the custom network before building.
-
-Do not paste only the Compose file into an unrelated directory. Relative `./config/...` mounts resolve from the project directory and must travel with the deployment.
-
-## 7. Check networking and the DSM firewall
-
-- Make sure the Plundarr subnet does not overlap the LAN, another Compose
-  project, or a remote VPN route.
-- Permit only the Web UI host ports you intend to use from trusted LAN sources.
-- Publish qBittorrent, SABnzbd, or NZBGet ports on Gluetun when those services
-  use `network_mode: service:gluetun`.
-- Prefer a private access layer or authenticated HTTPS reverse proxy over
-  exposing application UIs directly to the internet.
-- Enable WebSocket and HTTP/1.1 proxy support for applications that require
-  persistent connections.
-
-### Homepage behind HTTPS
-
-Before opening Homepage, set `HOMEPAGE_EXTERNAL_URL` to its HTTPS browser URL and `HOMEPAGE_ALLOWED_HOSTS` to the matching hostname and optional nonstandard port without the scheme. Configure the DSM reverse proxy and certificate separately, forwarding to `HOMEPAGE_WEBUI_PORT` and preserving the original host and forwarded HTTPS scheme. Recreate Homepage after editing `.env`, then sign in with the generated password. See [Homepage login](../projects/plundarr/homepage.md) for the complete setup and recovery steps.
-
-## 8. Validate in layers
-
-Start the project, then run these checks from the deployed directory containing `docker-compose.yml` and `.env`:
-
-```sh
-docker compose config
-docker compose ps
-docker compose logs --tail=100 privateerr gluetun
-```
-
-When operating directly from the Plundarr checkout, use `make test-vpn PRESET=plundarr` to check its generated deployment. A copied Container Manager deployment has no Makefile; validate its VPN lane through the running service logs and client interface.
-
-Only after the tunnel and download-client path are healthy should you configure Prowlarr, Radarr, Sonarr, request services, and playback applications.
-
-Back up `config/` and the private `.env` through a secret-aware process. Transcode directories, caches, and ordinary container logs usually do not belong in the same backup tier as application databases.

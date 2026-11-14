@@ -1,65 +1,44 @@
 ---
-title: Any Docker Host
-description: Deploy the media projects on Linux or Docker Desktop without Synology assumptions.
+title: Docker hosts
+description: Run the generated project on Linux or Docker Desktop.
 icon: fontawesome/brands/docker
 ---
 
-# Any Docker host
+# Deploy with Docker Compose
 
-Plundarr and its siblings are Docker Compose projects. Synology is a supported harbor, not a runtime dependency.
-
-## Prerequisites
+Use this route for Linux or Docker Desktop. You need Docker with Compose v2 and images supported by your host:
 
 ```sh
 docker version
 docker compose version
 ```
 
-Use Docker Compose v2 (`docker compose`). If your system only provides the old `docker-compose` binary, upgrade or translate commands deliberately rather than assuming every modern Compose feature is supported.
+## Prepare host folders
 
-## Prepare durable paths
+Choose durable download, media, and config directories. Grant the numeric host user/group in your `.env` the required access. Replace `/volume1/...` examples with real absolute paths on this host. Docker Desktop must be allowed to share those folders with containers.
 
-One Linux example:
+The generated default mounts support imports through copies; downloads and final libraries are separate container mounts. Hardlinks need a different, deliberately designed shared-mount layout. See [paths and permissions](storage-and-permissions.md).
+
+## Generate and start
+
+Follow the [Plundarr quick start](../projects/plundarr/quick-start.md). If you generated elsewhere, transfer the whole project directory and run from the directory containing `docker-compose.yml` and `.env`:
 
 ```sh
-sudo install -d -m 775 \
-  /srv/media/downloads \
-  /srv/media/movies \
-  /srv/media/tv \
-  /srv/containers/plundarr
-sudo chown -R media:media /srv/media /srv/containers/plundarr
+docker compose config --quiet
+docker compose up --detach --pull always
+docker compose ps
 ```
 
-Choose ownership for your host. The name `media` is only an example. Record the numeric IDs with `id media` and use them consistently in `.env`.
+Start only one copy. Check Privateerr and Gluetun locally before continuing to qBittorrent:
 
-## Generate and validate
+```sh
+docker compose logs --tail 100 privateerr gluetun qbittorrent
+```
 
-Follow the [Plundarr quick start](../projects/plundarr/quick-start.md) on this host or another Docker-capable computer through **Validate before launch**, then return here. Deployment continues below; do not start a second copy on the generation host.
-
-Replace all `/volume1/...` examples with your `/srv`, `/mnt`, or other absolute host paths. Relative `./config/...` paths are resolved from the Compose project directory and can remain portable.
+Confirm the healthy tunnel and sign in to the downloader. Then [connect the applications](../projects/plundarr/connect-applications.md). [Troubleshooting](../projects/plundarr/troubleshooting.md) follows the same layers.
 
 ## Host requirements
 
-- Gluetun needs the network capabilities declared by the generated Compose
-  stack.
-- The host firewall must permit the Web UI ports you intend to reach.
-- Hardware transcoding requires platform-specific device mounts and group
-  permissions; it is not automatically portable across Intel, AMD, NVIDIA, and
-  NAS hardware.
-- Docker Desktop must be allowed to share any host directory mounted into a
-  Linux container.
+Gluetun needs `/dev/net/tun` and its declared network capability. The firewall must allow the intended Web UI ports from trusted clients. Hardware transcoding needs host-specific device/group configuration; it is not automatically portable between Linux and Docker Desktop.
 
-## Operate in layers
-
-```sh
-make up
-make ps
-docker compose --project-directory dist/plundarr logs --tail=100 privateerr gluetun
-make test-vpn
-```
-
-Configure the download client next, then Prowlarr, then Radarr/Sonarr, then the request and playback layers. This ordering keeps a networking problem from masquerading as five application problems.
-
-## Backups
-
-Back up `config/`, `.env` through an encrypted secret-aware method, and any custom Compose inputs. Media files are replaceable only in theory; application databases, watched state, collections, and carefully tuned quality profiles are often harder to reconstruct.
+Back up application state, the private `.env`, and external settings separately from media and caches. Follow [updates and backups](../projects/plundarr/upgrading.md).

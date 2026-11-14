@@ -1,101 +1,73 @@
 ---
 title: Troubleshoot Plundarr
-description: Diagnose generation, Compose, permissions, VPN, ports, imports, and Synology problems by layer.
+description: Find generation, Compose, VPN, permissions, login, and import failures.
 icon: material/lifebuoy
 ---
 
 # Troubleshoot Plundarr
 
-Start at the lowest failing layer. A red Radarr health indicator cannot tell you whether Docker failed to mount a path, Gluetun never became healthy, or the download client simply lacks a category.
+Start with the first failing service. Run commands from the deployed directory containing `docker-compose.yml` and `.env`; inspect logs locally because they can contain secrets.
+
+```sh
+docker compose ps
+docker compose logs --tail 100 SERVICE
+```
+
+Replace `SERVICE` with the service name reported by `ps`.
 
 ## Generator problems
 
-```sh
-make test-unit
-make services
-make presets
-```
+Read Maraudarr's first error. A registry or Docker-daemon failure is different from invalid generated Compose. Check that the output folder exists, is mounted at `/output`, and is writable by the `--user` identity. Run the [published-image command](quick-start.md#1-open-the-interactive-generator) with `--pull always` when refreshing the catalog.
 
-If generation fails, inspect the first error before the summary. Maraudarr may have failed to find a local image, pull the published one, or build a fallback. Do not confuse a registry/Docker-daemon failure with a bad generated Compose model.
-
-If the generated catalog differs from the source you intended to use, check [the selected generator image](quick-start.md#choose-the-generator). Rebuild the source-selected image or pull the configured published image, then regenerate:
-
-```sh
-make ship PRESET=YOUR-PRESET
-make config PRESET=YOUR-PRESET
-```
-
-Replace `YOUR-PRESET` with the affected deployment ID. Maraudarr regenerates only `dist/YOUR-PRESET/`.
+Source builds and generator unit tests belong to [developer documentation](https://scottgigawatt.github.io/plundarr/development/maraudarr/). They are not prerequisites for using the published image.
 
 ## Compose problems
 
 ```sh
-make config PRESET=YOUR-PRESET
-make ps PRESET=YOUR-PRESET
-make logs PRESET=YOUR-PRESET
+docker compose config --quiet
 ```
 
-Common causes:
-
-- `.env` is missing from `dist/<preset>/` or is not beside `docker-compose.yml`;
-- a host port is already in use;
-- a path is relative to a different project directory than expected;
-- the custom subnet overlaps another route;
-- a service references an optional companion that was not selected.
+Check that `.env` is beside the Compose file, host ports are available, paths refer to this deployment, and the subnet does not overlap another route. Quiet validation avoids printing secrets. Inspect resolved configuration privately only when the error requires it.
 
 ## Permission problems
 
-Symptoms include `permission denied`, an app that cannot import downloads, or a database that repeatedly resets. Compare numeric ownership on the host with the generated user, group, and service-specific supplemental-group values, then test the exact mounted directory rather than its parent.
-
-For Apprise or Seerr startup failures on Synology, inspect the selected image, generated identity, and mounted paths with `make config PRESET=YOUR-PRESET` before changing host ownership or weakening a read-only filesystem.
+Compare numeric host ownership with the generated user/group settings, then check access to the exact mounted directory. A parent folder being writable does not prove a child database is writable. On NAS hosts, account for ACLs and mapped identities. Do not weaken read-only filesystems or grant broad permissions before identifying the denied path. See [paths and permissions](../../guides/storage-and-permissions.md).
 
 ## VPN lane never becomes healthy
 
 Check in order:
 
-1. Privateerr logs show successful configuration generation.
-2. `config/gluetun/wireguard/wg0.conf` exists and is non-empty.
-3. `privateerr.env` contains the selected endpoint metadata.
-4. Gluetun reads the shared directory and starts with `custom` WireGuard.
-5. The selected PIA region supports port forwarding when `PIA_PF=true`.
-6. The host provides the capabilities/devices required by Gluetun.
+1. Privateerr installs its scripts and prepares `config/gluetun/wireguard/wg0.conf` and matching `privateerr.env`.
+2. Gluetun reads the complete shared directory and establishes a healthy tunnel.
+3. The selected region supports forwarding when `PIA_PF=true`.
+4. qBittorrent starts, signs in, and receives the forwarded port/interface.
 
 ```sh
-make test-vpn
+docker compose logs --tail 100 privateerr gluetun qbittorrent
 ```
+
+Use [Privateerr troubleshooting](../privateerr/troubleshooting.md) for the failing step. Repository users can run `make test-vpn PRESET=YOUR-PRESET` against their selected running deployment; that check uses live provider configuration.
 
 ## The Web UI is unreachable
 
-When a download client shares `service:gluetun`, publish its UI port on Gluetun. Connecting to the download-client container's nonexistent independent IP will fail by design.
-
-On Synology, also confirm the DSM firewall allows the host port and, when needed, traffic sourced from the Compose subnet.
+Use the host address and `.env` host port in your browser. A downloader sharing `service:gluetun` publishes its port on Gluetun and has no independent container address. Check the host firewall, especially DSM rules for the Compose subnet.
 
 ## Homepage login fails
 
-Use the generated password from the deployment `.env`; no username is required. Check that `HOMEPAGE_EXTERNAL_URL` exactly matches the browser URL and `HOMEPAGE_ALLOWED_HOSTS` contains its hostname and nonstandard port without a scheme. Recreate Homepage after environment changes. Behind HTTPS, verify the proxy preserves the host and forwarded scheme. See [Homepage login](homepage.md) for password rotation and session invalidation.
+Read the generated password from `.env`; no username is required. Match `HOMEPAGE_EXTERNAL_URL` to the browser URL and `HOMEPAGE_ALLOWED_HOSTS` to its hostname/port without scheme. Recreate Homepage after changes. For HTTPS proxies, preserve host and forwarded scheme. See [Homepage login](homepage.md).
 
 ## Kometa or PATTRMM Neo cannot read or write configuration
 
-Confirm `KOMETA_RUNTIME_CONFIG_PATH` points to an existing readable YAML file, not a directory. Both services receive the same `/config/config.yml`. Maraudarr does not clone or populate the external checkout. Neo also needs existing settings, writable cache/output, and a completed settings run; follow [Duplex configuration](../presets/duplex.md#prepare-pattrmm-neo) before startup.
+`KOMETA_RUNTIME_CONFIG_PATH` must name an existing readable YAML file. Maraudarr does not create the external checkout. Neo also needs settings plus writable cache/output, and every selected settings run must complete. See [Duplex configuration](../presets/duplex.md#prepare-pattrmm-neo).
 
 ## NZBGet is healthy but managers cannot connect
 
-- Use `gluetun:6789` from Radarr or Sonarr; do not use the browser-facing host
-  port between containers.
-- Keep SSL disabled unless you intentionally configured it inside NZBGet.
-- Copy `NZBGET_USER` and `NZBGET_PASS` from the generated `.env`.
-- Confirm Radarr uses category `radarr` and Sonarr uses category `sonarr`.
-- Keep NZBGet's internal control port at `6789`; changing it also requires
-  coordinated Compose, healthcheck, Homepage, and manager updates.
+Use `gluetun:6789` internally, with SSL off and generated `NZBGET_USER`/`NZBGET_PASS`. Keep categories `radarr` and `sonarr` and the internal listener at `6789`; the browser host port is separate. See [NZBGet setup](configuration.md#nzbget-first-run-settings).
 
 ## Downloads finish but never import
 
-- Use the same container path for the shared download root.
-- Match categories between Radarr/Sonarr and the download client.
-- Confirm the manager can read the completed file and write the final library.
-- Check whether cross-filesystem moves prevent hardlinks.
-- Do not point Plex or Jellyfin at the incomplete download directory.
+Check matching container paths, categories, manager read/write permissions, and the final root folder. Default separate mounts import through copies. Keep playback libraries out of incomplete downloads. [Connect your applications](connect-applications.md) shows the default path and internal addresses.
 
 ## Safe reset
 
-Back up `dist/<preset>/config/`, the private `.env`, and external application state before changing it. Export [Tracearr backups](monitoring.md#back-up-and-update) first: a host config archive does not contain its named-volume database. `make down PRESET=YOUR-PRESET` preserves volumes, images, environment files, configuration, and backups. `make nuke PRESET=YOUR-PRESET` removes scoped Docker resources/cache, clears Gluetun runtime state, and overwrites the saved VPN pair with examples; other application volumes and deployment files remain. Only `make delete-config PRESET=YOUR-PRESET` deletes the generated configuration tree.
+Stop with `docker compose down` while preserving state. Back up private settings and export databases before destructive cleanup. Repository `make nuke` removes scoped Docker resources/cache while preserving application volumes, deployment files, VPN configuration, and backups. `make delete-config` deletes the selected host config tree and exports there. See [updates and backups](upgrading.md); cleanup does not replace recovery.

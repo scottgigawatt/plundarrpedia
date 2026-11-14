@@ -10,13 +10,13 @@ status: updated
 Long-running Privateerr shares files with Gluetun at startup and uses its authenticated API during recovery. Gluetun owns the tunnel; rewriting a file alone does not reconfigure a running tunnel.
 
 1. Privateerr installs its two image-owned integration scripts.
-2. It validates and reuses the saved VPN pair when recovery is enabled, or generates fresh settings.
+2. It validates and reuses the saved WireGuard configuration and PIA settings when recovery is enabled, or generates fresh settings.
 3. Its startup healthcheck allows Gluetun to start.
 4. Gluetun's wrapper reads the matching metadata and configures recovery authentication.
 5. Gluetun starts the tunnel; network-sharing download clients start after it is healthy.
 6. During sustained failure, Privateerr applies a candidate through the API and saves it after settings readback and tunnel-health confirmation.
 
-One-shot generation with both `PRIVATEERR_KEEPALIVE=false` and `PRIVATEERR_AUTO_RECOVER=false` writes the VPN pair without installing or changing integration scripts. Follow the [one-shot procedure](quick-start.md#generate-files-for-another-wireguard-deployment) and stop other writers first.
+Creating configuration files once with both `PRIVATEERR_KEEPALIVE=false` and `PRIVATEERR_AUTO_RECOVER=false` writes the VPN pair without installing or changing integration scripts. Follow the [configuration-only procedure](https://scottgigawatt.github.io/privateerr/advanced-usage/#generate-without-make) and stop other writers first.
 
 ## Why the metadata exists
 
@@ -26,7 +26,7 @@ One-shot generation with both `PRIVATEERR_KEEPALIVE=false` and `PRIVATEERR_AUTO_
 
 For long-running startup, Privateerr's readiness marker means it installed the scripts and produced or validated the saved pair. It does not certify tunnel health or future recovery write access; Gluetun has its own healthcheck.
 
-The supervisor retains `.privateerr-pending/` and `.privateerr-commit/` beside the pair when an update or save needs reconciliation. If publication fails, the running tunnel may already use newer settings than the saved files. Preserve those directories, repair the reported storage problem, and allow reconciliation. Do not delete retained state or run another writer. See [storage diagnostics](troubleshooting.md#recovery-reports-a-storage-error).
+The supervisor retains `.privateerr-pending/` and `.privateerr-commit/` beside the two files when an update or save needs reconciliation. If publication fails, the running tunnel may already use newer settings than the saved files. Preserve those directories, repair the reported storage problem, and allow reconciliation. Do not delete retained state or run another writer. See [storage diagnostics](troubleshooting.md#recovery-reports-a-storage-error).
 
 ## Important variables
 
@@ -36,8 +36,8 @@ See [region changes](../plundarr/configuration.md#vpn-region-selection), [recove
 
 ## Mount the shared directory
 
-Share the complete Gluetun configuration directory read/write: Privateerr mounts it at `/gluetun`; Gluetun mounts the same directory at `/gluetun` and `/tmp/gluetun`. Directory mounts support atomic replacement and retain recovery state. Privateerr's UID 0 needs write/traverse access; Gluetun needs read/execute access to the scripts. Only one supervisor may own the pair.
+Share the complete Gluetun configuration directory read/write: Privateerr mounts it at `/gluetun`; Gluetun mounts the same directory at `/gluetun` and `/tmp/gluetun`. Directory mounts support atomic replacement and retain recovery state. Privateerr's UID 0 needs write/traverse access; Gluetun needs read/execute access to the scripts. Only one supervisor may own the two files.
 
-Privateerr replaces `scripts/gluetun-entrypoint-wrapper.sh` and `scripts/qbittorrent-port-forwarding.sh` from its image on long-running startup. Keep operator scripts under other names. A preserved custom `GLUETUN_ENTRYPOINT_WRAPPER` must satisfy the [recovery contract](automatic-recovery.md#configure-a-generated-deployment).
+Privateerr replaces `scripts/gluetun-entrypoint-wrapper.sh` and `scripts/qbittorrent-port-forwarding.sh` from its image on long-running startup. Keep operator scripts under other names. A preserved custom `GLUETUN_ENTRYPOINT_WRAPPER` must satisfy the [recovery contract](automatic-recovery.md#enable-recovery).
 
 Keep Privateerr on the project network, outside Gluetun's namespace, so it can contact PIA during an outage. Keep Gluetun's control and health endpoints internal.

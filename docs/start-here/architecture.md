@@ -1,76 +1,31 @@
 ---
-title: How the Fleet Fits Together
-description: Understand control, download, VPN, storage, and playback lanes before deploying.
+title: How the containers connect
+description: Understand Privateerr configuration, Gluetun traffic, and the media workflow.
 icon: material/transit-connection-variant
 ---
 
-# How the fleet fits together
+# How the containers connect
 
-The easiest way to understand a media stack is to separate it into lanes. A container may speak to several lanes, but each lane has one job.
+**Privateerr prepares VPN settings. Gluetun runs the tunnel. qBittorrent sends torrent traffic through Gluetun.** Privateerr is not a VPN tunnel and does not carry downloads.
 
-| Lane | Typical services | Responsibility |
-| ---------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Requests | Seerr, Cruisarr, Velvarr | Turns human requests into manager activity. |
-| Discovery | Prowlarr, FlareSolverr | Supplies indexers and supported challenge handling. |
-| Management | Radarr, Sonarr, Whisparr, Bazarr, Lidarr, Recyclarr | Chooses releases and manages final library files. |
-| Download | qBittorrent, SABnzbd, NZBGet | Retrieves payloads into a shared download root. |
-| VPN | Privateerr, Gluetun | Generates VPN configuration, runs the tunnel, and handles PIA port forwarding. |
-| Playback | Plex, Jellyfin, Jellyfin Vue | Servers scan and serve completed libraries; clients present playback. |
-| Books | Calibre-Web Automated | Ingests, manages, and serves an ebook library. |
-| Operations | Homepage, Tracearr, Portainer, Duplicati, Cleanuparr, Speedtest Tracker, Apprise | Observability, backup, cleanup, and notification work. |
-| Updates | Watchtower | Replaces eligible container images under an explicit host policy. |
-| Curation | Kometa, ImageMaid, PATTRMM Neo, Themerr, Tautulli, Notifiarr | Curates libraries, manages Plex/Jellyfin theme songs, and monitors playback. |
+## VPN settings and traffic
 
-## The VPN boundary
+![Privateerr writes configuration for Gluetun and uses its recovery API; qBittorrent traffic travels through Gluetun to PIA](../assets/images/vpn-flow.svg)
 
-<div class="flow-map" role="group" aria-label="VPN configuration handoff">
-  <span class="flow-map__step">🏴‍☠️ Privateerr</span>
-  <span class="flow-map__arrow">writes →</span>
-  <span class="flow-map__step">📜 Shared VPN configuration</span>
-  <span class="flow-map__arrow">read at startup →</span>
-  <span class="flow-map__step">🛡️ Gluetun</span>
-</div>
+At startup, the Privateerr container writes the WireGuard configuration and matching PIA settings into a directory shared with Gluetun. Gluetun reads them and connects to PIA. During a sustained outage, Privateerr's Python supervisor can send replacement settings to Gluetun's authenticated internal API. Rewriting a file alone does not change a running tunnel.
 
-<div class="flow-map flow-map--support" role="group" aria-label="Download traffic path">
-  <span class="flow-map__step">📥 Download clients</span>
-  <span class="flow-map__arrow">shared network →</span>
-  <span class="flow-map__step">🔐 Gluetun's WireGuard tunnel</span>
-  <span class="flow-map__arrow">encrypted traffic →</span>
-  <span class="flow-map__step">🌐 PIA endpoint</span>
-</div>
+qBittorrent shares Gluetun's network, so its torrent traffic uses Gluetun's VPN tunnel. Privateerr stays on the ordinary project network so it can contact PIA when that tunnel is unavailable. Other applications normally remain on the project network.
 
-Privateerr also uses Gluetun's internal authenticated API to replace stale connection settings. Radarr, Sonarr, and Prowlarr reach download-client Web UIs through Gluetun on the project network.
+Publish qBittorrent's browser port on the Gluetun service. The browser interface is local control traffic; PIA's forwarded torrent peer port arrives through the tunnel and needs no host publication. [Networking and VPN](../guides/networking-and-vpn.md) explains ports and [automatic recovery](../projects/privateerr/automatic-recovery.md) explains outage behavior.
 
-Only selected download clients need to share Gluetun's network namespace. Managers, indexers, dashboards, and playback servers normally stay on the project network and reach the download clients through the ports exposed by Gluetun.
+## The media workflow
 
-> [!WARNING]
-> `network_mode: service:gluetun` means the download client does not own a separate network identity. Publish its Web UI on Gluetun, not on the download-client service. PIA-forwarded peer ports arrive through the VPN tunnel and do not need host publication.
+1. You or a request service asks Radarr or Sonarr for a title.
+2. Prowlarr supplies indexers; the manager sends the chosen release to a download client.
+3. The client downloads into the shared downloads directory.
+4. The manager imports the completed files into the final movie or television library.
+5. Plex or Jellyfin, when selected, scans the final library for playback.
 
-## The storage boundary
+Maraudarr generates the Compose project and exits. Plundarr is the resulting stack. Presets select services from the same catalog; they are not separate generators.
 
-Use consistent container paths across apps. If qBittorrent reports a completed file as `/downloads/movies/example.mkv`, Radarr should see that same file at `/downloads/movies/example.mkv`. Mapping the same host directory to different container paths creates remote-path and hardlink problems.
-
-```text
-Host
-├── downloads
-│   ├── complete
-│   └── incomplete
-├── media
-│   ├── movies
-│   ├── tv
-│   └── anime
-└── docker
-    └── plundarr
-        └── config
-```
-
-## Responsibility map
-
-- **Maraudarr** generates Plundarr; it is not a long-running media service.
-- **Presets** select a maintained deployment shape; they are not separate generator implementations.
-- **Privateerr** generates PIA files and supervises stale-connection recovery through Gluetun's API; it does not carry traffic.
-- **Gluetun** carries VPN traffic and coordinates port forwarding.
-- **Download clients** retrieve files; they should not organize the library.
-- **Radarr/Sonarr** import and organize; they should not be the download engine.
-- **Plex/Jellyfin** serve completed libraries; they should not watch incomplete
-  download directories.
+Keep matching container paths for shared downloads. For example, qBittorrent, Radarr, and Sonarr should all see the same torrent file under `/downloads/torrents/`. Host paths can differ by platform, but the application-to-application path must agree. See [connect your applications](../projects/plundarr/connect-applications.md) for the next steps.

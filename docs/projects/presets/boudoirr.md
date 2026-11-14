@@ -7,11 +7,11 @@ status: updated
 
 # Boudoirr preset 💋
 
-Boudoirr combines required Privateerr, Gluetun, FlareSolverr, Prowlarr, and Whisparr services. qBittorrent, Cruisarr, Jellyfin, Cleanuparr, and Watchtower are removable defaults. Maraudarr writes the project under `dist/boudoirr/`.
+Boudoirr combines required Privateerr, Gluetun, FlareSolverr, Prowlarr, and Whisparr services. qBittorrent, Cruisarr, Jellyfin, Stash, Cleanuparr, and Watchtower are removable defaults. Maraudarr writes the project under `dist/boudoirr/`.
 
 ## Before you start
 
-Complete [generator setup](../plundarr/quick-start.md#choose-the-generator). For the default Cruisarr selection, you also need:
+Choose **Boudoirr** in the [interactive generator](../plundarr/quick-start.md#1-open-the-interactive-generator). Review the requirements below before launch. The Make examples on this page are optional [repository helpers](../plundarr/quick-start.md#use-repository-helpers-later). For the default Cruisarr selection, you also need:
 
 - An amd64 or arm64 host. Cruisarr does not support arm/v7.
 - Access to Cruisarr's private GitHub Container Registry (GHCR) package and a personal access token (classic) with `read:packages`.
@@ -22,7 +22,7 @@ Cruisarr connects to Jellyfin and Whisparr over the network. They can run in thi
 
 ## Generate and review the preset
 
-From the Plundarr checkout, generate the default selection:
+In the picker, keep or deselect Cruisarr, Jellyfin, and Stash independently. From an optional Plundarr checkout, the equivalent default generation is:
 
 ```sh
 make ship PRESET=boudoirr
@@ -34,7 +34,7 @@ To use an external Jellyfin server, omit only the local playback service:
 make ship PRESET=boudoirr REMOVE_SERVICES=jellyfin
 ```
 
-Use `REMOVE_SERVICES=cruisarr,jellyfin` to omit both companions. For a Usenet-only downloader lane:
+Use `REMOVE_SERVICES=cruisarr,jellyfin` to omit requests and the local Jellyfin server while retaining Stash. For a Usenet-only downloader lane:
 
 ```sh
 make ship PRESET=boudoirr REMOVE_SERVICES=qbittorrent,cleanuparr ADD_SERVICES=sabnzbd
@@ -43,7 +43,7 @@ make ship PRESET=boudoirr REMOVE_SERVICES=qbittorrent,cleanuparr ADD_SERVICES=sa
 Repeat the complete service selection on regeneration. Review PIA credentials, host paths, user/group IDs, ports, generated secrets, and [recovery settings](../privateerr/automatic-recovery.md) in `dist/boudoirr/.env`, then validate:
 
 ```sh
-make config PRESET=boudoirr
+docker compose --project-directory dist/boudoirr config --quiet
 ```
 
 ## Configure Whisparr libraries
@@ -89,12 +89,11 @@ Keep `CRUISARR_ALLOW_HTTP=1` when Whisparr or Jellyfin uses private HTTP. Cruisa
 1. Launch the reviewed project and check status:
 
     ```sh
-    make up PRESET=boudoirr
-    make ps PRESET=boudoirr
-    make test-vpn PRESET=boudoirr
+    docker compose --project-directory dist/boudoirr up --detach --pull always
+    docker compose --project-directory dist/boudoirr ps
     ```
 
-2. Open Cruisarr at the configured browser address. Boudoirr defaults to host port `16699`; the internal port is `6699`. Read `CRUISARR_SETUP_SECRET` locally from `.env` for first-run setup.
+2. Confirm the VPN is healthy in local Privateerr/Gluetun logs, then open Cruisarr at the configured browser address. Boudoirr defaults to host port `16699`; the internal port is `6699`. Read `CRUISARR_SETUP_SECRET` locally from `.env` for first-run setup.
 3. Connect Jellyfin with your account, API key, and intended libraries. Use `http://jellyfin:8096` inside this project or an address reachable from Cruisarr for an external server.
 4. Set Jellyfin's external playback URL to the address users open in their browsers.
 5. Connect Whisparr at `http://whisparr:6969` with its API key. Add an optional Alt instance at `http://whisparr-alt:6969` with its own key.
@@ -107,15 +106,17 @@ A healthy Cruisarr container confirms application storage access. It does not ve
 
 When Homepage is selected, Maraudarr adds a Cruisarr link card. Set `HOMEPAGE_VAR_CRUISARR_HREF` to the browser address; the internal service address is not a browser URL.
 
-## Complete Velvarr owner setup
+## Add Stash cataloging
 
-Velvarr is an optional alternative with an amd64-only official image. To select it instead of Cruisarr, regenerate with your complete service selection, including:
+Stash is independently removable in the interactive picker. It uses the same media root as Jellyfin, mounted read-only at `/data`. Only the creators directory at `/data/scenes/creators` and the recycle directory at `/data/recycle/stash` are writable; Whisparr-managed media stays protected.
 
-```sh
-make ship PRESET=boudoirr REMOVE_SERVICES=cruisarr ADD_SERVICES=velvarr
-```
+Before launch, set `STASH_DATA_PATH` to your media root, `STASH_CREATORS_PATH` to that root's existing `scenes/creators` child, and `STASH_RECYCLE_PATH` to its `recycle/stash` directory. Grant the configured user/group the intended access. Docker can create the recycle directory, but its host ownership still needs to permit writes. Stash's separate config/database, metadata, images, cache, and previews live under `config/stash/` by default.
 
-Velvarr also needs Jellyfin for owner setup and authentication. Read `VELVARR_SETUP_SECRET` locally for first-run setup. The official image targets one Whisparr endpoint for TPDB movies and StashDB scenes, without TMDB movie discovery. Its movie target must use TPDB. Follow [Velvarr setup and image selection](https://scottgigawatt.github.io/plundarr/project-guides/velvarr/) for connections, browser origin, and provider requirements. Keep Velvarr's complete stopped SQLite directory with its matching `VELVARR_SECRET_KEY` in your backups.
+Open `http://YOUR-HOST:19999` for Boudoirr's default Stash port. Create an account, scan only your intended video libraries, and set the recycle-bin directory to `/data/recycle/stash`, outside scanned libraries. Try a small scan and playback sample before bulk preview generation. Identification through StashDB needs a separate account/API key; simply enabling Stash does not import existing NFO metadata.
+
+Jellyfin integrations can use `http://stash:9999` in this project. Both applications see the same `/data` paths. Whisparr sees different child paths; do not enable scan/cleanup notifications with an unverified mapping. Scan Stash again after Whisparr moves or renames files.
+
+Use [Stash setup and backup](https://scottgigawatt.github.io/plundarr/project-guides/stash/) for optional integrations and recovery. Export a Stash database backup before archiving its surrounding stopped application state; media, external paths, and `.env` need separate backups. Cache and previews can be regenerated.
 
 ## Choose the Jellyfin client
 

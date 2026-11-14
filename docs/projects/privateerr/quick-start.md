@@ -1,93 +1,85 @@
 ---
-title: Privateerr Quick Start
-description: Generate PIA WireGuard files or start Privateerr, Gluetun, and qBittorrent without running live fault tests.
+title: Privateerr quick start
+description: Run the published Privateerr, Gluetun, and qBittorrent images and verify the VPN download stack.
 icon: material/flash
-status: updated
 ---
 
-# Privateerr quick start
+# Start Privateerr, Gluetun, and qBittorrent
 
-Choose a VPN-enabled Plundarr preset for a generated media stack, or the standalone Privateerr project for one-shot generation and a focused three-service stack. You need Docker, a PIA subscription, and private storage. Source builds also require Git, Make, Compose, Buildx, and the initialized PIA submodule.
+This starts three published images. **Privateerr** prepares PIA WireGuard settings and monitors VPN recovery. **Gluetun** runs the VPN tunnel. **qBittorrent** downloads through Gluetun.
 
-## Generate the complete Plundarr route
+## Before you start
 
-Complete [Plundarr's generator setup](../plundarr/quick-start.md#choose-the-generator), then generate the preset. Set `PIA_USER` and `PIA_PASS` in `dist/plundarr/.env`; keep `PIA_PF=true` for forwarding. Review paths, permissions, ports, and the generated shared API key:
+You need Git, Docker with Compose v2, an active PIA subscription, and an amd64 or arm64 host for the supplied qBittorrent image. Privateerr alone also supports arm/v7. Choose private storage for configuration and a writable download directory. No local image build or Make is required.
 
-> [!WARNING]
-> Keep credentials, keys, VPN files, resolved Compose output, and unsanitized logs out of Git and public support reports.
+## 1. Create your settings file
 
-```sh
-make config
-```
-
-After reviewing the resolved settings, start and verify the VPN lane:
+Start a new checkout:
 
 ```sh
-make up
-make test-vpn
-```
-
-Privateerr installs its integration scripts and prepares the saved pair before readiness. Gluetun then starts the tunnel. Recovery is enabled when both are selected, preserving existing keys and explicit opt-outs.
-
-## Generate files for another WireGuard deployment
-
-Clone the source with its public submodule:
-
-```sh
-git clone --recurse-submodules https://github.com/scottgigawatt/privateerr.git
+git clone https://github.com/scottgigawatt/privateerr.git
 cd privateerr
 cp example.env .env
 ```
 
-Edit the private `.env`: set your PIA VPN username (`p` or `P` followed by seven digits, not your email address) and password, keep `PIA_VPN_PROTOCOL=wireguard` and `PIA_CONNECT=false`, and review output paths. Preserve needed VPN files and stop every supervisor writing the same directory before running:
+Open `.env` in your editor. Change the right-hand value for these settings, retaining each setting name:
+
+| Setting | Required action |
+| --- | --- |
+| `PIA_USER`, `PIA_PASS` | Enter your PIA VPN username (`p` or `P` followed by seven digits) and password; do not use your email |
+| `PRIVATEERR_GLUETUN_API_KEY` | Set a private key generated with the command below |
+| `QBITTORRENT_PUID`, `QBITTORRENT_PGID` | Match the numeric host owner of downloads and qBittorrent configuration; use `id` to check |
+| `HOST_TORRENTS_DOWNLOADS_PATH` | Choose a writable download directory |
+| `QBITTORRENT_TZ`, `QBITTORRENT_WEBUI_PORT` | Set your timezone; change port `8080` only if occupied |
+
+Generate the shared recovery key locally, then paste it into `PRIVATEERR_GLUETUN_API_KEY`:
 
 ```sh
-make run-privateerr
+openssl rand -hex 24
 ```
 
-This builds the checkout, disables recovery/keepalive for the disposable run, and replaces `config/gluetun/wireguard/wg0.conf` and `privateerr.env`. It does not change `.env` or install or modify Gluetun integration scripts. Confirm `Generation complete.` and both output files exist; generation alone does not establish a tunnel. Custom one-shot containers should use `restart: "no"`; the [direct Docker route](https://github.com/scottgigawatt/privateerr#using-docker-directly) needs neither Git nor Make.
+Keep `PIA_VPN_PROTOCOL=wireguard`, `PIA_CONNECT=false`, `PIA_PF=true`, `PRIVATEERR_AUTO_RECOVER=true`, and `QBITTORRENT_PORT_SYNC=true`. Privateerr and Gluetun share `config/gluetun/`; startup installs the integration scripts automatically.
 
-With host `curl` and `jq` installed, list public PIA region IDs and port-forwarding support from the Privateerr checkout:
+> [!WARNING]
+> Keep `.env`, WireGuard files, API keys, and unsanitized logs private. Do not commit them or paste them into support requests.
+
+## 2. Start the published images
+
+Run from the `privateerr` checkout:
 
 ```sh
-make list-pia-regions
+docker compose config --quiet
+docker compose pull privateerr gluetun qbittorrent
+docker compose up --detach --no-build privateerr gluetun qbittorrent
+docker compose ps
 ```
 
-This lookup needs no PIA credentials. To choose a region, set `PIA_AUTOCONNECT=false` and `PIA_PREFERRED_REGION` to its ID before generation. See [region selection](../plundarr/configuration.md#vpn-region-selection) before replacing an existing connection.
+Quiet validation succeeds without output. Allow time for image downloads and VPN startup. The test service Buccaneerr is excluded from this command.
 
-## Run the standalone example stack
+## 3. Confirm the VPN and open qBittorrent
 
-From the checkout above, prepare the three-service Privateerr/Gluetun/qBittorrent application:
-
-1. Generate a key with `openssl rand -hex 24` and save it as `PRIVATEERR_GLUETUN_API_KEY` in `.env`.
-2. Review qBittorrent's user/group IDs, config/download paths, and `QBITTORRENT_WEBUI_PORT`. Keep `PIA_PF=true` and `QBITTORRENT_PORT_SYNC=true` for forwarding.
-3. Share the complete `config/gluetun/` directory read/write with both VPN services. Privateerr installs the scripts; no separate download or file mount is needed.
-4. Confirm amd64 or arm64 support for this qBittorrent example; Privateerr alone also supports arm/v7.
-
-Review the resolved settings privately; `make config` output can contain credentials:
+Inspect startup locally:
 
 ```sh
-make config
+docker compose logs --tail 100 privateerr gluetun qbittorrent
 ```
 
-After checking the settings and resolving configuration errors, pull the published images and start the application:
+Confirm `Automatic recovery enabled` and `Gluetun tunnel is healthy` in Privateerr's logs. Privateerr being healthy means its startup files are ready; Gluetun's health reports the tunnel state.
+
+Open <http://localhost:8080> when Docker runs on this computer. From another computer, use the Docker host's address and your configured port. Sign in to qBittorrent as `admin`, read its temporary password locally from qBittorrent's logs, and change it in the Web UI.
+
+In qBittorrent, confirm the listening port matches Gluetun's forwarded port and its network interface is the VPN interface. The forwarding hook updates both. A tunnel can be healthy even if the hook cannot reach qBittorrent; see [qBittorrent troubleshooting](troubleshooting.md#qbittorrent-does-not-follow-the-tunnel).
+
+You have a working starting point when all three containers run, Gluetun is healthy, and you can sign in to qBittorrent. A small legal test download provides an additional end-to-end check. If a step fails, use [Privateerr troubleshooting](troubleshooting.md).
+
+## Stop or expand
+
+Stop the project while retaining saved configuration and downloads:
 
 ```sh
-make up
-make ps
+docker compose down
 ```
 
-`make up` does not build images or start Buccaneerr. Use `make up-build` to build Privateerr from this checkout while pulling its companions. Check Privateerr's readiness, Gluetun's healthy tunnel, and qBittorrent's Web UI in that order.
+[Generate a complete Plundarr stack](../plundarr/quick-start.md) when you want media automation and dashboards. Plundarr includes its own VPN services; stop this standalone project before reusing its ports or application state. Do not point both stacks at the same qBittorrent configuration.
 
-Open the configured host port, default `8080`. Read qBittorrent's initial password locally from logs and change it. The seeded hook uses unauthenticated loopback API access; every application sharing the namespace has that access. Existing qBittorrent configuration must permit the hook. See [local control and VPN ports](../../guides/networking-and-vpn.md#shared-network-namespaces).
-
-`make down` stops the project while preserving volumes, images, and the saved pair. Keep Gluetun's control/health ports internal.
-
-## Run tests deliberately
-
-Ordinary startup does not run fault tests. `make test` runs credential-free checks in Buccaneerr with runtime networking disabled; building the test image can need network access.
-
-> [!CAUTION]
-> Live tests deliberately interrupt the VPN and can overwrite saved configuration during cleanup. Use the [Privateerr testing guide](https://scottgigawatt.github.io/privateerr/development/privateerr/testing/) from an isolated disposable checkout, with needed files backed up.
-
-[Understand the file handoff](config-handoff.md){ .md-button } [Troubleshoot Privateerr](troubleshooting.md){ .md-button }
+For another task, [create WireGuard configuration files once](https://scottgigawatt.github.io/privateerr/advanced-usage/#generate-without-make), [choose a PIA region](../plundarr/configuration.md#vpn-region-selection), or [configure automatic recovery](automatic-recovery.md). [Privateerr's developer guide](https://scottgigawatt.github.io/privateerr/development/privateerr/) covers source builds and tests. Tests that deliberately interrupt the VPN belong in an isolated environment.

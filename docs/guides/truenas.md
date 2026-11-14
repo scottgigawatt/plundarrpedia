@@ -1,207 +1,104 @@
 ---
 title: TrueNAS
-description: Run Plundarr on TrueNAS SCALE with Dockge or a TrueNAS custom application.
+description: Deploy a generated project through Dockge or a Docker-based TrueNAS Custom App.
 icon: material/server-network
-status: new
 ---
 
-# TrueNAS
+# Deploy on TrueNAS
 
-This guide covers deploying Plundarr on **TrueNAS SCALE** through its Docker-based Apps system, using either Dockge or a custom application. You can deploy Plundarr as either:
+Use TrueNAS's Docker-based Apps system with **Dockge** for a file-based Compose project, or **Custom App** for pasted YAML. Check the [Dockge catalog entry](https://apps.truenas.com/catalog/dockge/) for your installed TrueNAS release before starting. Use only one manager for this stack.
 
-- a **Dockge stack**, which keeps the generated Compose project editable and
-  manageable as ordinary files; or
-- a **TrueNAS custom application**, which accepts a rendered Compose model in
-  the Apps interface.
+## 1. Prepare datasets and permissions
 
-This guide focuses on Dockge because it is a comfortable fit for people already using Compose. The custom-application route remains useful when you do not want another stack manager. Both routes require the Docker-based Apps system in TrueNAS SCALE.
-
-The TrueNAS Community catalog currently lists Dockge for TrueNAS 24.10.2.2 or newer. Screens and container identity behavior continue to evolve, so confirm the workflow against the documentation for your installed release.
-
-## 1. Plan datasets before installing
-
-TrueNAS recommends dedicated datasets for application data instead of hiding important state inside the system-managed `ix-apps` dataset. One starting point for Dockge and Plundarr is:
+Create durable application storage outside the system-managed `ix-apps` dataset. One example is:
 
 ```text
-/mnt/tank
-├── apps
-│   └── dockge
-│       ├── data
-│       └── stacks
-│           └── plundarr
-│               ├── compose.yaml
-│               ├── .env
-│               └── config
-└── media
-    ├── downloads
-    │   ├── torrents
-    │   └── usenet
-    └── library
-        ├── movies
-        ├── tv
-        └── anime
+/mnt/tank/apps/dockge/data
+/mnt/tank/apps/dockge/stacks/plundarr
+/mnt/tank/media/downloads/torrents
+/mnt/tank/media/library/movies
+/mnt/tank/media/library/tv
 ```
 
-The Dockge `data` directory holds its application state. The `stacks` directory holds the actual Compose projects. Plundarr configuration and media stay separate so they can have different backup, snapshot, and permission policies.
+Set service user/group IDs to host identities with the required dataset ACL access. Dockge needs its data and stack directories; downloaders need downloads; managers need downloads and their libraries; Privateerr needs the shared Gluetun configuration directory. Jellyfin's generated `/data` root is writable; Plex libraries are read-only.
 
-> [!IMPORTANT]
-> **Keep hardlink candidates in one filesystem.** ZFS datasets are separate filesystems. If you want Radarr or Sonarr to hardlink completed downloads into a library, keep both trees in the same dataset and create ordinary directories beneath it. Separate child datasets prevent hardlinks across that boundary.
+Container root may map to `truenas_container_unpriv_root`. If access fails, check current [TrueNAS ACL guidance](https://www.truenas.com/docs/scale/26/datasets/permissions/permissions/). Do not grant world-write access as a general fix.
 
-See the TrueNAS guidance for [setting up storage](https://www.truenas.com/docs/scale/25.10/gettingstarted/configure/setupstoragescale/) and [application host paths](https://apps.truenas.com/getting-started/app-storage/) before placing irreplaceable state.
+Default generated imports use copies because downloads and libraries are separate bind mounts. A custom hardlink layout also needs one shared container mount and one host filesystem; ZFS child datasets are separate filesystems. See [storage and permissions](storage-and-permissions.md) before changing that layout.
 
-## 2. Grant the container identities access
+## 2. Install Dockge
 
-Plundarr services commonly use numeric `PUID` and `PGID` values. Choose the TrueNAS user and group that should own media files, record their IDs, and put those values into the generated `.env`.
+Open **Apps → Discover Apps**, install Dockge, and configure:
 
-Host-path mounts do not gain permission merely because a path appears in Compose. Add the required access control list (ACL) entries for the identities that read or write each dataset:
+1. Data storage at `/mnt/tank/apps/dockge/data`.
+2. Stack storage at `/mnt/tank/apps/dockge/stacks`.
+3. An available Web UI port, normally `5001`.
+4. Both `PUID` and `PGID` if those options are exposed; Dockge ignores the pair if only one is set.
+5. An administrator account in the Web UI.
 
-- Dockge needs access to its `data` and `stacks` paths.
-- Download clients need modify access to download directories.
-- Radarr and Sonarr need downloads plus their own final libraries.
-- Plex or Jellyfin normally need read access to libraries and modify access to
-  their configuration and transcode paths.
-- Privateerr needs modify access to the shared Gluetun configuration path.
-
-Newer TrueNAS container isolation may map container root to the special `truenas_container_unpriv_root` host identity. If a container runs as root and cannot traverse a host path, consult the current [TrueNAS ACL guidance](https://www.truenas.com/docs/scale/26/datasets/permissions/permissions/) before adding an entry. Do not solve every ACL problem with recursive world write access.
-
-## 3. Install Dockge from the Apps catalog
-
-Open **Apps → Discover Apps**, search for **Dockge**, and install the Community catalog application. During setup:
-
-1. Map Dockge's application data to `/mnt/tank/apps/dockge/data`.
-2. Map its stacks storage to `/mnt/tank/apps/dockge/stacks`.
-3. Use an available Web UI port; Dockge uses port `5001` by default.
-4. If the form exposes Dockge's `PUID` and `PGID`, set both to the identity that
-   should own files created through the editor. Dockge ignores the pair if only
-   one value is set.
-5. Finish the installation, open the Web UI, and create its administrator
-   account.
-
-Dockge requires its stacks directory to use the **same absolute path on both sides of the mount**. If the TrueNAS form exposes the container mount path or `DOCKGE_STACKS_DIR`, all three values should agree:
+The stack directory must use the **same absolute path** on the host, inside Dockge, and in `DOCKGE_STACKS_DIR`:
 
 ```text
-Host path:          /mnt/tank/apps/dockge/stacks
-Container path:     /mnt/tank/apps/dockge/stacks
+Host:              /mnt/tank/apps/dockge/stacks
+Container:         /mnt/tank/apps/dockge/stacks
 DOCKGE_STACKS_DIR:  /mnt/tank/apps/dockge/stacks
 ```
 
-Using `/mnt/tank/apps/dockge/stacks` on the host and `/opt/stacks` in the container looks conventional, but it prevents Dockge from handing the correct host-side paths to Docker Compose.
+See [Dockge's stack requirements](https://github.com/louislam/dockge) before changing paths.
 
 > [!CAUTION]
-> **Dockge can control Docker.** The catalog application mounts the host Docker socket and currently runs as root. Anyone who controls Dockge can effectively control every Docker container on the TrueNAS host. Keep its Web UI on a trusted network, protect the account carefully, and do not publish it directly to the internet.
+> Dockge controls the host Docker engine through its socket. Anyone controlling Dockge can control the host's containers. Restrict its UI to trusted administrators and do not expose it directly to the internet.
 
-The [TrueNAS Dockge catalog entry](https://apps.truenas.com/catalog/dockge/) documents the supported TrueNAS version and security context. Dockge's own [README](https://github.com/louislam/dockge) documents its stack-directory and import behavior.
+## 3. Generate and place the project
 
-## 4. Generate the Plundarr stack
+Complete [Plundarr quick start steps 1–2](../projects/plundarr/quick-start.md#1-open-the-interactive-generator), then validate without starting. Replace `/volume1/...` examples with actual `/mnt/tank/...` paths on TrueNAS. Keep the generated seed files with any config path they populate; external Kometa settings need their own storage.
 
-Follow the [Plundarr quick start](../projects/plundarr/quick-start.md) on this host or another Docker-capable computer through **Validate before launch**, then return here. Deployment continues below; do not start a second copy on the generation host.
-
-Replace Synology-shaped `/volume1/...` defaults with the actual `/mnt/tank/...` host paths. Use absolute host paths for media and operator-managed external state. Keep the generated `config/` seed tree with the project; relative `./config` mounts resolve from its deployment directory. If you move service config mounts to a separate dataset, move their generated seed files there before launch. Keep the container paths consistent across download clients and media managers.
-
-**.env and env_file are different.** The `.env` beside `compose.yaml` supplies values for `${VARIABLE}` interpolation in the Compose project. An `env_file:` entry sends variables into a particular container. One does not replace the other.
-
-## 5. Put the stack where Dockge expects it
-
-For a new deployment, copy the complete generated project into its own lowercase stack directory. Do not overwrite an existing application configuration tree:
+Transfer the complete generated directory to `/mnt/tank/apps/dockge/stacks/plundarr`. If generation ran on TrueNAS, from the parent directory containing `dist/`, copy a new project:
 
 ```sh
 mkdir -p /mnt/tank/apps/dockge/stacks/plundarr
-cp dist/plundarr/docker-compose.yml \
-  /mnt/tank/apps/dockge/stacks/plundarr/compose.yaml
+cp dist/plundarr/docker-compose.yml /mnt/tank/apps/dockge/stacks/plundarr/compose.yaml
 cp dist/plundarr/.env /mnt/tank/apps/dockge/stacks/plundarr/.env
 cp -a dist/plundarr/config /mnt/tank/apps/dockge/stacks/plundarr/
 ```
 
-Run those commands from a checkout stored on TrueNAS. If you generated the project on another computer, transfer the complete generated project to the same destination with SFTP or an SMB share instead.
+These commands are for a new destination; do not overwrite existing state. When generating elsewhere, transfer files with SFTP or SMB instead. Keep `.env` private beside the Compose file. Relative `./config` paths resolve from this deployment directory.
 
-Keep `.env` beside `compose.yaml`, and protect both as private configuration. If `COMPOSE_PROJECT_NAME` is set, use a stable value such as `plundarr`.
+In Dockge, choose **Scan Stacks Folder**, open `plundarr`, review the settings, and deploy. Both `compose.yaml` and `docker-compose.yml` are supported. Do not start a second workstation, CLI, or Custom App copy against the same state.
 
-In Dockge, choose **Scan Stacks Folder**. Open the discovered `plundarr` stack, review the resolved configuration, and deploy it. Dockge recognizes standard `compose.yaml` and `docker-compose.yml` files, but one stack per directory is the least surprising layout.
+## 4. Preserve VPN requirements
 
-**Do not launch the same stack twice.** Stop and remove any earlier CLI-managed or TrueNAS Custom App copy before deploying it through Dockge. Two copies compete for container names, ports, networks, and the same configuration files.
+Keep Gluetun's `NET_ADMIN`, `/dev/net/tun`, and the selected downloader's `network_mode: service:gluetun`. Publish downloader Web UI ports on Gluetun. Privateerr needs writable shared config, with its separate capabilities dropped; do not give it Gluetun's tunnel privileges.
 
-## 6. Preserve the VPN requirements
+Dockge itself does not need TUN. Do not switch the whole stack to host networking to solve a port issue. Check the [network guide](networking-and-vpn.md) for local controls versus VPN-forwarded peer ports.
 
-Do not remove these pieces from the generated Gluetun service:
+## Use Custom App instead
 
-```yaml
-cap_add:
-  - NET_ADMIN
-devices:
-  - /dev/net/tun:/dev/net/tun
-```
+Skip this section when using Dockge. TrueNAS's YAML editor needs resolved Compose values; it does not discover a separate `.env` automatically.
 
-Also preserve the shared-network relationship for any download client using:
+> [!WARNING]
+> Rendered Compose contains private credentials and paths. Create it on the deployment host with private permissions, and never commit it or paste it into public support reports.
 
-```yaml
-network_mode: service:gluetun
-```
-
-Dockge controls the host Docker engine, so **Gluetun** needs `/dev/net/tun` and `NET_ADMIN`; the Dockge application itself does not. Publish a network-sharing download client's Web UI port on Gluetun because the client has no separate network identity. VPN-assigned torrent peer ports arrive through the tunnel and need no host publication; see [local control and VPN traffic](networking-and-vpn.md#shared-network-namespaces).
-
-Avoid switching the entire stack to host networking just to make one port reachable. It removes useful isolation and creates port collisions with TrueNAS and other Apps.
-
-## 7. Use the Custom App route instead
-
-Skip this section if Dockge is managing the stack. For a TrueNAS custom application, render interpolation before pasting the project because the Apps editor does not automatically discover the `.env` beside your source file. Run this from the Plundarr repository root on the TrueNAS host so resolved bind paths exist on that host:
+From the generated project directory on TrueNAS:
 
 ```sh
-docker compose --project-directory dist/plundarr config > truenas-compose.yml
+umask 077
+docker compose config > truenas-compose.yml
 ```
 
-Then:
+Open **Apps → Discover Apps → Custom App → Install via YAML**, choose a lowercase application name, paste the reviewed file, and deploy. Follow the [current Custom App procedure](https://apps.truenas.com/managing-apps/installing-custom-apps/) for the exact screen. YAML validation does not prove folder access or live service health.
 
-1. Open **Apps → Discover Apps**.
-2. Open the menu beside **Custom App**.
-3. Choose **Install via YAML**.
-4. Use a lowercase application name such as `plundarr`.
-5. Paste the reviewed contents of `truenas-compose.yml`.
-6. Save and watch the first deployment rather than leaving it unattended.
+## Verify and operate
 
-TrueNAS performs basic YAML validation but does not prove that paths, permissions, ports, or application settings are correct. Follow the current [custom application documentation](https://apps.truenas.com/managing-apps/installing-custom-apps/) for the exact screen.
+Use the selected manager's logs to confirm Privateerr readiness, Gluetun's healthy tunnel, and downloader startup. Sign in to the downloader, check write access, then [connect your applications](../projects/plundarr/connect-applications.md). Managers must see the same completed download path.
 
-Rendered Compose can contain credentials, tokens, and private paths that came from `.env`. Never commit it or paste it into a public support thread.
-
-## 8. Validate the smallest path first
-
-Use Dockge's container logs, or the TrueNAS Apps logs for a custom application, to confirm this order:
-
-1. Privateerr installs its Gluetun integration scripts, then generates or validates the saved `wg0.conf` and `privateerr.env` pair before readiness.
-2. Gluetun reads those files and establishes the WireGuard tunnel.
-3. The selected download client starts in Gluetun's network namespace.
-4. The download client can write to the TrueNAS download dataset.
-5. A media manager can see the same completed file at the same container path.
-
-Do not configure every indexer and manager while the VPN lane is still unhealthy. One working path is easier to diagnose than twenty simultaneous first-run failures.
-
-## 9. Update without creating configuration drift
-
-Treat the generated project as the deployment definition. Export application databases/named-volume backups separately before updating; the config tree alone does not contain them. Follow [update and backup checks](../projects/plundarr/upgrading.md), then:
-
-1. Back up `config/`, `compose.yaml`, and `.env` through a secret-aware process.
-2. Copy the current Dockge `.env` back to `dist/plundarr/.env`, then run `make ship` in the Plundarr checkout with the complete `ADD_SERVICES` and `REMOVE_SERVICES` selection. Review the regenerated files.
-3. Validate them with `docker compose --project-directory dist/plundarr config --quiet`.
-4. Copy the reviewed Compose file and `.env` into the Dockge stack directory. Preserve application state; install seeds only for new services and review regenerated Homepage cards separately. Privateerr installs its two image-owned integration scripts on startup; keep custom scripts under separate names and review the [recovery requirements](../projects/privateerr/automatic-recovery.md#configure-a-generated-deployment).
-5. Use Dockge to pull the selected images and recreate the stack.
-6. Repeat the VPN-lane validation before updating application settings.
-
-Avoid maintaining different hand-edited copies in the Plundarr checkout and Dockge. That makes the next regeneration difficult to audit.
-
-## Dockge troubleshooting
+For updates, follow [updates and backups](../projects/plundarr/upgrading.md). Keep one authoritative private `.env`. Regenerate with the complete service selection, review files, preserve existing state, and copy only reviewed changes into the managed stack. Export application databases and named volumes separately; the config tree alone is insufficient.
 
 | Symptom | First check |
 | --- | --- |
-| Stack is absent after a scan | Confirm `stacks/plundarr/compose.yaml` exists and the host, container, and `DOCKGE_STACKS_DIR` paths match exactly. |
-| Compose variables are empty | Confirm the private file is named `.env`, sits beside `compose.yaml`, and is readable by Dockge. |
-| A host path is denied | Check dataset traversal, ACL entries, and the numeric service UID/GID instead of granting world-write access. |
-| Gluetun cannot open TUN | Confirm the Gluetun service retains `/dev/net/tun` and `NET_ADMIN`. |
-| Download-client Web UI is unreachable | Publish its ports on Gluetun when it uses `network_mode: service:gluetun`. |
-| Ports or container names already exist | Stop the older Custom App or CLI-managed copy before deploying the Dockge stack. |
-
-## TrueNAS launch checklist
-
-- [ ] Your release supports Docker-based Apps and the selected Dockge application.
-- [ ] Datasets/ACLs and numeric identities match each service; hardlink candidates share one filesystem.
-- [ ] Dockge's host, container, and configured stack paths match; `.env` is private beside the Compose file.
-- [ ] Gluetun retains TUN, `NET_ADMIN`, and the shared-network port mappings.
-- [ ] Ports/subnets do not conflict, management access is restricted, and only one copy runs.
+| Dockge cannot find the stack | Stack directory, Compose filename, and matching absolute host/container paths |
+| Empty Compose variables | Private `.env` beside the Compose file and readable by Dockge |
+| Host path denied | Dataset traversal, ACLs, numeric identity, and container UID mapping |
+| Gluetun cannot open TUN | Its device mapping and `NET_ADMIN` |
+| Downloader UI unreachable | Host port published on Gluetun and firewall access |
+| Conflicting ports or names | Another copy of the project is running |

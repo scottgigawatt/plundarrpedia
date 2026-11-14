@@ -1,30 +1,11 @@
 ---
-title: Core Guides
-description: Operational guidance for storage, permissions, networking, and VPN behavior across every supported platform.
+title: Storage and networking
+description: Find shared host storage, permission, and network guidance.
 icon: material/tools
 ---
 
-# Core guides 🧭
+# Storage and networking
 
-These guides cover the parts of a media stack that remain important whether Docker runs on Linux, Synology, or TrueNAS. Choose the problem you are solving:
+Use [paths and permissions](../storage-and-permissions.md) to prepare shared downloads and libraries. Use [networking and VPN](../networking-and-vpn.md) for ports, subnets, and Gluetun's shared network.
 
-<div class="grid cards" markdown>
-
--   :material-folder-key-network:{ .lg .middle } **Paths and permissions**
-
-    ---
-
-    Design mounts for imports, hardlinks, backups, and least-privilege access.
-
-    [:octicons-arrow-right-24: Plan storage](../storage-and-permissions.md)
-
--   :material-vpn:{ .lg .middle } **Networking and VPN**
-
-    ---
-
-    Understand service networks, Gluetun, published ports, DNS, and safe remote
-    access.
-
-    [:octicons-arrow-right-24: Trace the network](../networking-and-vpn.md)
-
-</div>
+Return to [your platform guide](../index.md) for the deployment steps.

@@ -1,14 +1,12 @@
 ---
-title: Duplex Guide Moved
-description: Continue to the maintained Plundarr Duplex preset guide.
-icon: material/map-marker-right
+title: Duplex
+description: Set up Plex curation and Plex/Jellyfin theme-song utilities.
+icon: material/television-classic
 hide:
   - navigation
   - toc
 ---
 
-# The Duplex guide has moved
+# Duplex
 
-Use the maintained Duplex preset guide for Plex curation, Plex/Jellyfin theme songs, and deliberate maintenance tools.
-
-[Open the current Duplex preset guide](../presets/duplex.md){ .md-button .md-button--primary }
+Use the [Duplex setup guide](../presets/duplex.md) to configure external Kometa settings, Themerr, and deliberate maintenance tools. Duplex supports an existing media server rather than deploying one.

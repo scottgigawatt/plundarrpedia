@@ -1,14 +1,12 @@
 ---
-title: Preset Catalog Moved
-description: Continue to the maintained Plundarr preset catalog.
-icon: material/map-marker-right
+title: Preset catalog
+description: Choose a generated media stack, server, ebook, or utility project.
+icon: material/view-grid-plus
 hide:
   - navigation
   - toc
 ---
 
-# The preset catalog has moved
+# Preset catalog
 
-Find focused Boudoirr, Duplex, media-server, ebook, Watchtower, and Portainer guidance in the maintained preset section.
-
-[Open the current preset catalog](presets/index.md){ .md-button .md-button--primary }
+[Compare the Plundarr presets](presets/index.md) to choose a media stack, focused server, ebook library, or utility project. Each selection uses the same Maraudarr generator.
