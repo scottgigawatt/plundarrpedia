@@ -3,53 +3,59 @@
 
   SPDX-License-Identifier: Apache-2.0
 
-  vpn-flow.svg: Separate VPN configuration and download traffic paths.
+  vpn-flow.svg: Explain VPN configuration, recovery, and torrent traffic.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 790" role="img" aria-labelledby="title desc">
-  <title id="title">VPN configuration and download traffic</title>
-  <desc id="desc">The Privateerr container writes the PIA WireGuard configuration file, wg0.conf, and matching server metadata, privateerr.env, that the Gluetun VPN container reads. Privateerr can also send recovery settings directly to Gluetun's API. qBittorrent shares Gluetun's network and sends torrent traffic through Gluetun's VPN tunnel to PIA.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 1480" role="img" aria-labelledby="title desc">
+  <title id="title">VPN configuration, recovery, and torrent traffic</title>
+  <desc id="desc">Privateerr writes wg0.conf and privateerr.env for Gluetun to read at startup. A separate dashed recovery route connects Privateerr's Python supervisor to Gluetun's API. qBittorrent sends torrent traffic through Gluetun's shared network and encrypted VPN tunnel to a PIA server. The background outside the colored boxes is transparent.</desc>
   <defs>
-    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="none" stroke="#365a74" stroke-width="1.7"/></marker>
+    <marker id="arrow" viewBox="0 0 10 10" markerWidth="9" markerHeight="9" refX="9" refY="5" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#7a8ea6" stroke-width="1.8"/></marker>
     <style>
-      text { fill: #182a3a; font-family: system-ui, sans-serif; font-size: 19px; text-anchor: middle; }
-      .heading { font-size: 23px; font-weight: 700; }
-      .name { font-weight: 700; }
-      .small { font-size: 16px; }
-      .node { fill: #ffffff; stroke: #627e91; stroke-width: 2; }
-      .line { fill: none; stroke: #365a74; stroke-width: 2.5; marker-end: url(#arrow); }
+      text{font-family:system-ui,"Apple Color Emoji","Segoe UI Emoji",sans-serif;text-anchor:middle;fill:#f8fafc;font-size:21px}
+      .title{font-size:23px;font-weight:700}.sub{font-size:18px}.band{fill:white;font-size:23px;font-weight:700}.action{font-size:19px}
+      .node{stroke-width:2.5}.line{fill:none;stroke:#7a8ea6;stroke-width:3;marker-end:url(#arrow)}.route{fill:none;stroke:#7a8ea6;stroke-width:3;stroke-dasharray:8 6}.pill{fill:#293746;stroke:#9db0c5;stroke-width:1.5}
     </style>
   </defs>
-  <rect width="600" height="790" rx="16" fill="#f2f6f9"/>
-  <text x="300" y="39" class="heading">1. Prepare and recover the VPN</text>
-  <rect x="160" y="63" width="280" height="65" rx="10" class="node"/>
-  <text x="300" y="91" class="name">Privateerr container</text>
-  <text x="300" y="115" class="small">Stays outside the VPN network</text>
-  <path d="M300 128 V182" class="line"/>
-  <text x="346" y="162" class="small">writes</text>
-  <rect x="130" y="190" width="340" height="65" rx="10" class="node"/>
-  <text x="300" y="218" class="name">Shared configuration files</text>
-  <text x="300" y="242" class="small">wg0.conf + privateerr.env</text>
-  <path d="M300 255 V309" class="line"/>
-  <text x="360" y="290" class="small">reads at startup</text>
-  <rect x="160" y="317" width="280" height="65" rx="10" class="node"/>
-  <text x="300" y="345" class="name">Gluetun container</text>
-  <text x="300" y="369" class="small">Connects the VPN tunnel</text>
-  <path d="M440 95 H544 V350 H450" class="line" stroke-dasharray="6 5"/>
-  <rect x="460" y="193" width="112" height="72" rx="5" fill="#f2f6f9"/>
-  <text x="516" y="214" class="small">Recovery</text>
-  <text x="516" y="236" class="small">through</text>
-  <text x="516" y="258" class="small">internal API</text>
-  <path d="M28 415 H572" stroke="#b9c9d4"/>
-  <text x="300" y="451" class="heading">2. Send download traffic</text>
-  <rect x="85" y="470" width="430" height="207" rx="14" fill="#e0eef4" stroke="#627e91" stroke-width="2"/>
-  <text x="300" y="497" class="small">Gluetun's shared network</text>
-  <rect x="155" y="514" width="290" height="54" rx="10" class="node"/>
-  <text x="300" y="548" class="name">qBittorrent</text>
-  <path d="M300 568 V603" class="line"/>
-  <rect x="155" y="612" width="290" height="48" rx="10" class="node"/>
-  <text x="300" y="643" class="name">Gluetun VPN tunnel</text>
-  <path d="M300 660 V722" class="line"/>
-  <text x="416" y="707" class="small">Encrypted traffic</text>
-  <rect x="155" y="732" width="290" height="42" rx="10" class="node"/>
-  <text x="300" y="760" class="name">PIA VPN server</text>
+  <rect x="64" y="24" width="492" height="56" rx="14" fill="#263b63" stroke="#b9c9e7" class="node"/>
+  <text x="310" y="61" class="band">1. Configure and recover the VPN</text>
+  <rect x="80" y="128" width="460" height="112" rx="16" fill="#243552" stroke="#93b5f5" class="node"/>
+  <rect x="163" y="141" width="38" height="36" rx="8" fill="#e2e8f0"/>
+  <text x="182" y="167" class="title">🏴‍☠️</text>
+  <text x="327" y="167" class="title">Privateerr container</text>
+  <text x="310" y="199" class="sub">Creates the WireGuard configuration file</text>
+  <text x="310" y="223" class="sub">Python supervisor monitors Gluetun</text>
+  <path d="M310 240 V358" class="line"/>
+  <rect x="350" y="280" width="210" height="40" rx="12" class="pill"/>
+  <text x="455" y="307" class="action">✍️ Writes files</text>
+  <rect x="80" y="360" width="460" height="112" rx="16" fill="#513c20" stroke="#f1c269" class="node"/>
+  <text x="310" y="405" class="title">📄 Shared VPN files</text>
+  <text x="310" y="439" class="sub">wg0.conf + privateerr.env</text>
+  <path d="M310 472 V590" class="line"/>
+  <rect x="350" y="512" width="210" height="40" rx="12" class="pill"/>
+  <text x="455" y="539" class="action">📖 Reads at startup</text>
+  <rect x="80" y="592" width="460" height="112" rx="16" fill="#174c4c" stroke="#77d8ca" class="node"/>
+  <text x="310" y="637" class="title">🛡️ Gluetun VPN container</text>
+  <text x="310" y="671" class="sub">Reads the files and connects to PIA</text>
+  <path d="M540 184 H690 V358" class="route"/>
+  <rect x="580" y="360" width="220" height="112" rx="16" fill="#243552" stroke="#93b5f5" class="node"/>
+  <text x="690" y="392" class="action">🔄 Automatic recovery</text>
+  <text x="690" y="424" class="sub">Python supervisor</text>
+  <text x="690" y="452" class="sub">→ Gluetun API</text>
+  <path d="M690 474 V648 H542" class="route" marker-end="url(#arrow)"/>
+  <rect x="64" y="776" width="492" height="56" rx="14" fill="#155a59" stroke="#8fd5d1" class="node"/>
+  <text x="310" y="813" class="band">2. Send torrent traffic</text>
+  <rect x="64" y="880" width="492" height="384" rx="20" fill="#182b3d" stroke="#8fbaca" stroke-width="2.5"/>
+  <text x="310" y="916" class="title">🌐 Gluetun's shared network</text>
+  <rect x="124" y="952" width="372" height="80" rx="14" fill="#4c304e" stroke="#e5a9da" class="node"/>
+  <text x="310" y="1000" class="title">📥 qBittorrent</text>
+  <path d="M310 1032 V1150" class="line"/>
+  <rect x="350" y="1072" width="190" height="40" rx="12" class="pill"/>
+  <text x="445" y="1099" class="action">⬇️ Torrent traffic</text>
+  <rect x="124" y="1152" width="372" height="80" rx="14" fill="#174c4c" stroke="#77d8ca" class="node"/>
+  <text x="310" y="1200" class="title">🔒 Gluetun VPN tunnel</text>
+  <path d="M310 1232 V1350" class="line"/>
+  <rect x="350" y="1272" width="230" height="40" rx="12" class="pill"/>
+  <text x="465" y="1299" class="action">🔐 Encrypted traffic</text>
+  <rect x="80" y="1352" width="460" height="80" rx="16" fill="#243552" stroke="#93b5f5" class="node"/>
+  <text x="310" y="1400" class="title">🌍 PIA VPN server</text>
 </svg>

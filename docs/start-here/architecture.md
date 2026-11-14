@@ -10,7 +10,9 @@ icon: material/transit-connection-variant
 
 ## VPN configuration and traffic
 
-![Privateerr writes configuration for Gluetun and uses its recovery API; qBittorrent traffic travels through Gluetun to PIA](../assets/images/vpn-flow.svg)
+[![Privateerr writes configuration for Gluetun and uses its recovery API; qBittorrent traffic travels through Gluetun to PIA](../assets/images/vpn-flow.svg)](../assets/images/vpn-flow.svg)
+
+[View the full-size diagram](../assets/images/vpn-flow.svg).
 
 At startup, the Privateerr container writes the PIA WireGuard configuration file (`wg0.conf`) and matching server metadata (`privateerr.env`) into a directory shared with the Gluetun VPN container. Gluetun reads them and connects to PIA. During a sustained outage, Privateerr's Python supervisor can send replacement settings to Gluetun's authenticated internal API. Rewriting a file alone does not change a running tunnel.
 
