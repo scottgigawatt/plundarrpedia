@@ -13,6 +13,8 @@
     "ruff.importStrategy": "useBundled",
 
     "cSpell.words": [
+        "Donath",
+        "endmacro",
         "urandom",
         "startswith",
         "cksum",

@@ -224,6 +224,17 @@ extra_css:
 # schema, including generator visibility, page statuses, and footer links.
 #
 extra:
+  #
+  # Keep tab icons independent of the first page in each section.
+  #
+  nav_icons:
+    Start here: material/map
+    Privateerr: material/shield-key
+    Plundarr: material/pirate
+    Expand your stack: material/view-grid-plus
+    Run and maintain: material/server-network
+    Reference and contribute: material/book-open-variant
+
   generator: false
 
   # Define reusable labels for pages marked new or recently updated.
