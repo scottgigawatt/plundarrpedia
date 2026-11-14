@@ -1,3 +1,9 @@
+---
+title: Host Plundarrpedia
+description: Run the published Plundarrpedia image with Docker.
+icon: material/docker
+---
+
 # Host Plundarrpedia
 
 Plundarrpedia is a task-oriented field guide for Plundarr, Privateerr, Plex utilities, and practical self-hosted media automation. The container serves the complete Material for MkDocs site from an unprivileged Nginx runtime.
