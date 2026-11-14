@@ -58,7 +58,7 @@ Gluetun needs `/dev/net/tun` plus the `NET_ADMIN` capability declared in the gen
 ls -l /dev/net/tun
 ```
 
-If the device is absent after a reboot, review Plundarr's `scripts/synology/tun.sh` helper before adding it as a boot-triggered task under **Control Panel → Task Scheduler**. Run host-level scripts with the smallest privilege that works and keep a record of the change.
+If the device is absent after a reboot, review Plundarr's [TUN helper](https://scottgigawatt.github.io/plundarr/project-guides/scripts/#synologytunsh). Use the [shared Synology boot-task procedure](https://scottgigawatt.github.io/plundarr/project-guides/scripts/#create-a-synology-boot-task) to schedule it as `root` before a dependent VPN-stack restart.
 
 ## 5. Create the Container Manager project
 
@@ -100,27 +100,15 @@ When operating directly from the Plundarr checkout, use `make test-vpn PRESET=pl
 
 Only after the tunnel and download-client path are healthy should you configure Prowlarr, Radarr, Sonarr, request services, and playback applications.
 
+For coordinated stack startup after each reboot, use Plundarr's [restart helper and shared boot-task setup](https://scottgigawatt.github.io/plundarr/project-guides/scripts/#composerestartsh).
+
 Back up `config/` and the private `.env` through a secret-aware process. Transcode directories, caches, and ordinary container logs usually do not belong in the same backup tier as application databases.
 
 ## Optional: restore trusted Docker CLI access after boot
 
 This optional step is only for trusted administrators using Docker over SSH. Container Manager can recreate `/var/run/docker.sock` with root-only group ownership after a DSM reboot or package update. This affects trusted users who run Docker commands over SSH; it does not require making the socket writable by every local account.
 
-If the socket loses the intended group access:
-
-1. Create a `docker` group under **Control Panel → User & Group → Group**.
-2. Add only the trusted DSM users who need Docker CLI access.
-3. Review Plundarr's
-   [`docker-socket.sh`](https://github.com/scottgigawatt/plundarr/blob/main/scripts/synology/docker-socket.sh)
-   helper.
-4. Create a boot-up task in **Control Panel → Task Scheduler**, select `root`
-   as the task user, and run:
-
-```sh
-sh /volume1/docker/plundarr-source/scripts/synology/docker-socket.sh
-```
-
-Replace the example source-checkout path with your actual Plundarr checkout. The generated deployment directory does not include host helpers. The helper waits up to 120 seconds for the socket, verifies the Synology `docker` group, then restores ownership to `root:docker` with mode `0660`.
+If the socket loses the intended group access, create a `docker` group under **Control Panel → User & Group → Group** and add only trusted DSM users who need Docker CLI access. Plundarr's [Docker socket helper](https://scottgigawatt.github.io/plundarr/project-guides/scripts/#synologydocker-socketsh) lists its prerequisites, command, and expected result. Follow the [shared boot-task procedure](https://scottgigawatt.github.io/plundarr/project-guides/scripts/#create-a-synology-boot-task) with **User** set to `root`.
 
 > [!CAUTION]
 > Docker-group membership grants root-equivalent control of the NAS through the Docker daemon. Add only trusted administrators; do not replace the helper's `0660` mode with world-writable permissions.

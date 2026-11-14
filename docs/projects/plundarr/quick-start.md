@@ -18,6 +18,8 @@ Watchtower is selected by default and can update eligible containers across this
 
 ![Maraudarr's interactive service picker generates the default Plundarr project](https://raw.githubusercontent.com/scottgigawatt/plundarr/main/docs/assets/maraudarr-demo.gif)
 
+🔎 [View the full-size demo](https://raw.githubusercontent.com/scottgigawatt/plundarr/main/docs/assets/maraudarr-demo.gif).
+
 ## 1. Open the interactive generator
 
 Run these commands in a new directory. Keep an existing deployment's files and settings; use the [update guide](upgrading.md) when regenerating it.

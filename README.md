@@ -44,12 +44,12 @@ Plundarrpedia helps you run [Privateerr](https://github.com/scottgigawatt/privat
 
 ## Start using the projects
 
-| Your goal | Start here |
+| 🎯 Your goal | 🧭 Start here |
 | --- | --- |
-| Run Privateerr, Gluetun, and qBittorrent | [Privateerr quick start](https://scottgigawatt.github.io/plundarrpedia/projects/privateerr/quick-start/) |
-| Generate and start a complete media stack | [Interactive Plundarr quick start](https://scottgigawatt.github.io/plundarrpedia/projects/plundarr/quick-start/) |
-| Add media servers, books, or other tools | [Choose a preset](https://scottgigawatt.github.io/plundarrpedia/projects/presets/) |
-| Use Synology Container Manager or TrueNAS | [Choose your platform](https://scottgigawatt.github.io/plundarrpedia/guides/) |
+| 🏴‍☠️ Run Privateerr, Gluetun, and qBittorrent | [Privateerr quick start](https://scottgigawatt.github.io/plundarrpedia/projects/privateerr/quick-start/) |
+| 🏴‍☠️ Generate and start a complete media stack | [Interactive Plundarr quick start](https://scottgigawatt.github.io/plundarrpedia/projects/plundarr/quick-start/) |
+| 🗺️ Add media servers, books, or other tools | [Choose a preset](https://scottgigawatt.github.io/plundarrpedia/projects/presets/) |
+| 🖥️ Use Synology Container Manager or TrueNAS | [Choose your platform](https://scottgigawatt.github.io/plundarrpedia/guides/) |
 
 ## Host the wiki
 

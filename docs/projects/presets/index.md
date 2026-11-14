@@ -8,16 +8,16 @@ icon: material/view-grid-plus
 
 A preset is a starting service selection in Maraudarr. Choose it in the [interactive generator](../plundarr/quick-start.md#1-open-the-interactive-generator), adjust optional services, and review the final selection. Each project gets its own `dist/<preset>/` directory.
 
-| Preset | Use it for | Before launch |
+| 🗺️ Preset | 🎯 Use it for | ✅ Before launch |
 | --- | --- | --- |
-| `plundarr` | Movies, television, ebooks, requests, monitoring, and VPN downloads | [Default quick start](../plundarr/quick-start.md) |
-| `boudoirr` | Whisparr automation, requests, Jellyfin playback, and Stash cataloging | [Boudoirr setup](boudoirr.md); Cruisarr requires private-image access |
-| `jellyfin`, `plex` | One media server | [Media server setup](media-servers-and-books.md) |
-| `calibre-web-automated` | Ebook library and ingest | [Book paths and ingest behavior](media-servers-and-books.md#calibre-web-automated) |
-| `duplex` | Plex curation and Plex/Jellyfin theme songs | [External configuration and keys](duplex.md) |
-| `watchtower` | Deliberate container image updates | [Host update policy](watchtower.md) |
-| `portainer` | Docker host management | [Administrator access](portainer.md) |
-| `custom` | Your own service selection | Review dependencies and each selected service |
+| 🏴‍☠️ `plundarr` | Movies, television, ebooks, requests, monitoring, and VPN downloads | [Default quick start](../plundarr/quick-start.md) |
+| 🔞 `boudoirr` | Whisparr automation, requests, Jellyfin playback, and Stash cataloging | [Boudoirr setup](boudoirr.md); Cruisarr requires private-image access |
+| 🎞️ `jellyfin`, 📺 `plex` | One media server | [Media server setup](media-servers-and-books.md) |
+| 📚 `calibre-web-automated` | Ebook library and ingest | [Book paths and ingest behavior](media-servers-and-books.md#calibre-web-automated) |
+| 🎭 `duplex` | Plex curation and Plex/Jellyfin theme songs | [External configuration and keys](duplex.md) |
+| 🔭 `watchtower` | Deliberate container image updates | [Host update policy](watchtower.md) |
+| 🚢 `portainer` | Docker host management | [Administrator access](portainer.md) |
+| 🧩 `custom` | Your own service selection | Review dependencies and each selected service |
 
 Required core services stay selected. Removable defaults start checked, and optional services start unchecked. Maraudarr adds required companions and shows the result before generating files. Generator platform support does not guarantee that every application supports your host.
 
