@@ -65,7 +65,7 @@ Kometa uses external operator-owned configuration. Themerr requires amd64/arm64 
 | Duplicati | Encrypted configuration/host-data backups |
 | Portainer | Docker management through the host socket |
 | Speedtest Tracker and Apprise | Network history and notifications |
-| Watchtower | Deliberate automatic or one-shot image updates |
+| Watchtower | Automatic updates or a single update pass |
 
 Read [Tracearr setup and database exports](monitoring.md), [Homepage login](homepage.md), and [Portainer access](../presets/portainer.md) before launch.
 
@@ -79,7 +79,6 @@ After [choosing the generator](quick-start.md#use-repository-helpers-later), rep
 ```sh
 make generate PRESET=YOUR-PRESET ADD_SERVICES=SERVICE-ID
 make compose-services PRESET=YOUR-PRESET
-make config PRESET=YOUR-PRESET
 ```
 
 Keep your complete existing service selection on regeneration. Generator architecture support does not guarantee support for every selected application.

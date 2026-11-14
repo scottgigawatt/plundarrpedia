@@ -36,7 +36,7 @@ A practical layout keeps completed downloads and final libraries under one share
     └── anime
 ```
 
-Use consistent container paths across downloaders and media managers. If qBittorrent reports `/data/downloads/torrents/movie.mkv`, Radarr should see that same file at the same container path.
+Use consistent container paths across downloaders and media managers. If qBittorrent reports `/downloads/torrents/movie.mkv`, Radarr should see that same file at the same container path.
 
 ## 3. Match permissions
 
@@ -60,20 +60,14 @@ ls -l /dev/net/tun
 
 If the device is absent after a reboot, review Plundarr's [TUN helper](https://scottgigawatt.github.io/plundarr/project-guides/scripts/#synologytunsh). Use the [shared Synology boot-task procedure](https://scottgigawatt.github.io/plundarr/project-guides/scripts/#create-a-synology-boot-task) to schedule it as `root` before a dependent VPN-stack restart.
 
-## 5. Create the Container Manager project
+<!-- markdownlint-disable-next-line MD033 -->
+<a id="6-check-networking-and-the-dsm-firewall"></a>
 
-1. Open **Container Manager → Project**.
-2. Select **Create** and choose the generated project directory.
-3. Use a stable project name such as `plundarr`.
-4. Confirm Container Manager found `docker-compose.yml` and `.env` together.
-5. Review host paths, published ports, and the custom network before building.
-
-Do not paste only the Compose file into an unrelated directory. Relative `./config/...` mounts resolve from the project directory and must travel with the deployment.
-
-## 6. Check networking and the DSM firewall
+## 5. Check networking and the DSM firewall
 
 - Make sure the Plundarr subnet does not overlap the LAN, another Compose
   project, or a remote VPN route.
+- If the DSM firewall is enabled, allow the generated bridge subnet before launch. For default Plundarr, allow all ports from `172.20.0.0` with mask `255.255.0.0`. Use the subnet from your generated `.env` if customized, and repeat for each bridge-network preset. See [Plundarr's firewall steps](https://scottgigawatt.github.io/plundarr/setup/#configure-the-synology-firewall).
 - Permit only the Web UI host ports you intend to use from trusted LAN sources.
 - Publish qBittorrent, SABnzbd, or NZBGet ports on Gluetun when those services
   use `network_mode: service:gluetun`.
@@ -85,6 +79,19 @@ Do not paste only the Compose file into an unrelated directory. Relative `./conf
 ### Homepage behind HTTPS
 
 Before opening Homepage, set `HOMEPAGE_EXTERNAL_URL` to its HTTPS browser URL and `HOMEPAGE_ALLOWED_HOSTS` to the matching hostname and optional nonstandard port without the scheme. Configure the DSM reverse proxy and certificate separately, forwarding to `HOMEPAGE_WEBUI_PORT` and preserving the original host and forwarded HTTPS scheme. Recreate Homepage after editing `.env`, then sign in with the generated password. See [Homepage login](../projects/plundarr/homepage.md) for the complete setup and recovery steps.
+
+<!-- markdownlint-disable-next-line MD033 -->
+<a id="5-create-the-container-manager-project"></a>
+
+## 6. Create the Container Manager project
+
+1. Open **Container Manager → Project**.
+2. Select **Create** and choose the generated project directory.
+3. Use a stable project name such as `plundarr`.
+4. Confirm Container Manager found `docker-compose.yml` and `.env` together.
+5. Review host paths, published ports, and the custom network before building.
+
+Do not paste only the Compose file into an unrelated directory. Relative `./config/...` mounts resolve from the project directory and must travel with the deployment.
 
 ## 7. Validate in layers
 

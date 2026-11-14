@@ -5,7 +5,7 @@ icon: material/heart
 status: updated
 ---
 
-# Boudoirr preset 💋
+# Boudoirr preset 🔞
 
 Boudoirr combines required Privateerr, Gluetun, FlareSolverr, Prowlarr, and Whisparr services. qBittorrent, Cruisarr, Jellyfin, Stash, Cleanuparr, and Watchtower are removable defaults. Maraudarr writes the project under `dist/boudoirr/`.
 

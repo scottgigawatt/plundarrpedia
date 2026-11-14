@@ -10,7 +10,7 @@ This starts three published images. The **Privateerr container** generates the P
 
 ## Before you start
 
-You need Git, Docker with Compose v2, an active PIA subscription, and an amd64 or arm64 host for the supplied qBittorrent image. Privateerr alone also supports arm/v7. Choose private storage for configuration and a writable download directory. No local image build or Make is required.
+You need Git, Docker with Compose v2, `openssl` to generate the recovery key, an active PIA subscription, and an amd64 or arm64 host for the supplied qBittorrent image. Privateerr alone also supports arm/v7. Choose private storage for configuration and a writable download directory. No local image build or Make is required.
 
 ## 1. Create your settings file
 
@@ -82,4 +82,4 @@ docker compose down
 
 [Generate a complete Plundarr stack](../plundarr/quick-start.md) when you want media automation and dashboards. Plundarr includes its own VPN services; stop this standalone project before reusing its ports or application state. Do not point both stacks at the same qBittorrent configuration.
 
-For another task, [create WireGuard configuration files once](https://scottgigawatt.github.io/privateerr/advanced-usage/#generate-without-make), [choose a PIA region](../plundarr/configuration.md#vpn-region-selection), or [configure automatic recovery](automatic-recovery.md). [Privateerr's developer guide](https://scottgigawatt.github.io/privateerr/development/privateerr/) covers source builds and tests. Tests that deliberately interrupt the VPN belong in an isolated environment.
+For another task, [create a PIA WireGuard configuration file](https://scottgigawatt.github.io/privateerr/advanced-usage/#generate-without-make), [choose a PIA region](../plundarr/configuration.md#vpn-region-selection), or [configure automatic recovery](automatic-recovery.md). [Privateerr's developer guide](https://scottgigawatt.github.io/privateerr/development/privateerr/) covers source builds and tests. Tests that deliberately interrupt the VPN belong in an isolated environment.

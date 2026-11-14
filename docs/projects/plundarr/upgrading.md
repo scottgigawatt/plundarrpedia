@@ -19,7 +19,7 @@ Stop affected applications before raw database file copies. Never run two databa
 
 ## Regenerate when changing the stack definition
 
-To change services or adopt generator changes, rerun the [interactive generator](quick-start.md#1-open-the-interactive-generator) from the same mounted parent directory. Select your complete intended service set again; preserved `.env` assignments do not remember the selection. Stop retiring services before omitting them, and review remaining Compose orphans before removal.
+To change services or adopt generator changes, return to the original output directory containing `dist/` and run the Docker command in [Plundarr's regeneration procedure](https://scottgigawatt.github.io/plundarr/maintain/#regenerate-a-deployment). Select your complete intended service set again; preserved `.env` assignments do not remember the selection. Stop retiring services before omitting them, and review remaining Compose orphans before removal.
 
 Maraudarr preserves existing environment assignments, image references, and application state. Review generated changes before applying them. Homepage service cards are regenerated; persistent card customization belongs in the generator's source fragments. Other existing Homepage settings are preserved. Privateerr replaces its two image-owned scripts on long-running startup; keep custom scripts under other names.
 

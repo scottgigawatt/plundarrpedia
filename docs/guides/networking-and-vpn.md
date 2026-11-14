@@ -65,13 +65,12 @@ The VPN-assigned peer port is separate from the Web UI port and arrives through 
 
 ## Validation ladder
 
-Run these commands from the Plundarr repository root for the default preset:
+Run these commands from the deployed directory containing `docker-compose.yml` and `.env`:
 
 ```sh
-make config
-make ps
-docker compose --project-directory dist/plundarr logs privateerr gluetun
-make test-vpn
+docker compose config --quiet
+docker compose ps
+docker compose logs --tail 100 privateerr gluetun qbittorrent
 ```
 
-Then check the download client's Web UI and listening-port setting. Move on to Prowlarr/Radarr/Sonarr only after this layer is stable.
+Quiet validation succeeds without output. Confirm Gluetun is healthy, then check qBittorrent's Web UI and listening-port setting. Keep logs private and sanitize excerpts before sharing them. If you use a Plundarr checkout, `make test-vpn PRESET=plundarr` is an optional check for that checkout's generated deployment. Move on to Prowlarr/Radarr/Sonarr only after this layer is stable.

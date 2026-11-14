@@ -50,4 +50,4 @@ Recreate the full VPN group when replacing Gluetun. `depends_on.restart: true` f
 
 If a storage operation fails, preserve pending/commit files and repair the reported path, permissions, disk, or quota problem. Readiness with existing files does not guarantee future recovery writes. See [storage troubleshooting](troubleshooting.md#recovery-reports-a-storage-error) before deleting any state.
 
-To disable recovery, preserve needed VPN files, set `PRIVATEERR_AUTO_RECOVER=false`, and recreate the stack. This interrupts traffic and regenerates the saved settings. Gluetun resumes its configured tunnel-health restart policy. Container restart policies alone do not restart unhealthy containers.
+To disable recovery, save any PIA WireGuard configuration files you need, set `PRIVATEERR_AUTO_RECOVER=false`, and recreate the stack. This interrupts traffic and regenerates the saved settings. Gluetun resumes its configured tunnel-health restart policy. Container restart policies alone do not restart unhealthy containers.

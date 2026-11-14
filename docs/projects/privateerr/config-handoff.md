@@ -16,7 +16,7 @@ Long-running Privateerr shares files with Gluetun at startup and uses its authen
 5. Gluetun starts the tunnel; network-sharing download clients start after it is healthy.
 6. During sustained failure, Privateerr applies a candidate through the API and saves it after settings readback and tunnel-health confirmation.
 
-Creating configuration files once with both `PRIVATEERR_KEEPALIVE=false` and `PRIVATEERR_AUTO_RECOVER=false` writes the VPN pair without installing or changing integration scripts. Follow the [configuration-only procedure](https://scottgigawatt.github.io/privateerr/advanced-usage/#generate-without-make) and stop other writers first.
+Creating configuration files once with both `PRIVATEERR_KEEPALIVE=false` and `PRIVATEERR_AUTO_RECOVER=false` writes the VPN pair without installing or changing integration scripts. Follow the [configuration-only procedure](https://scottgigawatt.github.io/privateerr/advanced-usage/#generate-without-make) and stop other Privateerr containers writing to the same directory first.
 
 ## Why the metadata exists
 

@@ -1,13 +1,13 @@
 ---
 title: Watchtower
-description: Run the maintained Watchtower image as a persistent Plundarr preset or a deliberate one-shot update.
+description: Run the maintained Watchtower image as a persistent Plundarr preset or a deliberate update pass.
 icon: material/telescope
 status: updated
 ---
 
 # Watchtower preset 🔭
 
-The Watchtower preset generates one focused project for eligible container updates on a Docker host. Plundarr uses the maintained `nickfedor/watchtower` image and supports either a persistent daemon or an explicit one-shot pass.
+The Watchtower preset generates one focused project for eligible container updates on a Docker host. Plundarr uses the maintained `nickfedor/watchtower` image and supports either a persistent daemon or an explicit update pass that exits.
 
 ## Run the persistent preset
 
@@ -28,7 +28,7 @@ Stop any persistent Watchtower daemon first. With the optional [repository helpe
 make watchtower-run-once PRESET=watchtower
 ```
 
-The one-shot target pulls the configured image, runs with `--run-once`, and removes its temporary container when the pass completes.
+The `make watchtower-run-once` target pulls the configured image, runs with `--run-once`, and removes its temporary container when the pass completes.
 
 > [!CAUTION]
 > Automatic image replacement can introduce database migrations, changed configuration, or incompatible runtime behavior. Back up application state and keep tightly coordinated services excluded unless you have tested their upgrade path.

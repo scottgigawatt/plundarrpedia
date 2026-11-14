@@ -5,7 +5,7 @@ icon: material/television-classic
 status: updated
 ---
 
-# Duplex preset 📺
+# Duplex preset 🎭
 
 Duplex is the Plundarr preset for the backstage work around an existing Plex Media Server and Plex/Jellyfin theme songs. Maraudarr generates the complete project under `dist/duplex/`.
 

@@ -70,7 +70,7 @@ From the generated `dist/plundarr/` directory, validate without printing passwor
 docker compose config --quiet
 ```
 
-Success produces no output. Fix any reported setting before continuing. This checks Compose syntax and required values; folder permissions and live connections are checked after startup.
+Success produces no output. Fix any reported setting before continuing. This validates the Compose model; it does not verify PIA credentials, folder permissions, or live connections. Check those after startup.
 
 For Synology or TrueNAS, transfer this complete project directory and continue with [your platform's deployment steps](../../guides/index.md). Start only one copy. For Docker Compose on this host:
 

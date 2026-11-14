@@ -39,7 +39,7 @@ Keep `PIA_PF=true` and choose a compatible region. Healthy saved settings surviv
 
 ## Gluetun reports a custom WireGuard error
 
-Confirm `wg0.conf` exists, is non-empty, and uses WireGuard; check the host clock. Regenerate configuration rather than editing keys or endpoints by hand. Back up needed VPN files and stop other writers first.
+Confirm `wg0.conf` exists, is non-empty, and uses WireGuard; check the host clock. Regenerate configuration rather than editing keys or endpoints by hand. Save any PIA WireGuard configuration files you need and stop other Privateerr containers writing to the same directory first.
 
 ## Recovery does not start
 
