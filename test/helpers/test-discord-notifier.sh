@@ -65,12 +65,17 @@ assert_payload() {
         and ([.embeds[0].fields[] | select(.inline) | .name]
             == ["📋 Build context", "🧾 Details"])
         and all(.embeds[0].fields[]; (.value | contains("\n\n") | not))
+        and all(.embeds[0].fields[];
+            if .name | endswith("📦 Registry targets") then .name == "\u200b\n📦 Registry targets"
+            elif .name | endswith("🧾 Digest") then .name == "\u200b\n🧾 Digest"
+            elif .name | endswith("🔗 Quick links") then .name == "\u200b\n🔗 Quick links"
+            else true end)
         and (if .username | startswith("Plundarrpedia Docs") then
             any(.embeds[0].fields[]; .name == "🧾 Details"
                 and (.value | startswith("**Project: 📖** Plundarrpedia\n**Target: 🗺️** GitHub Pages")))
           else any(.embeds[0].fields[]; .name == "🧾 Details"
                 and (.value | startswith("**Image:** **🐳** Plundarrpedia"))) end)
-        and any(.embeds[0].fields[]; .name == "🔗 Quick links"
+        and any(.embeds[0].fields[]; .name == "\u200b\n🔗 Quick links"
             and (.value | contains("[View run](https://example.invalid/run)")))
     ' >/dev/null
 }
@@ -82,6 +87,9 @@ for profile in image-primary image-secondary; do
     for selection in 0 1; do
         payload=$(render --type image-start --profile "${profile}" --random-value "${selection}")
         assert_payload 3900150 "${payload}"
+        sparse_payload=$(render --type image-start --profile "${profile}" --random-value "${selection}" \
+            --workflow-name '' --actor '' --platforms '')
+        assert_payload 3900150 "${sparse_payload}"
         printf '%s\n' "${payload}" | jq --exit-status '
             .embeds[0].description | startswith("The Plundarrpedia image pipeline has started.")
         ' >/dev/null
@@ -99,6 +107,11 @@ for profile in image-primary image-secondary; do
                 --publication-status success --published-digest sha256:0123456789abcdef \
                 --published-tags ghcr.io/example/plundarrpedia:edge)
             assert_payload "${color}" "${payload}"
+            sparse_payload=$(render --type image-verdict --profile "${profile}" \
+                --random-value "${selection}" --job-status "${status}" \
+                --publication-status success --published-digest sha256:0123456789abcdef \
+                --workflow-name '' --actor '' --platforms '')
+            assert_payload "${color}" "${sparse_payload}"
         done
     done
 done
@@ -110,6 +123,9 @@ done
 for selection in 0 1; do
     payload=$(render --type docs-start --profile docs --random-value "${selection}")
     assert_payload 3900150 "${payload}"
+    sparse_payload=$(render --type docs-start --profile docs --random-value "${selection}" \
+        --workflow-name '' --actor '' --platforms '')
+    assert_payload 3900150 "${sparse_payload}"
 
     for build_status in success failure cancelled skipped neutral unknown; do
         for deploy_status in success failure cancelled skipped neutral unknown; do
@@ -130,6 +146,10 @@ for selection in 0 1; do
                 --build-status "${build_status}" --deploy-status "${deploy_status}" \
                 --site-url https://example.invalid/docs/)
             assert_payload "${color}" "${payload}"
+            sparse_payload=$(render --type docs-verdict --profile docs --random-value "${selection}" \
+                --build-status "${build_status}" --deploy-status "${deploy_status}" \
+                --workflow-name '' --actor '' --platforms '')
+            assert_payload "${color}" "${sparse_payload}"
         done
     done
 done
@@ -169,7 +189,7 @@ printf '%s\n' "${payload}" | jq --exit-status '
     ([.embeds[0].fields[].value] | join("\n")) as $values
     | ($values | contains("planned-tag") | not)
         and ($values | contains("sha256:0123456789abcdef") | not)
-        and ([.embeds[0].fields[].name] | index("🧾 Digest") == null)
+        and ([.embeds[0].fields[].name] | index("\u200b\n🧾 Digest") == null)
 ' >/dev/null
 payload=$(render --type image-verdict --profile image-primary --random-value 0 \
     --job-status success --publication-status success --published-tags planned-tag)
@@ -201,11 +221,11 @@ printf '%s\n' "${payload}" | jq --exit-status --arg digest "${full_digest}" '
     and any(.embeds[0].fields[]; .name == "🧾 Details" and .inline
         and .value == "**Image:** **🐳** Plundarrpedia\n**GHCR:** ✅ success")
     and any(.embeds[0].fields[]; .value == "**Tags: 🏷️** `edge` · `sha-0123456789abcdef`\n**Platforms:** **🧱** `amd64` · `arm64` · `arm/v7`\n**Workflow: ⚙️** A deliberately funny workflow name")
-    and any(.embeds[0].fields[]; .name == "🧾 Digest" and .value == $digest)
-    and any(.embeds[0].fields[]; .name == "🔗 Quick links"
+    and any(.embeds[0].fields[]; .name == "\u200b\n🧾 Digest" and .value == $digest)
+    and any(.embeds[0].fields[]; .name == "\u200b\n🔗 Quick links"
         and .value == "[View run](https://example.invalid/run) · [GHCR image](https://example.invalid/package)")
     and ([.embeds[0].fields[].value] | join("\n") | contains("**Docker Hub:**") | not)
-    and ([.embeds[0].fields[].name] | index("📦 Image") == null and index("📦 Registry targets") == null)
+    and ([.embeds[0].fields[].name] | index("📦 Image") == null and index("\u200b\n📦 Registry targets") == null)
 ' >/dev/null
 
 payload=$(render --type docs-verdict --profile docs --random-value 0 \
@@ -213,10 +233,10 @@ payload=$(render --type docs-verdict --profile docs --random-value 0 \
 printf '%s\n' "${payload}" | jq --exit-status '
     any(.embeds[0].fields[]; .name == "🧾 Details"
         and .value == "**Project: 📖** Plundarrpedia\n**Target: 🗺️** GitHub Pages\n**Build:** ✅ success\n**Pages:** ✅ success")
-    and any(.embeds[0].fields[]; .name == "🔗 Quick links"
+    and any(.embeds[0].fields[]; .name == "\u200b\n🔗 Quick links"
         and .value == "[View run](https://example.invalid/run) · [Open documentation](https://example.invalid/docs/)")
     and ([.embeds[0].fields[].value] | join("\n") | contains("**Platforms:**") | not)
-    and ([.embeds[0].fields[].name] | index("📦 Registry targets") == null and index("🧾 Digest") == null)
+    and ([.embeds[0].fields[].name] | index("\u200b\n📦 Registry targets") == null and index("\u200b\n🧾 Digest") == null)
 ' >/dev/null
 
 #
@@ -232,7 +252,7 @@ printf '%s\n' "${payload}" | jq --exit-status '
     any(.embeds[0].fields[]; .name == "📋 Build context"
         and (.value | contains("https://github.com/") | not)
         and (.value | contains("**Ref: 🌿** `ref\u0027 [forged](https://bad.invalid)`")))
-    and any(.embeds[0].fields[]; .name == "🔗 Quick links"
+    and any(.embeds[0].fields[]; .name == "\u200b\n🔗 Quick links"
         and .value == "[View run](https://example.invalid/run)")
 ' >/dev/null
 payload=$(render --type image-start --profile image-primary --random-value 0 --actor 'example-bot[bot]')
@@ -298,7 +318,7 @@ payload=$(render --type image-start --profile image-primary --random-value 0 \
     --run-url 'https://example.invalid/run)[forged](https://bad.invalid)')
 printf '%s\n' "${payload}" | jq --exit-status '
     (.embeds[0] | has("url") | not)
-    and ([.embeds[0].fields[].name] | index("🔗 Quick links") == null)
+    and ([.embeds[0].fields[].name] | index("\u200b\n🔗 Quick links") == null)
 ' >/dev/null
 
 #
@@ -341,7 +361,7 @@ payload=$(render --type image-verdict --profile image-primary --random-value 0 \
     --job-status success --publication-status success --published-digest sha256:0123456789abcdef)
 printf '%s\n' "${payload}" | jq --exit-status '
     ([.embeds[0].fields[].value] | join("\n") | contains("**Tags: 🏷️**") | not)
-    and any(.embeds[0].fields[]; .name == "🧾 Digest")
+    and any(.embeds[0].fields[]; .name == "\u200b\n🧾 Digest")
 ' >/dev/null
 
 #
