@@ -94,7 +94,7 @@ git diff --check
 
 Check spelling, relative links/anchors, navigation, alerts, code, and affected light/dark/narrow-screen renders. Report unavailable checks.
 
-For workflow notification changes, run `make test-workflows` with a POSIX shell and `jq`. This suite uses synthetic data and a stubbed transport; it never sends to Discord. Follow the [notification guide](https://github.com/scottgigawatt/plundarrpedia/blob/main/.github/discord/README.md) for destination setup, payload previews, and expected results.
+For workflow notification changes, run `make test-workflows` with Python 3, a POSIX shell, and `jq`. This suite uses synthetic data and a stubbed transport; it never sends to Discord. Follow the [notification guide](https://github.com/scottgigawatt/plundarrpedia/blob/main/.github/discord/README.md) for destination setup, payload previews, and expected results.
 
 Run `make config` with public defaults for Compose changes, `make build` for image/theme/requirements changes, and `make build-platforms` when published platforms can be affected. Neither strict MkDocs nor lint proves all external links work or live instructions succeed.
 

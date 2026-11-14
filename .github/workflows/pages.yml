@@ -167,6 +167,7 @@ jobs:
                   DOCS_DEPLOY_STATUS: ${{ needs.deploy.result }}
                   RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
                   WORKFLOW_NAME: ${{ github.workflow }}
+                  ACTOR: ${{ github.actor }}
                   SITE_URL: ${{ needs.deploy.outputs.page-url }}
                   REPOSITORY: ${{ github.repository }}
                   REF_NAME: ${{ github.ref_name }}
@@ -179,6 +180,7 @@ jobs:
                       --deploy-status "${DOCS_DEPLOY_STATUS}" \
                       --run-url "${RUN_URL}" \
                       --workflow-name "${WORKFLOW_NAME}" \
+                      --actor "${ACTOR}" \
                       --site-url "${SITE_URL}" \
                       --repository "${REPOSITORY}" \
                       --ref-name "${REF_NAME}"

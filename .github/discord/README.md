@@ -17,7 +17,7 @@ You need permission to manage the intended Discord webhook and the repository’
 | `image-secondary` | Public Hades | `DISCORD_HADES_HOOK_URL` | Image notices with Underworld Archives copy |
 | `docs` | Private Asteres | `DISCORD_WEBHOOK_URL` | GitHub Pages notices with Reading Is Fundamental copy |
 
-Missing webhooks skip their destination. Each delivery is independent, keeps a 10-second connection timeout and 30-second total timeout, and makes no automatic retry. Workflow notification steps use `continue-on-error: true`, so delivery failures do not change image or documentation results. Check the notification step outcome if a message is missing. Never publish a webhook URL in source, issues, logs, or screenshots.
+Missing webhooks skip their destination. Each delivery is independent, keeps a 10-second connection timeout and 30-second total timeout, and makes no automatic retry. Workflow notification steps use `continue-on-error: true`, so delivery failures do not change image or documentation results. Check the notification step logs for a skip message or the HTTP status and curl exit code if a message is missing. Never publish a webhook URL in source, issues, logs, or screenshots.
 
 ## Understand events and colors
 
@@ -37,7 +37,7 @@ A successful job without confirmed push evidence is yellow, never green. Publish
 
 Notification tags use short names such as `edge`, `latest`, and `sha-0123456789abcdef`. The formatter accepts already short Docker tag names or removes only the exact expected image prefix from full references. Tags can contain up to 128 ASCII characters. It preserves their order and spelling, ignores blank lines, and validates the whole list before printing any output. Mismatched images, whitespace within a tag, digests, and invalid tag syntax are rejected without logging the input.
 
-Formatting changes only notification metadata, never registry publication inputs. It does not disable or bypass GitHub’s secret filtering; a short tag can still match a configured secret. Empty optional tag metadata stays empty and its field is omitted; a confirmed digest can still appear.
+Formatting changes only notification metadata, never registry publication inputs. It does not disable or bypass GitHub’s secret filtering; a short tag can still match a configured secret. Empty optional tag metadata stays empty and its Tags line is omitted; a confirmed digest can still appear.
 
 Documentation success means the build and Pages deployment both succeeded. Failure text identifies the documentation build or Pages deployment. Cancelled and skipped updates use their own wording instead of failure copy. Workflow names remain metadata; funny workflow titles never become part of a status sentence.
 
@@ -46,7 +46,7 @@ Documentation success means the build and Pages deployment both succeeded. Failu
 | Source | Responsibility |
 | --- | --- |
 | [themes.jq](themes.jq) | Project identities, fixed image color, status colors, and two joke variants per outcome |
-| [payloads/common.jq](payloads/common.jq) | Literal status sentences, metadata fields, length bounds, and disabled mentions |
+| [payloads/common.jq](payloads/common.jq) | Literal status sentences, grouped metadata, safe links, length bounds, and disabled mentions |
 | [payloads/](payloads/) | Payload entry point for each notification type |
 | [discord-notifier.sh](../scripts/discord-notifier.sh) | Argument validation, outcome selection, rendering, and optional delivery |
 | [notification-tags.sh](../scripts/notification-tags.sh) | Validates notification tag names against the expected image and formats short names |
@@ -72,11 +72,14 @@ A dry run needs no webhook and never contacts Discord. Use synthetic values only
        --repository example/plundarrpedia \
        --ref-name example-ref \
        --ghcr-image ghcr.io/example/plundarrpedia \
+       --actor example-user \
+       --workflow-name "Example image workflow" \
+       --platforms linux/amd64,linux/arm64,linux/arm/v7 \
        --random-value 0 \
        --dry-run
    ```
 
-2. Confirm the sender identifies the image, the title says the pipeline started, the embed color is `3900150` (`#3B82F6`), and `allowed_mentions.parse` is empty. Select `--random-value 1` for the other joke or `--profile image-secondary` for Hades.
+2. Confirm the sender identifies the image, the title says the pipeline started, the embed color is `3900150` (`#3B82F6`), and `allowed_mentions.parse` is empty. Confirm Build context links the repository and user, Details identifies Plundarrpedia, and supporting metadata uses adjacent lines. Select `--random-value 1` for the other joke or `--profile image-secondary` for Hades.
 3. Run the credential scope guards and every supported result and variant:
 
    ```sh
@@ -90,7 +93,7 @@ python3 test/helpers/test_discord_secret_scope.py
 sh test/helpers/test-discord-notifier.sh
 ```
 
-The expected result reports `OK` for the credential scope tests, then ends with `Discord notifier checks passed`. The scope guards reject wrong destination bindings, broad or computed secret access, and cross-server fallback. Both suites use synthetic metadata and stubbed transport, including HTTP errors, connection failures, and deliberately noisy error output; they do not prove that a real webhook is configured or a live Discord message renders correctly.
+The expected result reports `OK` for the credential scope tests, then ends with `Discord notifier checks passed`. The scope guards reject wrong destination bindings, broad or computed secret access, and cross-server fallback. Both suites use synthetic metadata and stubbed transport, including grouped fields, publication evidence, safe links, HTTP errors, connection failures, and deliberately noisy error output; they do not prove that a real webhook is configured or a live Discord message renders correctly.
 
 ## Diagnose delivery failures safely
 

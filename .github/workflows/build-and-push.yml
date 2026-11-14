@@ -269,6 +269,7 @@ jobs:
                   DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
                   RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
                   WORKFLOW_NAME: ${{ github.workflow }}
+                  ACTOR: ${{ github.actor }}
                   REPOSITORY: ${{ github.repository }}
                   REF_NAME: ${{ github.ref_name }}
                   JOB_STATUS: ${{ job.status }}
@@ -302,6 +303,8 @@ jobs:
                       --repository "${REPOSITORY}" \
                       --ref-name "${REF_NAME}" \
                       --workflow-name "${WORKFLOW_NAME}" \
+                      --actor "${ACTOR}" \
+                      --platforms "${IMAGE_PLATFORMS}" \
                       --ghcr-image "${PLUNDARRPEDIA_IMAGE_REF}" \
                       --job-status "${JOB_STATUS}" \
                       --publication-status "${PUBLICATION_STATUS}" \
@@ -317,6 +320,7 @@ jobs:
                   DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_HADES_HOOK_URL }}
                   RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
                   WORKFLOW_NAME: ${{ github.workflow }}
+                  ACTOR: ${{ github.actor }}
                   REPOSITORY: ${{ github.repository }}
                   REF_NAME: ${{ github.ref_name }}
                   JOB_STATUS: ${{ job.status }}
@@ -350,6 +354,8 @@ jobs:
                       --repository "${REPOSITORY}" \
                       --ref-name "${REF_NAME}" \
                       --workflow-name "${WORKFLOW_NAME}" \
+                      --actor "${ACTOR}" \
+                      --platforms "${IMAGE_PLATFORMS}" \
                       --ghcr-image "${PLUNDARRPEDIA_IMAGE_REF}" \
                       --job-status "${JOB_STATUS}" \
                       --publication-status "${PUBLICATION_STATUS}" \

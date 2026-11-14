@@ -169,6 +169,25 @@ class NotificationSecretScopeTests(unittest.TestCase):
                         literal_webhook(expression, values), values[EXPECTED_ROUTES[route]]
                     )
 
+    def test_notification_context_arguments(self) -> None:
+        """Every actual notice supplies linked user and workflow context."""
+        notices = 0
+
+        for source in self.sources.values():
+            for _, _, block in workflow_steps(source):
+                if ".github/scripts/discord-notifier.sh" not in block:
+                    continue
+
+                notices += 1
+                self.assertIn("ACTOR: ${{ github.actor }}", block)
+                self.assertIn('--actor "${ACTOR}"', block)
+                self.assertIn('--workflow-name "${WORKFLOW_NAME}"', block)
+
+                if "--type image-" in block:
+                    self.assertIn('--platforms "${IMAGE_PLATFORMS}"', block)
+
+        self.assertEqual(notices, len(EXPECTED_ROUTES))
+
     def test_reject_wrong_destination_or_unrelated_secret(self) -> None:
         """Swapping a static destination is unsafe even without a broad context."""
         for name in WORKFLOWS:
