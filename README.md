@@ -17,16 +17,16 @@ Plundarrpedia helps you run [Privateerr](https://github.com/scottgigawatt/privat
 </p>
 
 <p align="center">
-  <a href="https://scottgigawatt.github.io/plundarrpedia/"><img src="https://img.shields.io/badge/Read-the%20Wiki-526CFE?logo=materialformkdocs&amp;logoColor=white&amp;style=flat&amp;color=526CFE&amp;labelColor=526CFE" alt="Read the Plundarrpedia wiki" /></a>
-  <a href="https://github.com/scottgigawatt/plundarrpedia/releases/latest"><img src="https://img.shields.io/github/v/release/scottgigawatt/plundarrpedia?label=Latest%20Edition&amp;logo=github&amp;style=flat&amp;color=BE123C&amp;labelColor=BE123C" alt="Latest Plundarrpedia release" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/scottgigawatt/plundarrpedia?label=Legal%20Scroll&amp;style=flat&amp;color=8250DF&amp;labelColor=8250DF" alt="Legal Scroll: Apache 2.0 license" /></a>
-  <a href="https://www.bestpractices.dev/projects/14769"><img src="https://img.shields.io/cii/summary/14769?label=OpenSSF%20Best%20Practices&amp;style=flat&amp;color=16823B&amp;labelColor=16823B" alt="OpenSSF Best Practices badge" /></a>
+  <a href="https://scottgigawatt.github.io/plundarrpedia/"><img src="https://img.shields.io/badge/Read-the%20Wiki-527C00?logo=materialformkdocs&amp;logoColor=white&amp;style=flat&amp;color=527C00&amp;labelColor=527C00" alt="Read the Plundarrpedia wiki" /></a>
+  <a href="https://github.com/scottgigawatt/plundarrpedia/releases/latest"><img src="https://img.shields.io/github/v/release/scottgigawatt/plundarrpedia?label=Latest%20Edition&amp;logo=github&amp;style=flat&amp;color=16823B&amp;labelColor=16823B&amp;logoColor=white" alt="Latest Plundarrpedia release" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/scottgigawatt/plundarrpedia?label=Legal%20Scroll&amp;style=flat&amp;color=008271&amp;labelColor=008271" alt="Legal Scroll: Apache 2.0 license" /></a>
+  <a href="https://www.bestpractices.dev/projects/14769"><img src="https://img.shields.io/cii/summary/14769?label=OpenSSF%20Best%20Practices&amp;style=flat&amp;color=116DB4&amp;labelColor=116DB4" alt="OpenSSF Best Practices badge" /></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/pages.yml"><img src="https://img.shields.io/github/actions/workflow/status/scottgigawatt/plundarrpedia/pages.yml?branch=main&amp;label=Wiki%20deploy&amp;logo=githubactions&amp;logoColor=white&amp;style=flat&amp;color=0284C7&amp;labelColor=0284C7" alt="GitHub Pages deployment status on main" /></a>
-  <a href="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/build-and-push.yml"><img src="https://img.shields.io/github/actions/workflow/status/scottgigawatt/plundarrpedia/build-and-push.yml?branch=main&amp;label=Image%20build&amp;logo=githubactions&amp;logoColor=white&amp;style=flat&amp;color=0284C7&amp;labelColor=0284C7" alt="Container build status on main" /></a>
-  <a href="https://github.com/scottgigawatt/plundarrpedia/pkgs/container/plundarrpedia"><img src="https://img.shields.io/badge/Fleet-amd64%20%7C%20arm64%20%7C%20arm%2Fv7-6D28D9?logo=docker&amp;logoColor=white&amp;style=flat&amp;color=6D28D9&amp;labelColor=6D28D9" alt="Plundarrpedia images for amd64, arm64, and arm/v7" /></a>
+  <a href="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/pages.yml"><img src="https://img.shields.io/github/actions/workflow/status/scottgigawatt/plundarrpedia/pages.yml?branch=main&amp;label=Wiki%20deploy&amp;logo=githubactions&amp;logoColor=white&amp;style=flat&amp;color=5138B6&amp;labelColor=5138B6" alt="GitHub Pages deployment status on main" /></a>
+  <a href="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/build-and-push.yml"><img src="https://img.shields.io/github/actions/workflow/status/scottgigawatt/plundarrpedia/build-and-push.yml?branch=main&amp;label=Image%20build&amp;logo=githubactions&amp;logoColor=white&amp;style=flat&amp;color=A32BA3&amp;labelColor=A32BA3" alt="Container build status on main" /></a>
+  <a href="https://github.com/scottgigawatt/plundarrpedia/pkgs/container/plundarrpedia"><img src="https://img.shields.io/badge/Fleet-amd64%20%7C%20arm64%20%7C%20arm%2Fv7-D62F65?logo=docker&amp;logoColor=white&amp;style=flat&amp;color=D62F65&amp;labelColor=D62F65" alt="Plundarrpedia images for amd64, arm64, and arm/v7" /></a>
 </p>
 
 <p align="center">─── ⛧ ───</p>
