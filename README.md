@@ -11,29 +11,29 @@ Plundarrpedia helps you run [Privateerr](https://github.com/scottgigawatt/privat
 </p>
 
 <p align="center">
-  <a href="https://github.com/scottgigawatt/plundarrpedia/stargazers"><img src="https://img.shields.io/github/stars/scottgigawatt/plundarrpedia?style=social&amp;label=Chart%20Collectors" alt="GitHub stars: Chart Collectors" /></a>
-  <a href="https://github.com/scottgigawatt/plundarrpedia/forks"><img src="https://img.shields.io/github/forks/scottgigawatt/plundarrpedia?style=social&amp;label=Forked%20Currents" alt="GitHub forks: Forked Currents" /></a>
-  <a href="https://github.com/scottgigawatt/plundarrpedia/watchers"><img src="https://img.shields.io/github/watchers/scottgigawatt/plundarrpedia?style=social&amp;label=Crow%27s%20Nest%20Readers" alt="GitHub watchers: Crow's Nest Readers" /></a>
+  <a href="https://github.com/scottgigawatt/plundarrpedia/stargazers"><img src="https://img.shields.io/github/stars/scottgigawatt/plundarrpedia?label=Chart%20Collectors&amp;style=flat&amp;color=D7263D&amp;labelColor=D7263D" alt="GitHub stars: Chart Collectors" /></a>
+  <a href="https://github.com/scottgigawatt/plundarrpedia/forks"><img src="https://img.shields.io/github/forks/scottgigawatt/plundarrpedia?label=Forked%20Currents&amp;style=flat&amp;color=C45100&amp;labelColor=C45100" alt="GitHub forks: Forked Currents" /></a>
+  <a href="https://github.com/scottgigawatt/plundarrpedia/watchers"><img src="https://img.shields.io/github/watchers/scottgigawatt/plundarrpedia?label=Crow%27s%20Nest%20Readers&amp;style=flat&amp;color=8C6900&amp;labelColor=8C6900" alt="GitHub watchers: Crow's Nest Readers" /></a>
 </p>
 
 <p align="center">
-  <a href="https://scottgigawatt.github.io/plundarrpedia/"><img src="https://img.shields.io/badge/Read-the%20Wiki-526CFE?logo=materialformkdocs&amp;logoColor=white" alt="Read the Plundarrpedia wiki" /></a>
-  <a href="https://github.com/scottgigawatt/plundarrpedia/releases/latest"><img src="https://img.shields.io/github/v/release/scottgigawatt/plundarrpedia?label=Latest%20Edition&amp;logo=github&amp;color=BE123C" alt="Latest Plundarrpedia release" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/scottgigawatt/plundarrpedia?label=Legal%20Scroll&amp;color=8250DF" alt="Legal Scroll: Apache 2.0 license" /></a>
-  <a href="https://www.bestpractices.dev/projects/14769"><img src="https://www.bestpractices.dev/projects/14769/badge" alt="OpenSSF Best Practices badge" /></a>
+  <a href="https://scottgigawatt.github.io/plundarrpedia/"><img src="https://img.shields.io/badge/Read-the%20Wiki-526CFE?logo=materialformkdocs&amp;logoColor=white&amp;style=flat&amp;color=526CFE&amp;labelColor=526CFE" alt="Read the Plundarrpedia wiki" /></a>
+  <a href="https://github.com/scottgigawatt/plundarrpedia/releases/latest"><img src="https://img.shields.io/github/v/release/scottgigawatt/plundarrpedia?label=Latest%20Edition&amp;logo=github&amp;style=flat&amp;color=BE123C&amp;labelColor=BE123C" alt="Latest Plundarrpedia release" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/scottgigawatt/plundarrpedia?label=Legal%20Scroll&amp;style=flat&amp;color=8250DF&amp;labelColor=8250DF" alt="Legal Scroll: Apache 2.0 license" /></a>
+  <a href="https://www.bestpractices.dev/projects/14769"><img src="https://img.shields.io/cii/summary/14769?label=OpenSSF%20Best%20Practices&amp;style=flat&amp;color=16823B&amp;labelColor=16823B" alt="OpenSSF Best Practices badge" /></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/pages.yml"><img src="https://img.shields.io/github/actions/workflow/status/scottgigawatt/plundarrpedia/pages.yml?branch=main&amp;label=Wiki%20deploy&amp;logo=githubactions&amp;logoColor=white" alt="GitHub Pages deployment status on main" /></a>
-  <a href="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/build-and-push.yml"><img src="https://img.shields.io/github/actions/workflow/status/scottgigawatt/plundarrpedia/build-and-push.yml?branch=main&amp;label=Image%20build&amp;logo=githubactions&amp;logoColor=white" alt="Container build status on main" /></a>
-  <a href="https://github.com/scottgigawatt/plundarrpedia/pkgs/container/plundarrpedia"><img src="https://img.shields.io/badge/Fleet-amd64%20%7C%20arm64%20%7C%20arm%2Fv7-6D28D9?logo=docker&amp;logoColor=white" alt="Plundarrpedia images for amd64, arm64, and arm/v7" /></a>
+  <a href="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/pages.yml"><img src="https://img.shields.io/github/actions/workflow/status/scottgigawatt/plundarrpedia/pages.yml?branch=main&amp;label=Wiki%20deploy&amp;logo=githubactions&amp;logoColor=white&amp;style=flat&amp;color=0284C7&amp;labelColor=0284C7" alt="GitHub Pages deployment status on main" /></a>
+  <a href="https://github.com/scottgigawatt/plundarrpedia/actions/workflows/build-and-push.yml"><img src="https://img.shields.io/github/actions/workflow/status/scottgigawatt/plundarrpedia/build-and-push.yml?branch=main&amp;label=Image%20build&amp;logo=githubactions&amp;logoColor=white&amp;style=flat&amp;color=0284C7&amp;labelColor=0284C7" alt="Container build status on main" /></a>
+  <a href="https://github.com/scottgigawatt/plundarrpedia/pkgs/container/plundarrpedia"><img src="https://img.shields.io/badge/Fleet-amd64%20%7C%20arm64%20%7C%20arm%2Fv7-6D28D9?logo=docker&amp;logoColor=white&amp;style=flat&amp;color=6D28D9&amp;labelColor=6D28D9" alt="Plundarrpedia images for amd64, arm64, and arm/v7" /></a>
 </p>
 
 <p align="center">─── ⛧ ───</p>
 
 <p align="center">
   <em>🗺️ Lost on the Styx? Ask the damned cartographers in</em>
-  <a href="https://discord.gg/BpEGzWwGYf"><img src="https://img.shields.io/discord/1403601106315116626?label=%F0%9F%94%A5HADES%F0%9F%94%A5&amp;logo=discord&amp;logoColor=white&amp;color=5865F2" alt="HADES Discord community" align="absmiddle" /></a>
+  <a href="https://discord.gg/BpEGzWwGYf"><img src="https://img.shields.io/discord/1403601106315116626?label=%F0%9F%94%A5HADES%F0%9F%94%A5&amp;logo=discord&amp;logoColor=white&amp;style=flat&amp;color=5865F2&amp;labelColor=5865F2" alt="HADES Discord community" align="absmiddle" /></a>
 </p>
 <!-- markdownlint-enable MD033 -->
 
