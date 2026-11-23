@@ -19,7 +19,9 @@
     "automergeSchedule": ["* 0-7 1 * *"],
     "updateNotScheduled": false,
     "prConcurrentLimit": 2,
-    "dependencyDashboard": true,
+    "dependencyDashboard": {
+        "enabled": true
+    },
 
     //
     // Merge routine dependency PRs during maintenance windows after checks pass.
