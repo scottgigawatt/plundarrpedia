@@ -11,7 +11,7 @@
 # Default build-stage image and tag that can be overridden using build args.
 #
 ARG MKDOCS_MATERIAL_IMAGE=squidfunk/mkdocs-material
-ARG MKDOCS_MATERIAL_TAG=9.8.1@sha256:f797da217ff01b20b298d2185eb9d88fb81f5a322c439eba854f2e4de8a48e65
+ARG MKDOCS_MATERIAL_TAG=9.8.2@sha256:fd13d78a4b1da637405c0336c9f0a4e0594b59271df106bd9cd64cae56cd1f38
 
 #
 # Default runtime image and tag that can be overridden using build args.
