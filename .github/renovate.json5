@@ -1,131 +1,146 @@
-//
-// Copyright 2026 Scott Gigawatt
-//
-// SPDX-License-Identifier: Apache-2.0
-//
-// renovate.json5: Automated update policy for actions, Python dependencies,
-//                 Compose images, and Dockerfile base images.
-//
-
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": [
-        "config:recommended",
-        "helpers:pinGitHubActionDigests",
-        ":enablePreCommit"
+    $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+    extends: [
+        'config:recommended',
+        'helpers:pinGitHubActionDigests',
+        ':enablePreCommit',
     ],
-    "timezone": "America/New_York",
-    "schedule": ["* 0-7 1 * *"],
-    "automergeSchedule": ["* 0-7 1 * *"],
-    "updateNotScheduled": false,
-    "prConcurrentLimit": 2,
-    "dependencyDashboard": true,
-
-    //
-    // Merge routine dependency PRs during maintenance windows after checks pass.
-    //
-    "automerge": true,
-    "automergeType": "pr",
-    "automergeStrategy": "squash",
-    "platformAutomerge": false,
-    "rebaseWhen": "behind-base-branch",
-    "labels": ["dependencies"],
-    "assignees": ["scottgigawatt"],
-    "reviewers": ["scottgigawatt"],
-    "enabledManagers": [
-        "custom.regex",
-        "docker-compose",
-        "dockerfile",
-        "github-actions",
-        "pip_requirements",
-        "pre-commit"
+    timezone: 'America/New_York',
+    schedule: [
+        '* 0-7 1 * *',
     ],
-    "customManagers": [
+    automergeSchedule: [
+        '* 0-7 1 * *',
+    ],
+    updateNotScheduled: false,
+    prConcurrentLimit: 2,
+    dependencyDashboard: {
+        enabled: true,
+    },
+    automerge: true,
+    automergeType: 'pr',
+    automergeStrategy: 'squash',
+    platformAutomerge: false,
+    rebaseWhen: 'behind-base-branch',
+    labels: [
+        'dependencies',
+    ],
+    assignees: [
+        'scottgigawatt',
+    ],
+    reviewers: [
+        'scottgigawatt',
+    ],
+    enabledManagers: [
+        'custom.regex',
+        'docker-compose',
+        'dockerfile',
+        'github-actions',
+        'pip_requirements',
+        'pre-commit',
+    ],
+    customManagers: [
         {
-            "customType": "regex",
-            "managerFilePatterns": ["/^example\\.env$/"],
-            "matchStrings": [
-                "MKDOCS_MATERIAL_TAG=\"\\$\\{MKDOCS_MATERIAL_TAG:-(?<currentValue>[^@\\s}]+)@(?<currentDigest>sha256:[a-f0-9]+)\\}\""
+            customType: 'regex',
+            managerFilePatterns: [
+                '/^example\\.env$/',
             ],
-            "depNameTemplate": "squidfunk/mkdocs-material",
-            "datasourceTemplate": "docker",
-            "versioningTemplate": "docker"
-        },
-        {
-            "customType": "regex",
-            "managerFilePatterns": ["/^example\\.env$/"],
-            "matchStrings": [
-                "NGINX_UNPRIVILEGED_TAG=\"\\$\\{NGINX_UNPRIVILEGED_TAG:-(?<currentValue>[^@\\s}]+)@(?<currentDigest>sha256:[a-f0-9]+)\\}\""
+            matchStrings: [
+                'MKDOCS_MATERIAL_TAG="\\$\\{MKDOCS_MATERIAL_TAG:-(?<currentValue>[^@\\s}]+)@(?<currentDigest>sha256:[a-f0-9]+)\\}"',
             ],
-            "depNameTemplate": "nginxinc/nginx-unprivileged",
-            "datasourceTemplate": "docker",
-            "versioningTemplate": "docker"
-        }
+            depNameTemplate: 'squidfunk/mkdocs-material',
+            datasourceTemplate: 'docker',
+            versioningTemplate: 'docker',
+        },
+        {
+            customType: 'regex',
+            managerFilePatterns: [
+                '/^example\\.env$/',
+            ],
+            matchStrings: [
+                'NGINX_UNPRIVILEGED_TAG="\\$\\{NGINX_UNPRIVILEGED_TAG:-(?<currentValue>[^@\\s}]+)@(?<currentDigest>sha256:[a-f0-9]+)\\}"',
+            ],
+            depNameTemplate: 'nginxinc/nginx-unprivileged',
+            datasourceTemplate: 'docker',
+            versioningTemplate: 'docker',
+        },
     ],
-    //
-    // Preserve dependency tracking and pinning before applying maintenance policy.
-    //
-    "packageRules": [
+    packageRules: [
         {
-            "groupName": "pre-commit hooks",
-            "matchManagers": ["pre-commit"]
+            groupName: 'pre-commit hooks',
+            matchManagers: [
+                'pre-commit',
+            ],
         },
         {
-            "matchManagers": ["docker-compose", "dockerfile", "custom.regex"],
-            "pinDigests": true
+            matchManagers: [
+                'docker-compose',
+                'dockerfile',
+                'custom.regex',
+            ],
+            pinDigests: true,
         },
         {
-            "groupName": "GitHub Actions",
-            "matchManagers": ["github-actions"]
+            groupName: 'GitHub Actions',
+            matchManagers: [
+                'github-actions',
+            ],
         },
         {
-            "groupName": "Container images",
-            "matchManagers": ["custom.regex", "docker-compose", "dockerfile"]
+            groupName: 'Container images',
+            matchManagers: [
+                'custom.regex',
+                'docker-compose',
+                'dockerfile',
+            ],
         },
         {
-            "groupName": "MkDocs dependencies",
-            "matchManagers": ["pip_requirements"]
+            groupName: 'MkDocs dependencies',
+            matchManagers: [
+                'pip_requirements',
+            ],
         },
-
-        //
-        // Batch routine CI, hooks, and site tooling on the first day of each month.
-        //
         {
-            "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-            "groupName": "monthly maintenance"
+            matchUpdateTypes: [
+                'minor',
+                'patch',
+                'pin',
+                'digest',
+            ],
+            groupName: 'monthly maintenance',
         },
-
-        //
-        // Keep all image pins together in the weekly production update window.
-        //
         {
-            "matchDatasources": ["docker"],
-            "schedule": ["* 0-7 * * 1"],
-            "automergeSchedule": ["* 0-7 * * 1"],
-            "groupName": "weekly production dependencies"
+            matchDatasources: [
+                'docker',
+            ],
+            schedule: [
+                '* 0-7 * * 1',
+            ],
+            automergeSchedule: [
+                '* 0-7 * * 1',
+            ],
+            groupName: 'weekly production dependencies',
         },
-
-        //
-        // Require dashboard approval and individual review for major updates.
-        //
         {
-            "matchUpdateTypes": ["major"],
-            "dependencyDashboardApproval": true,
-            "automerge": false,
-            "groupName": null
-        }
+            matchUpdateTypes: [
+                'major',
+            ],
+            dependencyDashboardApproval: true,
+            automerge: false,
+            groupName: null,
+        },
     ],
-
-    //
-    // Open detected security updates promptly and leave them for manual review.
-    //
-    "vulnerabilityAlerts": {
-        "enabled": true,
-        "dependencyDashboardApproval": false,
-        "groupName": null,
-        "automerge": false,
-        "schedule": ["at any time"],
-        "automergeSchedule": ["at any time"],
-        "updateNotScheduled": true
-    }
+    vulnerabilityAlerts: {
+        enabled: true,
+        dependencyDashboardApproval: false,
+        groupName: null,
+        automerge: false,
+        schedule: [
+            'at any time',
+        ],
+        automergeSchedule: [
+            'at any time',
+        ],
+        updateNotScheduled: true,
+    },
 }
